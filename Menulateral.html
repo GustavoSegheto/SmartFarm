@@ -1,160 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFarm</title>
+  <style>
 
-    <title>MenuLateral</title>
-
-<style>
-*{
-      margin: 0; 
+    *{
+    margin: 0; 
       padding: 0;
       box-sizing: border-box;
-      font-family: "Nexa", sans-serif; 
-    } 
+      font-family: "Nexa", sans-serif;
+    }
 
-@font-face {
+    body {
+     
+    }
+
+    /* Fontes */
+    @font-face {
       font-family:"Nexa";
       src: url(assets/Nexa\ Light.otf); 
       font-weight: 300;
       font-style: normal;
     } 
 
-    body{
-        background-color: aliceblue;
+    /* Sidebar lateral */
+    .sidebar {
+      width: 70px;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 70px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      position: fixed;
+      height: 100vh;
     }
 
-    li{
-        list-style-type: none;
+    .sidebar a {
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      height: 90px;
+      text-decoration: none;
     }
 
-    a{
-        text-decoration: none;
-        display: flex;
-        gap: 20px;
-        color: rgb(0, 34, 126);
+    .sidebar a img {
+      width: 65px;
+      height: 65px;
+      filter: invert(0); /* deixa preto, se quiser mudar cor */
+      transition: transform 0.2s, filter 0.2s;
+      
     }
 
-    .menu{
-        width: 200px;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        background-color: rgb(226, 13, 13);
-        overflow: hidden;
+    .sidebar a:hover img {
+      transform: scale(1.2);
+      filter: invert(40%) sepia(100%) saturate(500%) hue-rotate(100deg);
     }
 
-    .logo{
-        height: 10%;
-        margin: -50px auto 0;
+    /* Conteúdo principal */
+    .content {
+      margin-left: 70px; /* espaço para a sidebar */
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #eaf3f3;
     }
 
-    .logo img{
-       width: 250px;
-       height: 300px; 
-       margin-right: 100px;
+    .fotos{
+        width: 70px;
+        height: 100px;
     }
 
-    /*Tratando a logo como div*/
-    #foto{
-        display:flex;
-        justify-content: center;
-        margin-left:-20px;
-    }
-    
-
-    /*
-     MEXER MELHOR
-       Estilo da faixa superior
-.smartfarm-topbar{
-  width: 100%;
-  background: #ffffff;                 
-  border-bottom: 10px solid #000000;   linha mais grossa e colorida
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  padding: 20px 16px;                 faixa mais alta
-}
-
-.smartfarm-topbar h1{
-  margin: 0;
-  text-align: center;
-  font-size: 60px;                    texto maior
-  font-weight: 900;                   mais grosso (negrito forte)
-  color: #11034e;
-}
-       mexer melhor
-*/
-
-    </style>
+  </style>
 </head>
 <body>
 
-    <!--LINHA SUPERIOR -->
-<header class="smartfarm-topbar">
-  <h1>Bem vindo ao SmartFarm</h1>
-</header>
+  <!-- Menu Lateral -->
+  <nav class="sidebar">
+    <a href="plantacoes.html"><img src="assets/ZLavourasImagem.png" alt="Plantacoes" ></a>
+    <a href="saude.html"><img src="assets/ZNovaLavoura.png" alt="Saúde" ></a>
+    <a href="calendario.html"><img src="assets/ZCalendario.png" alt="Calendário" ></a>
+    <a href="alertas.html"><img src="assets/ZAvisos.png" alt="Alertas" ></a>
+    <a href="estoque.html"><img src="assets/ZMarketplace.png" alt="Estoque" ></a>
+  </nav>
 
-    <nav class = menu>
-        <a href="/" class="logo">
-            <div >
-            <img src="/assets/LogoSmartFarm.png" alt="logo" id="foto"> </div>
-        </a>
+  <!-- Conteúdo -->
+  <div class="content">
+    <h1>Bem-vindo ao SmartFarm</h1>
+  </div>
 
-        <div class="Geral">
-            <h2>Visão Geral</h2>
-            <ul>
-                <li>
-                    <a href="#">
-                        <span class="material-symbols-outlined">
-                            dashboard
-                            </span>
-                            <h3>Lavouras</h3>
-                    </a>
-                </li>
-                    <li>
-                        <a href="#">
-                            <span class="material-symbols-outlined">
-                                new_window
-                                </span>
-                                <h4>Cadastro de Lavouras</h4>
-                        </a>
-                    </li>
-                        <li>
-                            <a href="#">
-                                <span class="material-symbols-outlined">
-                                    history
-                                    </span>
-                                    <h3>Historico</h3>
-                            </a>
-                        </li>
-                        
-                            <li>
-                                <a href="#">
-                                    <span class="material-symbols-outlined">
-                                    person_alert
-                                    </span>
-                                        <h3>Avisos</h3>
-                                </a>
-                            </li>
-                            
-                                <li>
-                                    <a href="#">
-                                        <span class="material-symbols-outlined">
-                                         storefront
-                                         </span>
-                                            <h3>Marketplace</h3>
-                                    </a>
-                                </li>
-
-                                <h2>Logout</h2>
-                                <li>
-                                    <a href="#">
-                                        <span class="material-symbols-outlined">
-                                            logout
-                                            </span>
-                                            <h3>Sair</h3>
-                                    </a>
-                                </li>
+</body>
+</html>
