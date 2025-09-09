@@ -7,14 +7,10 @@
   <style>
 
     *{
-    margin: 0; 
+      margin: 0; 
       padding: 0;
       box-sizing: border-box;
       font-family: "Nexa", sans-serif;
-    }
-
-    body {
-     
     }
 
     /* Fontes */
@@ -28,14 +24,15 @@
     /* Sidebar lateral */
     .sidebar {
       width: 70px;
-      background: #f8f9fa;
+      background: #1e1e1e;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-top: 70px;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
       position: fixed;
       height: 100vh;
+      
     }
 
     .sidebar a {
@@ -49,16 +46,15 @@
     }
 
     .sidebar a img {
-      width: 65px;
-      height: 65px;
-      filter: invert(0); /* deixa preto, se quiser mudar cor */
+      width: 50px;
+      height: 50px;
+      filter: brightness(0) invert(1); 
       transition: transform 0.2s, filter 0.2s;
-      
     }
 
     .sidebar a:hover img {
       transform: scale(1.2);
-      filter: invert(40%) sepia(100%) saturate(500%) hue-rotate(100deg);
+      filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
     }
 
     /* Conteúdo principal */
@@ -69,12 +65,16 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #eaf3f3;
+      background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);  
     }
 
-    .fotos{
-        width: 70px;
-        height: 100px;
+    .content img {
+      max-width: 400px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .content img:hover {
+      transform: scale(1.05);
     }
 
   </style>
@@ -83,16 +83,16 @@
 
   <!-- Menu Lateral -->
   <nav class="sidebar">
-    <a href="plantacoes.html"><img src="assets/ZLavourasImagem.png" alt="Plantacoes" ></a>
-    <a href="saude.html"><img src="assets/ZNovaLavoura.png" alt="Saúde" ></a>
-    <a href="calendario.html"><img src="assets/ZCalendario.png" alt="Calendário" ></a>
-    <a href="alertas.html"><img src="assets/ZAvisos.png" alt="Alertas" ></a>
-    <a href="estoque.html"><img src="assets/ZMarketplace.png" alt="Estoque" ></a>
+    <a href="plantacoes.html"><img src="assets/ZLavouras2.webp" alt="Plantacoes" ></a>
+    <a href="saude.html"><img src="assets/ZNovalavoura2.webp" alt="Saúde" ></a>
+    <a href="calendario.html"><img src="assets/ZCalendario2.webp" alt="Calendário" ></a>
+    <a href="alertas.html"><img src="assets/ZAvisos2.webp" alt="Alertas" ></a>
+    <a href="estoque.html"><img src="assets/ZMarketplace2.webp" alt="Estoque" ></a>
   </nav>
 
   <!-- Conteúdo -->
   <div class="content">
-    <h1>Bem-vindo ao SmartFarm</h1>
+    <a href="SmartFarmLogo.html"><img src="assets/ZSmartFarm.webp" alt="SmartFarmLogo"></a>
   </div>
 
 </body>
