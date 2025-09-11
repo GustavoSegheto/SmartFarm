@@ -13,6 +13,11 @@
       font-family: "Nexa", sans-serif;
     }
 
+    html, body {
+      height: 100%;
+      overflow: hidden; /* impede rolagem */
+    }
+
     /* Fontes */
     @font-face {
       font-family:"Nexa";
@@ -21,6 +26,45 @@
       font-style: normal;
     } 
 
+    /* Sidebar superior */
+    .sidebarsuperior{
+      height: 70px; 
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #1e1e1e;
+      color: rgb(255, 247, 247);
+      display: flex;
+      justify-content: center; /* centraliza o título */
+      align-items: center;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .sidebarsuperior h2 {
+      font-size: 30px;
+      font-weight: 300;
+    }
+
+    /* Ícone logout posicionado na ponta direita */
+    .sidebarsuperior a {
+      position: absolute;
+      right: 20px;
+    }
+
+    .sidebarsuperior a img {
+      width: 35px;
+      height: 35px;
+      filter: brightness(0) invert(1); 
+      transition: transform 0.2s, filter 0.2s;
+    }
+
+    .sidebarsuperior a:hover img {
+      transform: scale(1.1);
+      filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
+    }
+
     /* Sidebar lateral */
     .sidebar {
       width: 70px;
@@ -28,11 +72,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 70px;
+      padding-top: 70px; /* espaço do topo */
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
       position: fixed;
       height: 100vh;
-      
     }
 
     .sidebar a {
@@ -59,12 +102,14 @@
 
     /* Conteúdo principal */
     .content {
-      margin-left: 70px; /* espaço para a sidebar */
-      flex: 1;
+      position: fixed;
+      top: 70px;   /* abaixo da topbar */
+      left: 70px;  /* ao lado da sidebar */
+      width: calc(100% - 70px);
+      height: calc(100% - 70px);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);  
     }
 
@@ -81,7 +126,7 @@
 </head>
 <body>
 
-  <!-- Menu Lateral -->
+  <!-- Sidebar lateral -->
   <nav class="sidebar">
     <a href="plantacoes.html"><img src="assets/ZLavouras2.webp" alt="Plantacoes" ></a>
     <a href="saude.html"><img src="assets/ZNovalavoura2.webp" alt="Saúde" ></a>
@@ -94,6 +139,12 @@
   <div class="content">
     <a href="SmartFarmLogo.html"><img src="assets/ZSmartFarm.webp" alt="SmartFarmLogo"></a>
   </div>
+
+  <!-- Sidebar superior -->
+  <nav class="sidebarsuperior">
+    <h2>SEJA BEM VINDO AO SMARTFARM!</h2>
+    <a href="logout.html"> <img src="assets/ZLogout.png" alt="Saida"></a>
+  </nav>
 
 </body>
 </html>
