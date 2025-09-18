@@ -165,6 +165,38 @@
       text-align: center;
     }
 
+    /* Inputs de calendário */
+.filters input[type="date"] {
+  background-color: #1e1e1e;      /* fundo escuro */
+  color: #e5e5e5;                 /* texto claro */
+  border: 2px solid #09e6145d;    /* borda verde translúcida */
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+/* ícone do calendário */
+.filters input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
+  cursor: pointer;
+}
+
+/* efeito hover */
+.filters input[type="date"]:hover {
+  border-color: #09e614;          /* verde mais forte */
+  background-color: #2c2c2c;
+}
+
+/* efeito foco */
+.filters input[type="date"]:focus {
+  outline: none;
+  border-color: #09e614;
+  box-shadow: 0 0 8px #09e61480;  /* brilho verde */
+}
+
+
   </style>
 </head>
 <body>
@@ -180,11 +212,11 @@
       <div class="filters">
         <div>
           <label for="inicio">Data de início:</label>
-          <input type="text" id="inicio" name="inicio">
+          <input type="date" id="inicio" name="inicio">
         </div>
         <div>
           <label for="colheita">Data de colheita:</label>
-          <input type="text" id="colheita" name="colheita">
+          <input type="date" id="colheita" name="colheita">
         </div>
         <div>
           <label for="nome">Nome:</label>
