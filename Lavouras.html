@@ -8,12 +8,15 @@
   <title>SmartFarm</title>
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.Js -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: "Nexa", sans-serif;
+
     }
 
     html,
@@ -98,7 +101,7 @@
 
     /* Card padrão */
     .custom-card {
-      background-color: white;
+       /*background-color: white;*/
       border-radius: 20px;
       padding: 15px;
       height: 100%;
@@ -204,8 +207,94 @@
       background-color: red;
     }
 
+    /* --- Gráfico de Pizza --- */
+
+    .subcardPizza {
+      display: flex;
+      background-color: white;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 32px;
+      gap: 30px;
+    }
+
+    .titulosnutrientes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-weight: bold;
+    }
+
+    .titulosnutrientes h4 {
+      position: relative;
+      padding-left: 26px;
+      
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .titulosnutrientes h4::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+
+    .corNitrogenio::before {
+      background-color: #1b5e20;
+      /* Verde escuro */
+    }
+
+    .corFosforo::before {
+      background-color: #2e7d32;
+      /* Verde médio */
+    }
+
+    .corPotassio::before {
+      background-color: #43a047;
+      /* Verde claro */
+    }
+
+    .corOutros::before {
+      background-color: #81c784;
+      /* Verde bem claro */
+    }
+
+
+    #grafico-container {
+      width: 400px;
+      height: 400px;
+    }
+
     h2 {
       color: rgb(25, 0, 255);
+    }
+
+    .cor {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .cor.corNitrogenio {
+      background-color: #1b5e20;
+    }
+
+    .cor.corFosforo {
+      background-color: #2e7d32;
+    }
+
+    .cor.corPotassio {
+      background-color: #43a047;
+    }
+
+    .cor.corOutros {
+      background-color: #81c784;
     }
   </style>
 </head>
@@ -227,7 +316,25 @@
         <!-- Gráfico Pizza (sup esquerdo) -->
         <div class="col-md-6 h-100">
           <div class="custom-card">
-            <h2>GRAFICO DE PIZZA</h2>
+
+            <div class="subcardPizza">
+
+              <div class="titulosnutrientes">
+                <div class="titulosnutrientes">
+                  <h4 class="corNitrogenio">Nitrogênio</h4>
+                  <h4 class="corFosforo">Fósforo</h4>
+                  <h4 class="corPotassio">Potássio</h4>
+                  <h4 class="corOutros">Outros</h4>
+                </div>
+
+              </div>
+
+              <div id="grafico-container">
+                <canvas id="graficoPizza"></canvas>
+              </div>
+
+
+            </div>
           </div>
         </div>
         <!-- Gráfico Barras (sup direito) -->
@@ -321,7 +428,11 @@
   <!-- JUSTGAGE -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/justgage@1.6.1/justgage.min.js"></script>
+  <!-- CHART.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+  <!-- Velocimetro -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       if (typeof Raphael === 'undefined' || typeof JustGage === 'undefined') return;
@@ -345,6 +456,55 @@
         }
       }, 2000);
     });
+
+  </script>
+
+  <!-- Gráfico de Pizza -->
+  <script>
+    const ctx = document.getElementById('graficoPizza').getContext('2d');
+
+    const dados = {
+      labels: ['Nitrogênio', 'Fósforo', 'Potássio', 'Outros'],
+      datasets: [{
+        label: 'Distribuição',
+        data: [25, 35, 20, 20],
+        backgroundColor: [
+          '#1b5e20', // Verde escuro (Nitrogênio)
+          '#2e7d32', // Verde médio (Fósforo)
+          '#43a047', // Verde claro (Potássio)
+          '#81c784'  // Verde bem claro (Outros)
+        ],
+        borderColor: '#ffffff',
+        borderWidth: 2
+      }]
+    };
+
+    const config = {
+      type: 'pie',
+      data: dados,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#2e7d32'
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                let label = context.label || '';
+                let value = context.raw || 0;
+                return `${label}: ${value}%`;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    const graficoPizza = new Chart(ctx, config);
   </script>
 </body>
 
