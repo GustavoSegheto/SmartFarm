@@ -11,6 +11,8 @@
   <!-- Chart.Js -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     * {
@@ -18,7 +20,6 @@
       padding: 0;
       box-sizing: border-box;
       font-family: "Nexa", sans-serif;
-
     }
 
     html,
@@ -47,11 +48,13 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .sidebarsuperior h2 {
       font-size: 26px;
       font-weight: 300;
+      letter-spacing: 1px;
     }
 
     /* Sidebar lateral */
@@ -65,6 +68,7 @@
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
       position: fixed;
       height: 100vh;
+      z-index: 999;
     }
 
     .sidebar a {
@@ -75,6 +79,7 @@
       width: 50px;
       height: 90px;
       text-decoration: none;
+      position: relative;
     }
 
     .sidebar a img {
@@ -89,6 +94,22 @@
       filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
     }
 
+    .sidebar a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: #4CAF50;
+      transition: width 0.3s;
+    }
+
+    .sidebar a:hover::after {
+      width: 30px;
+    }
+
     /* Área principal */
     .content {
       position: relative;
@@ -97,24 +118,33 @@
       width: calc(100% - 70px);
       height: calc(100% - 70px);
       background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
-      padding: 20px;
+      padding: 25px;
       overflow-y: auto;
     }
 
     /* Card padrão */
     .custom-card {
-
       border-radius: 20px;
-      padding: 15px;
+      padding: 20px;
       height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .custom-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 
     .subcardvento,
     .subcardumidsolo {
       width: 100%;
       height: 17vh;
-      background-color: #ffffff;
-      border-radius: 32px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 20px;
       padding: 20px;
       display: flex;
       flex-direction: row;
@@ -124,15 +154,28 @@
       overflow: hidden;
       text-align: center;
       gap: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .subcardvento::before,
+    .subcardumidsolo::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
     }
 
     .subcardPHSolo,
     .subcardUmidAr {
       width: 100%;
       height: 10vh;
-      background-color: #ffffff;
-      border-radius: 32px;
-      padding: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 16px;
+      padding: 15px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -140,17 +183,35 @@
       position: relative;
       overflow: hidden;
       text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      margin-bottom: 10px;
+    }
+
+    .subcardPHSolo::before,
+    .subcardUmidAr::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
     }
 
     .subcardAPI {
-      /* API DESENVOLVER */
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .subcardAPI img {
-      width: 75%;
-      height: 100%;
+      width: 85%;
+      height: auto;
       display: block;
       margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     #velocimetro,
@@ -164,8 +225,8 @@
     .subcardAvisos {
       width: 100%;
       height: 100%;
-      background-color: #ffffff;
-      border-radius: 32px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 20px;
       padding: 20px;
       display: flex;
       flex-direction: column;
@@ -173,21 +234,64 @@
       align-items: center;
       text-align: center;
       overflow-y: auto;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .subcardAvisos::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      border-radius: 20px 20px 0 0;
     }
 
     .subcardAvisos h2 {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .subcardAvisos h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 3px;
+      background: #4CAF50;
+      border-radius: 2px;
     }
 
     .aviso {
       width: 100%;
-      background: #f0f0f0;
+      background: #f8f9fa;
       border-radius: 12px;
-      padding: 10px 15px;
-      margin-bottom: 10px;
+      padding: 12px 15px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+      border-left: 4px solid #4CAF50;
+      transition: transform 0.2s;
+    }
+
+    .aviso:hover {
+      transform: translateX(5px);
+    }
+
+    .aviso.amarelo {
+      border-left-color: #FFC107;
+    }
+
+    .aviso.vermelho {
+      border-left-color: #F44336;
     }
 
     .status {
@@ -198,43 +302,60 @@
     }
 
     .status.verde {
-      background-color: green;
+      background-color: #4CAF50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
     }
 
     .status.amarelo {
-      background-color: gold;
+      background-color: #FFC107;
+      box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
     }
 
     .status.vermelho {
-      background-color: red;
+      background-color: #F44336;
+      box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
     }
 
     /* --- Gráfico de Pizza --- */
     .subcardPizza {
       width: 100%;
       height: 100%;
-      background-color: white;
-      border-radius: 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 20px;
       display: flex;
-      background-color: whit;
       justify-content: space-between;
       align-items: center;
       gap: 30px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .subcardPizza::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      border-radius: 20px 20px 0 0;
     }
 
     .titulosnutrientes {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 15px;
       font-weight: bold;
     }
 
     .titulosnutrientes h4 {
       position: relative;
-      padding-left: 26px;
-
-      font-weight: bold;
+      padding-left: 30px;
+      font-weight: 600;
       margin-bottom: 10px;
+      color: #333;
+      font-size: 16px;
     }
 
     .titulosnutrientes h4::before {
@@ -243,35 +364,32 @@
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .corNitrogenio::before {
       background-color: #1b5e20;
-      /* Verde escuro */
     }
 
     .corFosforo::before {
       background-color: #2e7d32;
-      /* Verde médio */
     }
 
     .corPotassio::before {
       background-color: #43a047;
-      /* Verde claro */
     }
 
     .corOutros::before {
       background-color: #81c784;
-      /* Verde bem claro */
     }
 
-
     #grafico-container {
-      width: 400px;
-      height: 400px;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
     }
 
     h2 {
@@ -301,113 +419,166 @@
       background-color: #81c784;
     }
 
-
     /* --- Gráfico de Barra --- */
     .subcardTemp {
       width: 100%;
       height: 100%;
-      background-color: white;
-      border-radius: 12px;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-radius: 20px;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+    }
+
+    .subcardTemp::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .temp-header {
+      text-align: center;
+      padding: 5px 0 10px;
+      flex-shrink: 0;
+    }
+
+    .temp-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .temp-header p {
+      font-size: 13px;
+      color: #666;
+      margin: 0;
+    }
+
+    .temp-chart-container {
+      position: relative;
+      flex-grow: 1;
+      min-height: 0;
+      margin: 10px 0;
+    }
+
+    .temp-display {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 5px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      flex-shrink: 0;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .temp-box {
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      min-width: 100px;
+      transition: transform 0.2s;
+    }
+
+    .temp-box:hover {
+      transform: translateY(-3px);
+    }
+
+    .temp-label {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+
+    .temp-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .max-temp {
+      color: #ff6b6b;
+    }
+
+    .min-temp {
+      color: #4dabf7;
+    }
+
+    /* Ícones nos cards de sensores */
+    .sensor-icon {
+      font-size: 24px;
+      margin-right: 10px;
+      color: #4CAF50;
+    }
+
+    .sensor-title {
+      display: flex;
       align-items: center;
     }
 
-    .header {
-            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-            color: white;
-            padding: 25px 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-weight: 600;
-            font-size: 28px;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-        
-        .header p {
-            opacity: 0.85;
-            font-size: 16px;
-        }
-        
-        .chart-container {
-            padding: 25px 30px;
-            position: relative;
-            height: 400px;
-        }
-        
-        .temperature-display {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #eaeaea;
-        }
-        
-        .temp-box {
-            text-align: center;
-            padding: 15px 25px;
-            border-radius: 10px;
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            min-width: 180px;
-            transition: transform 0.3s ease;
-        }
-        
-        .temp-box:hover {
-            transform: translateY(-5px);
-        }
-        
-        .temp-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .temp-value {
-            font-size: 32px;
-            font-weight: 700;
-        }
-        
-        .max-temp {
-            color: #ff0000;
-        }
-        
-        .min-temp {
-            color: #4dabf7;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 15px;
-            color: #666;
-            font-size: 14px;
-            border-top: 1px solid #eaeaea;
-            background: #f8f9fa;
-        }
-        
-        @media (max-width: 600px) {
-            .chart-container {
-                height: 350px;
-                padding: 15px;
-            }
-            
-            .temperature-display {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .temp-box {
-                min-width: auto;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-        }
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .temp-display {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .temp-box {
+        min-width: 120px;
+        width: 100%;
+        max-width: 150px;
+      }
+
+      .subcardPizza {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+      }
+
+      #grafico-container {
+        width: 250px;
+        height: 250px;
+      }
+    }
+
+    /* Animações suaves */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-card {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
   </style>
 </head>
 
@@ -424,54 +595,46 @@
   <!-- Conteúdo principal -->
   <div class="content">
     <div class="container-fluid h-100">
-      <div class="row h-50 mb-3">
+      <div class="row h-50 mb-4">
         <!-- Gráfico Pizza (sup esquerdo) -->
         <div class="col-md-6 h-100">
           <div class="custom-card">
-
             <div class="subcardPizza">
-
               <div class="titulosnutrientes">
-                <div class="titulosnutrientes">
-                  <h4 class="corNitrogenio">Nitrogênio</h4>
-                  <h4 class="corFosforo">Fósforo</h4>
-                  <h4 class="corPotassio">Potássio</h4>
-                  <h4 class="corOutros">Outros</h4>
-                </div>
-
+                <h4 class="corNitrogenio">Nitrogênio</h4>
+                <h4 class="corFosforo">Fósforo</h4>
+                <h4 class="corPotassio">Potássio</h4>
+                <h4 class="corOutros">Outros</h4>
               </div>
-
               <div id="grafico-container">
                 <canvas id="graficoPizza"></canvas>
               </div>
-
-
             </div>
           </div>
         </div>
         <!-- Gráfico Barras (sup direito) -->
         <div class="col-md-6 h-100">
           <div class="custom-card">
-
             <div class="subcardTemp">
-
-              <div class="header">
+              <div class="temp-header">
                 <h1>Temperaturas da Semana</h1>
-                <p>Máximas e mínimas registradas nos últimos 7 dias</p>
+                <p>Máximas e mínimas registradas</p>
               </div>
-
-              <div class="chart-container">
+              
+              <div class="temp-chart-container">
                 <canvas id="temperatureChart"></canvas>
               </div>
-
-              <div class="temperature-display">
+              
+              <div class="temp-display">
                 <div class="temp-box">
-                  <div class="temp-label">Temperatura Ideal:</div>
-                  <div class="temp-value max-temp" id="maxTempValue">XX°C</div>
+                  <div class="temp-label">Temperatura máxima:</div>
+                  <div class="temp-value max-temp" id="maxTempValue">32°C</div>
                 </div>
-
+                <div class="temp-box">
+                  <div class="temp-label">Temperatura mínima:</div>
+                  <div class="temp-value min-temp" id="minTempValue">18°C</div>
+                </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -480,19 +643,25 @@
       <div class="row h-50">
         <!-- Parte inferior esquerda (tempo + sensores) -->
         <div class="col-md-6 h-100">
-          <div class="row h-50 mb-2">
+          <div class="row h-50 mb-3">
             <div class="col-12">
               <div class="custom-card">
-                <div class="row">
-                  <div class="col-md-6">
+                <div class="row h-100">
+                  <div class="col-md-6 h-100">
                     <div class="subcardvento">
-                      <h2>Vel. do vento:</h2>
+                      <div class="sensor-title">
+                        <i class="fas fa-wind sensor-icon"></i>
+                        <h2>Vel. do vento:</h2>
+                      </div>
                       <div id="velocimetro" class="gauge-container"></div>
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-6 h-100">
                     <div class="subcardumidsolo">
-                      <h2>Umidade do Solo: XX%</h2>
+                      <div class="sensor-title">
+                        <i class="fas fa-tint sensor-icon"></i>
+                        <h2>Umidade do Solo: <span id="umidadeSoloValor">65%</span></h2>
+                      </div>
                       <div id="umidsolo"></div>
                     </div>
                   </div>
@@ -502,20 +671,26 @@
           </div>
 
           <div class="row h-50">
-            <div class="col-6">
+            <div class="col-6 h-100">
               <div class="custom-card">
-                <div class="subcardAPI">
-                  <a href="apiimagem.html"></a><img src="assets/APIIMAGEM.webp" alt="apiimagem">
+                <div class="subcardAPI h-100">
+                  <a href="apiimagem.html"><img src="assets/APIIMAGEM.webp" alt="apiimagem"></a>
                 </div>
               </div>
             </div>
-            <div class="col-6">
-              <div class="custom-card">
+            <div class="col-6 h-100">
+              <div class="custom-card h-100 d-flex flex-column justify-content-between">
                 <div class="subcardPHSolo">
-                  <h2>Ph do solo: XX%</h2>
+                  <div class="sensor-title">
+                    <i class="fas fa-flask sensor-icon"></i>
+                    <h2>Ph do solo: <span id="phSoloValor">6.2</span></h2>
+                  </div>
                 </div>
                 <div class="subcardUmidAr">
-                  <h2>Umidade do ar: XX%</h2>
+                  <div class="sensor-title">
+                    <i class="fas fa-cloud sensor-icon"></i>
+                    <h2>Umidade do ar: <span id="umidadeArValor">72%</span></h2>
+                  </div>
                 </div>
               </div>
             </div>
@@ -524,11 +699,11 @@
 
         <!-- Parte inferior direita (avisos) -->
         <div class="col-md-6 h-100">
-          <div class="custom-card">
+          <div class="custom-card h-100">
             <div class="subcardAvisos">
-              <h2>Avisos</h2>
+              <h2><i class="fas fa-bell"></i> Avisos</h2>
 
-              <div class="aviso">
+              <div class="aviso amarelo">
                 <span>Alerta de geadas: tome as devidas precauções</span>
                 <span class="status amarelo"></span>
               </div>
@@ -538,9 +713,19 @@
                 <span class="status verde"></span>
               </div>
 
-              <div class="aviso">
+              <div class="aviso vermelho">
                 <span>Seca na Colheita: Batata</span>
                 <span class="status vermelho"></span>
+              </div>
+
+              <div class="aviso">
+                <span>Irrigação programada para amanhã</span>
+                <span class="status verde"></span>
+              </div>
+
+              <div class="aviso amarelo">
+                <span>Fertilização necessária em 3 dias</span>
+                <span class="status amarelo"></span>
               </div>
 
             </div>
@@ -552,7 +737,7 @@
 
   <!-- Topbar -->
   <nav class="sidebarsuperior">
-    <h2>BEM-VINDO AO SMARTFARM!</h2>
+    <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
   </nav>
 
   <!-- Bootstrap JS -->
@@ -563,7 +748,6 @@
   <!-- CHART.JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
   <!-- Velocimetro -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -571,29 +755,47 @@
 
       let vento = new JustGage({
         id: "velocimetro",
-        value: 60,
+        value: 12,
         min: 0,
-        max: 120,
+        max: 60,
         title: "Km/h",
         label: "Velocidade",
         gaugeWidthScale: 0.6,
         levelColors: ["#00ff00", "#ffcc00", "#ff0000"],
-        counter: true
+        counter: true,
+        customSectors: [{
+          color: "#00ff00",
+          lo: 0,
+          hi: 20
+        }, {
+          color: "#ffcc00",
+          lo: 20,
+          hi: 40
+        }, {
+          color: "#ff0000",
+          lo: 40,
+          hi: 60
+        }]
       });
 
+      // Simular mudanças nos sensores
       setInterval(() => {
         if (vento) {
-          const novaVelocidade = Math.floor(Math.random() * 121);
+          const novaVelocidade = Math.floor(Math.random() * 61);
           vento.refresh(novaVelocidade);
         }
-      }, 2000);
+        
+        // Atualizar valores dos sensores
+        document.getElementById('umidadeSoloValor').textContent = (Math.random() * 30 + 60).toFixed(0) + '%';
+        document.getElementById('phSoloValor').textContent = (Math.random() * 1.5 + 5.5).toFixed(1);
+        document.getElementById('umidadeArValor').textContent = (Math.random() * 30 + 60).toFixed(0) + '%';
+      }, 3000);
     });
-
   </script>
 
   <!-- Gráfico de Pizza -->
   <script>
-    const ctx = document.getElementById('graficoPizza').getContext('2d');
+    const ctxPizza = document.getElementById('graficoPizza').getContext('2d');
     const dados = {
       labels: ['Nitrogênio', 'Fósforo', 'Potássio', 'Outros'],
       datasets: [{
@@ -606,21 +808,21 @@
           '#81c784'  // Verde bem claro (Outros)
         ],
         borderColor: '#ffffff',
-        borderWidth: 2
+        borderWidth: 3,
+        hoverOffset: 15
       }]
     };
 
-    const config = {
-      type: 'pie',
+    const configPizza = {
+      type: 'doughnut',
       data: dados,
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        cutout: '60%',
         plugins: {
           legend: {
-            position: 'bottom',
-            labels: {
-              color: '#2e7d32'
-            }
+            display: false
           },
           tooltip: {
             callbacks: {
@@ -635,129 +837,132 @@
       }
     };
 
-    const graficoPizza = new Chart(ctx, config);
+    const graficoPizza = new Chart(ctxPizza, configPizza);
   </script>
 
-  <!-- Gráfico de Barra -->
+  <!-- Gráfico de Temperatura -->
   <script>
     // Dados de exemplo para o gráfico
-    const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    const daysOfWeek = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     const maxTemperatures = [28, 30, 32, 29, 31, 33, 30];
     const minTemperatures = [18, 19, 20, 17, 19, 21, 20];
-
+    
     // Configuração do gráfico de barras
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
-    const temperatureChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: daysOfWeek,
-        datasets: [
-          {
-            label: 'Temperatura Máxima',
-            data: maxTemperatures,
-            backgroundColor: 'rgba(255, 107, 107, 0.7)',
-            borderColor: '#ff6b6b',
-            borderWidth: 2,
-            borderRadius: 6,
-            borderSkipped: false,
-          },
-          {
-            label: 'Temperatura Mínima',
-            data: minTemperatures,
-            backgroundColor: 'rgba(77, 171, 247, 0.7)',
-            borderColor: '#4dabf7',
-            borderWidth: 2,
-            borderRadius: 6,
-            borderSkipped: false,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              padding: 15,
-              font: {
-                size: 14,
-                weight: '500'
-              },
-              usePointStyle: true,
-              pointStyle: 'circle'
-            }
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            titleFont: {
-              size: 14
-            },
-            bodyFont: {
-              size: 14
-            },
-            padding: 12,
-            displayColors: true,
-            callbacks: {
-              label: function (context) {
-                return `${context.dataset.label}: ${context.parsed.y}°C`;
-              }
-            }
-          }
+    const ctxTemp = document.getElementById('temperatureChart').getContext('2d');
+    const temperatureChart = new Chart(ctxTemp, {
+        type: 'bar',
+        data: {
+            labels: daysOfWeek,
+            datasets: [
+                {
+                    label: 'Máxima',
+                    data: maxTemperatures,
+                    backgroundColor: 'rgba(255, 107, 107, 0.8)',
+                    borderColor: '#ff6b6b',
+                    borderWidth: 1,
+                    borderRadius: 3,
+                    borderSkipped: false,
+                },
+                {
+                    label: 'Mínima',
+                    data: minTemperatures,
+                    backgroundColor: 'rgba(77, 171, 247, 0.8)',
+                    borderColor: '#4dabf7',
+                    borderWidth: 1,
+                    borderRadius: 3,
+                    borderSkipped: false,
+                }
+            ]
         },
-        scales: {
-          y: {
-            beginAtZero: false,
-            min: 15,
-            max: 35,
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        padding: 8,
+                        font: {
+                            size: 11,
+                            weight: '500'
+                        },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 6
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleFont: {
+                        size: 12
+                    },
+                    bodyFont: {
+                        size: 12
+                    },
+                    padding: 8,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y}°C`;
+                        }
+                    }
+                }
             },
-            ticks: {
-              callback: function (value) {
-                return value + '°C';
-              },
-              font: {
-                size: 12
-              },
-              stepSize: 5
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: 15,
+                    max: 35,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + '°C';
+                        },
+                        font: {
+                            size: 10
+                        },
+                        stepSize: 5,
+                        padding: 5
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        },
+                        padding: 5
+                    }
+                }
             },
-            title: {
-              display: true,
-              text: 'Temperatura (°C)',
-              font: {
-                size: 14,
-                weight: 'bold'
-              },
-              padding: { top: 10, bottom: 10 }
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            animation: {
+                duration: 800,
+                easing: 'easeOutQuart'
+            },
+            layout: {
+                padding: {
+                    top: 5,
+                    bottom: 5,
+                    left: 5,
+                    right: 5
+                }
             }
-          },
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              font: {
-                size: 13
-              }
-            }
-          }
-        },
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
-        animation: {
-          duration: 1000,
-          easing: 'easeOutQuart'
         }
-      }
     });
-
+    
     // Atualizar os valores de temperatura máxima e mínima
     document.getElementById('maxTempValue').textContent = Math.max(...maxTemperatures) + '°C';
     document.getElementById('minTempValue').textContent = Math.min(...minTemperatures) + '°C';
   </script>
+  
 </body>
-
 </html>
