@@ -10,6 +10,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Chart.Js -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     * {
       margin: 0;
@@ -101,7 +103,7 @@
 
     /* Card padrão */
     .custom-card {
-      background-color: white;
+
       border-radius: 20px;
       padding: 15px;
       height: 100%;
@@ -208,8 +210,11 @@
     }
 
     /* --- Gráfico de Pizza --- */
-
     .subcardPizza {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      border-radius: 12px;
       display: flex;
       background-color: whit;
       justify-content: space-between;
@@ -227,7 +232,7 @@
     .titulosnutrientes h4 {
       position: relative;
       padding-left: 26px;
-      
+
       font-weight: bold;
       margin-bottom: 10px;
     }
@@ -270,7 +275,7 @@
     }
 
     h2 {
-      color: rgb(25, 0, 255);
+      color: rgb(0, 0, 0);
     }
 
     .cor {
@@ -295,6 +300,114 @@
     .cor.corOutros {
       background-color: #81c784;
     }
+
+
+    /* --- Gráfico de Barra --- */
+    .subcardTemp {
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-weight: 600;
+            font-size: 28px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .header p {
+            opacity: 0.85;
+            font-size: 16px;
+        }
+        
+        .chart-container {
+            padding: 25px 30px;
+            position: relative;
+            height: 400px;
+        }
+        
+        .temperature-display {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .temp-box {
+            text-align: center;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            min-width: 180px;
+            transition: transform 0.3s ease;
+        }
+        
+        .temp-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .temp-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .temp-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .max-temp {
+            color: #ff0000;
+        }
+        
+        .min-temp {
+            color: #4dabf7;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eaeaea;
+            background: #f8f9fa;
+        }
+        
+        @media (max-width: 600px) {
+            .chart-container {
+                height: 350px;
+                padding: 15px;
+            }
+            
+            .temperature-display {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .temp-box {
+                min-width: auto;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
   </style>
 </head>
 
@@ -339,7 +452,27 @@
         <!-- Gráfico Barras (sup direito) -->
         <div class="col-md-6 h-100">
           <div class="custom-card">
-            <h2>GRAFICO DE TEMP MAXIMA E A MINIMA</h2>
+
+            <div class="subcardTemp">
+
+              <div class="header">
+                <h1>Temperaturas da Semana</h1>
+                <p>Máximas e mínimas registradas nos últimos 7 dias</p>
+              </div>
+
+              <div class="chart-container">
+                <canvas id="temperatureChart"></canvas>
+              </div>
+
+              <div class="temperature-display">
+                <div class="temp-box">
+                  <div class="temp-label">Temperatura Ideal:</div>
+                  <div class="temp-value max-temp" id="maxTempValue">XX°C</div>
+                </div>
+
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
@@ -461,7 +594,6 @@
   <!-- Gráfico de Pizza -->
   <script>
     const ctx = document.getElementById('graficoPizza').getContext('2d');
-
     const dados = {
       labels: ['Nitrogênio', 'Fósforo', 'Potássio', 'Outros'],
       datasets: [{
@@ -504,6 +636,127 @@
     };
 
     const graficoPizza = new Chart(ctx, config);
+  </script>
+
+  <!-- Gráfico de Barra -->
+  <script>
+    // Dados de exemplo para o gráfico
+    const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    const maxTemperatures = [28, 30, 32, 29, 31, 33, 30];
+    const minTemperatures = [18, 19, 20, 17, 19, 21, 20];
+
+    // Configuração do gráfico de barras
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    const temperatureChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: daysOfWeek,
+        datasets: [
+          {
+            label: 'Temperatura Máxima',
+            data: maxTemperatures,
+            backgroundColor: 'rgba(255, 107, 107, 0.7)',
+            borderColor: '#ff6b6b',
+            borderWidth: 2,
+            borderRadius: 6,
+            borderSkipped: false,
+          },
+          {
+            label: 'Temperatura Mínima',
+            data: minTemperatures,
+            backgroundColor: 'rgba(77, 171, 247, 0.7)',
+            borderColor: '#4dabf7',
+            borderWidth: 2,
+            borderRadius: 6,
+            borderSkipped: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              padding: 15,
+              font: {
+                size: 14,
+                weight: '500'
+              },
+              usePointStyle: true,
+              pointStyle: 'circle'
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            titleFont: {
+              size: 14
+            },
+            bodyFont: {
+              size: 14
+            },
+            padding: 12,
+            displayColors: true,
+            callbacks: {
+              label: function (context) {
+                return `${context.dataset.label}: ${context.parsed.y}°C`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            min: 15,
+            max: 35,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              callback: function (value) {
+                return value + '°C';
+              },
+              font: {
+                size: 12
+              },
+              stepSize: 5
+            },
+            title: {
+              display: true,
+              text: 'Temperatura (°C)',
+              font: {
+                size: 14,
+                weight: 'bold'
+              },
+              padding: { top: 10, bottom: 10 }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                size: 13
+              }
+            }
+          }
+        },
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart'
+        }
+      }
+    });
+
+    // Atualizar os valores de temperatura máxima e mínima
+    document.getElementById('maxTempValue').textContent = Math.max(...maxTemperatures) + '°C';
+    document.getElementById('minTempValue').textContent = Math.min(...minTemperatures) + '°C';
   </script>
 </body>
 
