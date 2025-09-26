@@ -3,95 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menu Lateral</title>
+  <title>SmartFarm - Sidebars</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-
-    *{
-      margin: 0; 
+    * {
+      margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Nexa", sans-serif;
+      font-family: "Segoe UI", system-ui, sans-serif;
     }
 
     html, body {
       height: 100%;
-      overflow: hidden; /* impede rolagem */
+      overflow: hidden;
+      background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
     }
 
-    /* Fontes */
-    @font-face {
-      font-family:"Nexa";
-      src: url(assets/Nexa\ Light.otf); 
-      font-weight: 300;
-      font-style: normal;
-    } 
-
-    /* Sidebar superior */
-    .sidebarsuperior{
-      height: 70px; 
+    /* Topbar COM FOLHA */
+    .sidebarsuperior {
+      height: 70px;
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background: #1e1e1e;
-      color: rgb(255, 247, 247);
+      color: #fff;
       display: flex;
-      justify-content: center; /* centraliza o título */
+      justify-content: center;
       align-items: center;
-      padding: 0 20px;
       z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     .sidebarsuperior h2 {
-      font-size: 30px;
+      font-size: 26px;
       font-weight: 300;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    /* Ícone logout posicionado na ponta direita */
-    .sidebarsuperior a {
-      position: absolute;
-      right: 20px;
+    .sidebarsuperior h2 i {
+      color: #4CAF50;
+      font-size: 28px;
     }
 
-    .sidebarsuperior a img {
-      width: 35px;
-      height: 35px;
-      filter: brightness(0) invert(1); 
-      transition: transform 0.2s, filter 0.2s;
-    }
-
-    .sidebarsuperior a:hover img {
-      transform: scale(1.1);
-      filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
-    }
-
-    /* Sidebar lateral */
+    /* Sidebar lateral - COMPLETA como no código original */
     .sidebar {
       width: 70px;
       background: #1e1e1e;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 70px; /* espaço do topo */
+      padding-top: 70px;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
       position: fixed;
       height: 100vh;
+      z-index: 999;
     }
 
+
+.logout {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.logout:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+
     .sidebar a {
-      margin: 30px 0;
+      margin: 25px 0;
       display: flex;
       justify-content: center;
       align-items: center;
       width: 50px;
       height: 90px;
       text-decoration: none;
+      position: relative;
     }
 
     .sidebar a img {
-      width: 50px;
-      height: 50px;
-      filter: brightness(0) invert(1); 
+      width: 40px;
+      height: 40px;
+      filter: brightness(0) invert(1);
       transition: transform 0.2s, filter 0.2s;
     }
 
@@ -100,51 +103,110 @@
       filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
     }
 
-    /* Conteúdo principal */
+    /* BARRA VERDE abaixo dos ícones */
+    .sidebar a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
+      background: #4CAF50;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar a:hover::after {
+      width: 30px;
+    }
+
+    /* Área de conteúdo vazia - apenas para mostrar o fundo */
     .content {
-      position: fixed;
-      top: 70px;   /* abaixo da topbar */
-      left: 70px;  /* ao lado da sidebar */
+      position: relative;
+      top: 70px;
+      left: 70px;
       width: calc(100% - 70px);
       height: calc(100% - 70px);
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);  
+      text-align: center;
+      color: #2e7d32;
+      padding: 20px;
     }
 
-    .content img {
-      max-width: 400px;
-      transition: transform 0.3s ease-in-out;
+    .content h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
     }
 
-    .content img:hover {
-      transform: scale(1.05);
+    .content p {
+      font-size: 18px;
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    /* Placeholder para as imagens (caso não tenha as imagens) */
+    .icon-placeholder {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #333;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
     }
 
   </style>
 </head>
-<body>
 
-  <!-- Sidebar lateral -->
+<body>
+  <!-- Sidebar Lateral COMPLETA -->
   <nav class="sidebar">
-    <a href="plantacoes.html"><img src="assets/ZLavouras2.webp" alt="Plantacoes" ></a>
-    <a href="saude.html"><img src="assets/ZNovalavoura2.webp" alt="Saúde" ></a>
-    <a href="calendario.html"><img src="assets/ZCalendario2.webp" alt="Calendário" ></a>
-    <a href="alertas.html"><img src="assets/ZAvisos2.webp" alt="Alertas" ></a>
-    <a href="estoque.html"><img src="assets/ZMarketplace2.webp" alt="Estoque" ></a>
+    <a href="plantacoes.html" title="Plantações">
+      <!-- Se tiver a imagem original -->
+      <img src="assets/ZLavouras2.webp" alt="Plantações" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <!-- Fallback caso a imagem não carregue -->
+      <div class="icon-placeholder" style="display: none;">ZL</div>
+    </a>
+    
+    <a href="saude.html" title="Saúde">
+      <img src="assets/ZNovalavoura2.webp" alt="Saúde" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZN</div>
+    </a>
+    
+    <a href="calendario.html" title="Calendário">
+      <img src="assets/ZCalendario2.webp" alt="Calendário" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZC</div>
+    </a>
+    
+    <a href="alertas.html" title="Alertas">
+      <img src="assets/ZAvisos2.webp" alt="Alertas" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZA</div>
+    </a>
+    
+    <a href="estoque.html" title="Estoque">
+      <img src="assets/ZMarketplace2.webp" alt="Estoque" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZM</div>
+    </a>
   </nav>
 
-  <!-- Conteúdo -->
+  <!-- Área de Conteúdo -->
   <div class="content">
-    <img src="assets/ZSmartFarm.webp" alt="SmartFarmLogo">
+    <img src="assets/ZSmartFarm.webp" alt="SmartFarmLogo">]
+    <img class="logout" src="assets/ZLogout.png" alt="logout">
   </div>
 
-  <!-- Sidebar superior -->
+  <!-- Topbar COM FOLHA -->
   <nav class="sidebarsuperior">
-    <h2>BEM-VINDO AO SMARTFARM!</h2>
-    <a href="logout.html"> <img src="assets/ZLogout.png" alt="Saida"></a>
+    <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
+    <div class="logout"> <img src="assets/ZLogout.png" alt="logout"></div>
   </nav>
-
 </body>
 </html>
