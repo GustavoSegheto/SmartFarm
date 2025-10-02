@@ -143,7 +143,6 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            /* mais pra cima */
             padding: 20px;
             text-align: center;
             color: #2e7d32;
@@ -162,15 +161,91 @@
             margin-top: 30px;
         }
 
-        .card img{
-            width:50px;
-            height:70px;
+        .card img {
+            width: 50px;
+            height: 70px;
             margin-right: 7000px;
             margin-top: -350px;
         }
 
-        .infounicas{
+        .infounicas {
             color: #00ff0d;
+        }
+
+        .TitulosInfo{
+            color: rgb(255, 255, 255);
+            display: flex;
+            gap: 100px;
+            margin-bottom: 20px;
+        }
+        
+        /* Container da tabela com scroll */
+        .table-container {
+            width: 100%;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos da tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+        }
+        
+        thead {
+            background-color: #1a1a1a;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th, td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+        
+        th {
+            font-weight: 600;
+            color: #00ff0d;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #333;
+        }
+        
+        tbody tr:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Scrollbar personalizada */
+        .table-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #00ff0d;
+            border-radius: 10px;
+            border: 2px solid #1a1a1a;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #00cc0a;
+        }
+
+        /* Para Firefox */
+        .table-container {
+            scrollbar-width: thin;
+            scrollbar-color: #00ff0d #1a1a1a;
         }
     </style>
 </head>
@@ -214,9 +289,141 @@
     <!-- Conteúdo -->
     <div class="content">
         <div class="card">
-            <div class="infounicas"><h4>Informações Unicas</h4></div>
+            <div class="infounicas">
+                <h4>Informações Unicas</h4>
+            </div>
             <img src="assets/SetaVoltar.png" alt="seta">
+
+            <div class=TitulosInfo>
+                <h4>Lavoura de Tomate</h4>
+                <h4>Data de Inicio: 30/05/2007</h4>
+                <h4>Data de Colheita: 30/05/2007</h4>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <!-- Cabeçalho da tabela -->
+                    <thead>
+                        <!-- Linha -->
+                        <tr>
+                            <!-- Colunas -->
+                            <th>UMIDADE DO SOLO</th>
+                            <th>UMIDADE DO AR</th>
+                            <th>VELOCIDADE DO VENTO</th>
+                            <th>PH DO SOLO</th>
+                            <th>CLIMA</th>
+                            <th>TEMPERATURA</th>
+                            <th>NITRATO</th>
+                            <th>FOSFORO</th>
+                            <th>POTASSIO</th>
+                            <th>DATA</th>
+                        </tr>
+                    </thead>
+                    <!-- Corpo de Tabela -->
+                    <tbody>
+                        <!-- Linhas -->
+                        <tr>
+                            <td>55%</td>
+                            <td>20%</td>
+                            <td>10KM</td>
+                            <td>7</td>
+                            <td>sem nuvens</td>
+                            <td>28 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>10/11/2007</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>10%</td>
+                            <td>100KM</td>
+                            <td>5</td>
+                            <td>vento forte</td>
+                            <td>5 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>8/10/2000</td>
+                        </tr>
+                        <tr>
+                            <td>5%</td>
+                            <td>9%</td>
+                            <td>7KM</td>
+                            <td>10</td>
+                            <td>primavera</td>
+                            <td>18 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>05/08/2025</td>
+                        </tr>
+                        <tr>
+                            <td>30%</td>
+                            <td>3%</td>
+                            <td>12KM</td>
+                            <td>13</td>
+                            <td>chuva fraca</td>
+                            <td>15 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>07/03/1945</td>
+                        </tr>
+                        <!-- Linhas adicionais para demonstrar o scroll -->
+                        <tr>
+                            <td>45%</td>
+                            <td>25%</td>
+                            <td>8KM</td>
+                            <td>6.5</td>
+                            <td>ensolarado</td>
+                            <td>30 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>15/06/2023</td>
+                        </tr>
+                        <tr>
+                            <td>60%</td>
+                            <td>18%</td>
+                            <td>5KM</td>
+                            <td>7.2</td>
+                            <td>nublado</td>
+                            <td>22 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>22/09/2022</td>
+                        </tr>
+                        <tr>
+                            <td>35%</td>
+                            <td>12%</td>
+                            <td>15KM</td>
+                            <td>5.8</td>
+                            <td>chuva moderada</td>
+                            <td>17 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>03/12/2021</td>
+                        </tr>
+                        <tr>
+                            <td>50%</td>
+                            <td>22%</td>
+                            <td>3KM</td>
+                            <td>6.8</td>
+                            <td>parcialmente nublado</td>
+                            <td>26 °C</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>18/07/2020</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+    </div>
 </body>
 
 </html>
