@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartFarm - Sidebars</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -177,6 +178,11 @@
             margin-top: 30px;
         }
 
+        .material-icons {
+            font-size: 24px;
+            color: #ffffff;
+        }
+
         .status {
             width: 16px;
             height: 16px;
@@ -235,22 +241,24 @@
                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
             <div class="icon-placeholder" style="display: none;">ZM</div>
         </a>
+
+       
     </nav>
 
     <!-- Área de Conteúdo -->
     <div class="content">
         <div class="card">
-            <div class="title">
-                <h2>Lavoura de Milho 1</h2>
-                <h2>Lavoura de Feijão 1</h2>
-                <h2>Lavoura de Batata 1</h2>
-                <h2>Lavoura de Limão</h2>
-                <h2>Lavoura de feijão 2</h2>
-                <h2>Lavoura de batata 2</h2>
-                <h2>Lavoura de Milho</h2>
-            </div>
-
-
+           <table>
+            <tbody>
+                <!-- Linhas -->
+                <tr>
+                    <td> <span class="material-icons">search</span></td>
+                    <td><span class="material-icons">search</span></td>
+                    <td><span class="material-icons">search</span></td>
+                    <td><span class="material-icons">search</span></td>
+                    
+                </tr>
+           </table>
         </div>
     </div>
 
