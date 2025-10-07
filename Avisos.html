@@ -293,7 +293,7 @@
             font-size: 13px;
         }
         
-        /* ESTILOS DO CATÁLOGO EM LINHA */
+        /* ESTILOS DO CATÁLOGO COMO BOLINHAS */
         .catalogo-container {
             display: flex;
             justify-content: center;
@@ -303,7 +303,7 @@
             flex-wrap: wrap;
         }
         
-        .catalogo {
+        .botao-catalogo {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -311,23 +311,24 @@
             height: 40px;
             background-color: #4CAF50;
             color: white;
+            border: none;
             border-radius: 50%;
-            font-size: 18px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
-        .catalogo:hover {
-            background-color: #45a049;
+        .botao-catalogo:hover {
             transform: scale(1.1);
+            background-color: #45a049;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         
-        .catalogo.ativo {
+        .botao-catalogo.ativo {
             background-color: #2e7d32;
-            transform: scale(1.15);
+            transform: scale(1.2);
             box-shadow: 0 0 0 2px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.3);
         }
     </style>
@@ -466,13 +467,13 @@
                     </tbody>
                 </table>
 
-                <!-- Catálogo em linha -->
+                <!-- Catálogo como bolinhas simples -->
                 <div class="catalogo-container">
-                    <h4 class="catalogo ativo">1</h4>
-                    <h4 class="catalogo">2</h4>
-                    <h4 class="catalogo">3</h4>
-                    <h4 class="catalogo">4</h4>
-                    <h4 class="catalogo">5</h4>
+                    <button class="botao-catalogo ativo" onclick="selecionarPagina(1)">1</button>
+                    <button class="botao-catalogo" onclick="selecionarPagina(2)">2</button>
+                    <button class="botao-catalogo" onclick="selecionarPagina(3)">3</button>
+                    <button class="botao-catalogo" onclick="selecionarPagina(4)">4</button>
+                    <button class="botao-catalogo" onclick="selecionarPagina(5)">5</button>
                 </div>
 
             </div>
@@ -484,6 +485,24 @@
         <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
         <div class="logout"> <img src="assets/ZLogout.png" alt="logout"></div>
     </nav>
+
+    <script>
+        // Função para selecionar página do catálogo
+        function selecionarPagina(numeroPagina) {
+            // Remove a classe ativo de todos os botões
+            const botoes = document.querySelectorAll('.botao-catalogo');
+            botoes.forEach(botao => {
+                botao.classList.remove('ativo');
+            });
+            
+            // Adiciona a classe ativo ao botão clicado
+            event.target.classList.add('ativo');
+            
+            // Aqui você pode adicionar a lógica para carregar a página específica
+            console.log(`Página ${numeroPagina} selecionada`);
+            // Exemplo: carregarDadosPagina(numeroPagina);
+        }
+    </script>
 </body>
 
 </html>
