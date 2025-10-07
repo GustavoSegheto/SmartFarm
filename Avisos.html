@@ -204,13 +204,139 @@
             background-color: #F44336;
             box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
         }
+
+        /* ESTILOS DA TABELA DE AVISOS */
+        .avisos-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avisos-titulo {
+            color: #ffffff;
+            font-size: 28px;
+            margin-bottom: 25px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .avisos-tabela {
+            width: 95%;
+            border-collapse: collapse;
+            background: #3a3a3a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .avisos-tabela thead {
+            background: #4CAF50;
+        }
+
+        .avisos-tabela th {
+            padding: 16px 12px;
+            text-align: center; /* Centralizando o texto no cabeçalho */
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 2px solid #45a049;
+        }
+
+        .avisos-tabela tbody tr {
+            border-bottom: 1px solid #555;
+            transition: background-color 0.2s;
+        }
+
+        .avisos-tabela tbody tr:hover {
+            background: #4a4a4a;
+        }
+
+        .avisos-tabela td {
+            padding: 14px 12px;
+            color: #e0e0e0;
+            font-size: 14px;
+            vertical-align: middle;
+            text-align: center; /* Centralizando o texto nas células */
+        }
+
+        .lavoura-nome {
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .status-texto {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centralizando horizontalmente */
+            gap: 8px;
+        }
+
+        .status-seco {
+            color: #F44336;
+            font-weight: 500;
+        }
+
+        .status-pronto {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+
+        .status-regar {
+            color: #FFC107;
+            font-weight: 500;
+        }
+
+        .data-hora {
+            color: #b0b0b0;
+            font-size: 13px;
+        }
+        
+        /* ESTILOS DO CATÁLOGO EM LINHA */
+        .catalogo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .catalogo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .catalogo:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .catalogo.ativo {
+            background-color: #2e7d32;
+            transform: scale(1.15);
+            box-shadow: 0 0 0 2px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 
 <body>
     <!-- Sidebar Lateral COMPLETA -->
     <nav class="sidebar">
-        <a href="plantacoes.html" title="Plantações">
+        <a href="Lavouras.html" title="Plantações">
             <!-- Se tiver a imagem original -->
             <img src="assets/ZLavouras2.webp" alt="Plantações"
                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -248,17 +374,108 @@
     <!-- Área de Conteúdo -->
     <div class="content">
         <div class="card">
-           <table>
-            <tbody>
-                <!-- Linhas -->
-                <tr>
-                    <td> <span class="material-icons">search</span></td>
-                    <td><span class="material-icons">search</span></td>
-                    <td><span class="material-icons">search</span></td>
-                    <td><span class="material-icons">search</span></td>
-                    
-                </tr>
-           </table>
+            <div class="avisos-container">
+                <h2 class="avisos-titulo">Avisos</h2>
+                <table class="avisos-tabela">
+                    <thead>
+                        <tr>
+                            <th>LAVOURA</th>
+                            <th>STATUS</th>
+                            <th>DATA</th>
+                            <th>HORA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE MILHO 1</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status vermelho"></span>
+                                    <span class="status-seco">SECO</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">11/09/2001</td>
+                            <td class="data-hora">12:32</td>
+                        </tr>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE FEIJÃO 1</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status verde"></span>
+                                    <span class="status-pronto">Pronto a colheita</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">11/09/2001</td>
+                            <td class="data-hora">12:32</td>
+                        </tr>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE BATATA 1</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status amarelo"></span>
+                                    <span class="status-regar">PRECISANDO REGAR</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">11/09/2001</td>
+                            <td class="data-hora">12:32</td>
+                        </tr>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE LIMÃO 1</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status vermelho"></span>
+                                    <span class="status-seco">SECO</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">11/09/2001</td>
+                            <td class="data-hora">12:32</td>
+                        </tr>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE FEIJÃO 2</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status verde"></span>
+                                    <span class="status-pronto">Pronto a colheita</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">11/09/2001</td>
+                            <td class="data-hora">12:32</td>
+                        </tr>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE BATATA 1</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status amarelo"></span>
+                                    <span class="status-regar">PRECISANDO REGAR</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">11/09/2001</td>
+                            <td class="data-hora">12:32</td>
+                        </tr>
+                        <tr>
+                            <td class="lavoura-nome">LAVOURA DE MILHO 2</td>
+                            <td>
+                                <div class="status-texto">
+                                    <span class="status verde"></span>
+                                    <span class="status-pronto">Normal</span>
+                                </div>
+                            </td>
+                            <td class="data-hora">-</td>
+                            <td class="data-hora">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Catálogo em linha -->
+                <div class="catalogo-container">
+                    <h4 class="catalogo ativo">1</h4>
+                    <h4 class="catalogo">2</h4>
+                    <h4 class="catalogo">3</h4>
+                    <h4 class="catalogo">4</h4>
+                    <h4 class="catalogo">5</h4>
+                </div>
+
+            </div>
         </div>
     </div>
 
