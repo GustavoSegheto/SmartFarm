@@ -180,48 +180,7 @@
             margin-bottom: 20px;
         }
         
-        /* Seletor de Lavouras */
-        .seletor-lavouras {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 5;
-        }
-
-        .seletor-lavouras select {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            padding-right: 45px;
-            min-width: 200px;
-        }
-
-        .seletor-lavouras select:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        .seletor-lavouras::after {
-            content: '▼';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            pointer-events: none;
-            font-size: 12px;
-        }
+       
 
         /* Container da tabela com scroll */
         .table-container {
@@ -363,19 +322,6 @@
     <!-- Conteúdo -->
     <div class="content">
         <div class="card">
-            
-            <!-- Seletor de Lavouras -->
-            <div class="seletor-lavouras">
-                <select id="seletorLavouras" onchange="mudarLavoura()">
-                    <option value="lavoura1">LAVOURA DE MILHO 1</option>
-                    <option value="lavoura2">LAVOURA DE FEIJÃO 1</option>
-                    <option value="lavoura3">LAVOURA DE BATATA 1</option>
-                    <option value="lavoura4">LAVOURA DE LIMÃO 1</option>
-                    <option value="lavoura5">LAVOURA DE FEIJÃO 2</option>
-                    <option value="lavoura6">LAVOURA DE BATATA 2</option>
-                    <option value="lavoura7">LAVOURA DE MILHO 2</option>
-                </select>
-            </div>
             
             <div class="infounicas">
                 <h4>Cotas - <span id="nomeLavouraAtual">LAVOURA DE MILHO 1</span></h4>
