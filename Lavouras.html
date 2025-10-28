@@ -980,6 +980,25 @@
     // Atualizar os valores de temperatura máxima e mínima
     document.getElementById('maxTempValue').textContent = Math.max(...maxTemperatures) + '°C';
     document.getElementById('minTempValue').textContent = Math.min(...minTemperatures) + '°C';
+
+    // Funções para os novos elementos
+    function mudarLavoura() {
+      const seletor = document.getElementById('seletorLavouras');
+      const nomeLavoura = seletor.options[seletor.selectedIndex].text;
+      console.log(`Lavoura selecionada: ${nomeLavoura}`);
+      // Aqui você pode adicionar lógica para carregar dados específicos da lavoura
+    }
+
+    function excluirLavoura() {
+      const seletor = document.getElementById('seletorLavouras');
+      const nomeLavoura = seletor.options[seletor.selectedIndex].text;
+      
+      if (confirm(`Tem certeza que deseja excluir a ${nomeLavoura}?`)) {
+        alert(`${nomeLavoura} excluída com sucesso!`);
+        // Aqui você pode adicionar lógica para remover a lavoura do sistema
+      }
+    }
+
   </script>
   
 </body>

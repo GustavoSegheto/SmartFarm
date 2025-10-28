@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartFarm - Sidebars</title>
+  <title>SmartFarm - Lavouras</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
    * {
@@ -127,7 +127,7 @@
       width: 30px;
     }
 
-    /* Área de conteúdo vazia - apenas para mostrar o fundo */
+    /* Área de conteúdo */
     .content {
       position: relative;
       top: 70px;
@@ -136,26 +136,253 @@
       height: calc(100% - 70px);
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: #2e7d32;
       padding: 20px;
+      overflow-y: auto;
     }
 
-    .content h1 {
-      font-size: 36px;
-      margin-bottom: 20px;
+    /* Parte das lavouras */
+    .partelavouras {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
     }
 
-    .content p {
+    .botoes-superiores {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .botoes-superiores button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      background: #2e7d32;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .botoes-superiores button:hover {
+      background: #1b5e20;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Lista de lavouras */
+    .lista-lavouras {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .cartao-lavoura {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #4CAF50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-lavoura h3 {
+      color: #2e7d32;
+      margin-bottom: 8px;
       font-size: 18px;
-      max-width: 600px;
-      line-height: 1.6;
-      margin-bottom: 10px;
     }
 
-    /* Placeholder para as imagens (caso não tenha as imagens) */
+    .info-lavoura p {
+      color: #666;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .acoes-lavoura {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-acao {
+      width: 35px;
+      height: 35px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-editar {
+      background: #2196F3;
+      color: white;
+    }
+
+    .btn-excluir {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-acao:hover {
+      transform: scale(1.1);
+    }
+
+    /* FORMULÁRIOS NO ESTILO DO PROTÓTIPO */
+    .tela-formulario {
+      display: none;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .tela-formulario.ativo {
+      display: block;
+    }
+
+    .form-prototype {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .campo-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .campo-form label {
+      font-weight: bold;
+      color: #2e7d32;
+      font-size: 16px;
+    }
+
+    .campo-form input, .campo-form select {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .campo-form input:focus, .campo-form select:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+
+    .opcoes-lavoura {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .opcao-lavoura {
+      padding: 10px 15px;
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .opcao-lavoura:hover {
+      background: #c8e6c9;
+    }
+
+    .opcao-lavoura.selecionada {
+      background: #4CAF50;
+      color: white;
+      border-color: #2e7d32;
+    }
+
+    .secao-sensores {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+    }
+
+    .titulo-sensores {
+      font-size: 20px;
+      color: #2e7d32;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .botoes-form {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      justify-content: flex-end;
+    }
+
+    .botao-form {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .botao-cancelar {
+      background: #6c757d;
+      color: white;
+    }
+
+    .botao-salvar {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .botao-form:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .botao-adicionar-sensor {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+    }
+
+    .botao-adicionar-sensor:hover {
+      background: #2e7d32;
+    }
+
+    /* Títulos */
+    .titulo-tela {
+      color: #2e7d32;
+      margin-bottom: 25px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Placeholder para as imagens */
     .icon-placeholder {
       width: 40px;
       height: 40px;
@@ -169,14 +396,24 @@
       font-size: 14px;
     }
 
-    .partelavouras{
-        width: 100%;
-        height: 100%;
-        background: #1e1e1e;
-        right: 500px;
+    /* Barra de rolagem */
+    .lista-lavouras::-webkit-scrollbar {
+      width: 8px;
     }
 
+    .lista-lavouras::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
 
+    .lista-lavouras::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 4px;
+    }
+
+    .lista-lavouras::-webkit-scrollbar-thumb:hover {
+      background: #2e7d32;
+    }
   </style>
 </head>
 
@@ -184,9 +421,7 @@
   <!-- Sidebar Lateral COMPLETA -->
   <nav class="sidebar">
     <a href="Lavouras.html" title="Plantações">
-      <!-- Se tiver a imagem original -->
       <img src="assets/ZLavouras2.webp" alt="Plantações" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <!-- Fallback caso a imagem não carregue -->
       <div class="icon-placeholder" style="display: none;">ZL</div>
     </a>
     
@@ -219,8 +454,101 @@
   <!-- Área de Conteúdo -->
   <div class="content">
     <div class="partelavouras">
-        <button>Restaurar</button>
-        <button>Adicionar</button>
+      <div class="botoes-superiores">
+        <button id="btnRestaurar">Restaurar</button>
+        <button id="btnAdicionar">Adicionar</button>
+      </div>
+
+      <!-- Lista de lavouras existentes -->
+      <div class="lista-lavouras" id="listaLavouras">
+        <!-- As lavouras cadastradas aparecerão aqui -->
+      </div>
+
+      <!-- Tela 1: Cadastro de Lavoura -->
+      <div class="tela-formulario" id="telaCadastro">
+        <div class="form-prototype">
+          <h2 class="titulo-tela">Cadastro de Lavoura</h2>
+          
+          <div class="campo-form">
+            <label>Nome da lavoura:</label>
+            <div class="opcoes-lavoura">
+              <div class="opcao-lavoura" data-valor="Lavoura de tomate">Lavoura de tomate</div>
+              <div class="opcao-lavoura" data-valor="Lavoura de batata">Lavoura de batata</div>
+              <div class="opcao-lavoura" data-valor="Lavoura de cenoura">Lavoura de cenoura</div>
+              <div class="opcao-lavoura" data-valor="10 0001">10 0001</div>
+            </div>
+            <input type="text" id="nomeLavoura" placeholder="Ou digite um nome personalizado">
+          </div>
+
+          <div class="campo-form">
+            <label for="dataPlantio">Data de início do plantio:</label>
+            <input type="date" id="dataPlantio">
+          </div>
+
+          <div class="campo-form">
+            <label for="cultura">Cultura:</label>
+            <input type="text" id="cultura" placeholder="Digite a cultura">
+          </div>
+
+          <div class="campo-form">
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" placeholder="Ex: -23.5505">
+          </div>
+
+          <div class="campo-form">
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" placeholder="Ex: -46.6333">
+          </div>
+
+          <div class="secao-sensores">
+            <div class="titulo-sensores">
+              <i class="fas fa-microchip"></i>
+              SENSORES
+            </div>
+            <button type="button" class="botao-adicionar-sensor" id="btnAdicionarSensor">
+              <i class="fas fa-plus"></i> Adicionar
+            </button>
+          </div>
+
+          <div class="botoes-form">
+            <button type="button" class="botao-form botao-cancelar" id="btnCancelarCadastro">Cancelar</button>
+            <button type="button" class="botao-form botao-salvar" id="btnSalvarLavoura">Salvar Lavoura</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela 2: Adicionar Sensor -->
+      <div class="tela-formulario" id="telaSensor">
+        <div class="form-prototype">
+          <h2 class="titulo-tela">Adicionar Sensor</h2>
+          
+          <div class="campo-form">
+            <label for="tipoSensor">Tipo de Sensor:</label>
+            <select id="tipoSensor">
+              <option value="">Selecione o tipo de sensor</option>
+              <option value="umidade">Sensor de Umidade</option>
+              <option value="temperatura">Sensor de Temperatura</option>
+              <option value="ph">Sensor de pH</option>
+              <option value="luminosidade">Sensor de Luminosidade</option>
+            </select>
+          </div>
+
+          <div class="campo-form">
+            <label for="modeloSensor">Modelo do Sensor:</label>
+            <input type="text" id="modeloSensor" placeholder="Digite o modelo do sensor">
+          </div>
+
+          <div class="campo-form">
+            <label for="localizacaoSensor">Localização na Lavoura:</label>
+            <input type="text" id="localizacaoSensor" placeholder="Ex: Setor A, Norte">
+          </div>
+
+          <div class="botoes-form">
+            <button type="button" class="botao-form botao-cancelar" id="btnCancelarSensor">Voltar</button>
+            <button type="button" class="botao-form botao-salvar" id="btnSalvarSensor">Salvar Sensor</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -229,5 +557,184 @@
     <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
     <div class="logout"> <img src="assets/ZLogout.png" alt="logout"></div>
   </nav>
+
+  <script>
+    // Elementos principais
+    const btnAdicionar = document.getElementById('btnAdicionar');
+    const btnRestaurar = document.getElementById('btnRestaurar');
+    const telaCadastro = document.getElementById('telaCadastro');
+    const telaSensor = document.getElementById('telaSensor');
+    const listaLavouras = document.getElementById('listaLavouras');
+
+    // Elementos do formulário de cadastro
+    const opcoesLavoura = document.querySelectorAll('.opcao-lavoura');
+    const nomeLavouraInput = document.getElementById('nomeLavoura');
+    const btnCancelarCadastro = document.getElementById('btnCancelarCadastro');
+    const btnSalvarLavoura = document.getElementById('btnSalvarLavoura');
+    const btnAdicionarSensor = document.getElementById('btnAdicionarSensor');
+
+    // Elementos do formulário de sensor
+    const btnCancelarSensor = document.getElementById('btnCancelarSensor');
+    const btnSalvarSensor = document.getElementById('btnSalvarSensor');
+
+    // Lavouras excluídas (para restaurar)
+    let lavourasExcluidas = [];
+
+    // Função para mostrar tela e esconder lista
+    function mostrarTela(tela) {
+      listaLavouras.style.display = 'none';
+      telaCadastro.classList.remove('ativo');
+      telaSensor.classList.remove('ativo');
+      tela.classList.add('ativo');
+    }
+
+    // Função para voltar para a lista
+    function voltarParaLista() {
+      listaLavouras.style.display = 'block';
+      telaCadastro.classList.remove('ativo');
+      telaSensor.classList.remove('ativo');
+    }
+
+    // Mostrar tela de cadastro ao clicar em Adicionar
+    btnAdicionar.addEventListener('click', function() {
+      mostrarTela(telaCadastro);
+    });
+
+    // Botão Adicionar Sensor
+    btnAdicionarSensor.addEventListener('click', function() {
+      mostrarTela(telaSensor);
+    });
+
+    // Cancelar cadastro
+    btnCancelarCadastro.addEventListener('click', function() {
+      voltarParaLista();
+      limparFormularioCadastro();
+    });
+
+    // Voltar do sensor para o cadastro
+    btnCancelarSensor.addEventListener('click', function() {
+      mostrarTela(telaCadastro);
+    });
+
+    // Salvar sensor
+    btnSalvarSensor.addEventListener('click', function() {
+      const tipoSensor = document.getElementById('tipoSensor').value;
+      const modeloSensor = document.getElementById('modeloSensor').value;
+      
+      if (!tipoSensor || !modeloSensor) {
+        alert('Por favor, preencha todos os campos do sensor.');
+        return;
+      }
+      
+      alert(`Sensor ${modeloSensor} (${tipoSensor}) adicionado com sucesso!`);
+      mostrarTela(telaCadastro);
+    });
+
+    // Selecionar opção de lavoura
+    opcoesLavoura.forEach(opcao => {
+      opcao.addEventListener('click', function() {
+        opcoesLavoura.forEach(o => o.classList.remove('selecionada'));
+        this.classList.add('selecionada');
+        nomeLavouraInput.value = this.getAttribute('data-valor');
+      });
+    });
+
+    // Limpar seleção ao digitar no campo
+    nomeLavouraInput.addEventListener('input', function() {
+      opcoesLavoura.forEach(o => o.classList.remove('selecionada'));
+    });
+
+    // Função para limpar o formulário de cadastro
+    function limparFormularioCadastro() {
+      document.querySelectorAll('#telaCadastro input').forEach(input => {
+        input.value = '';
+      });
+      opcoesLavoura.forEach(o => o.classList.remove('selecionada'));
+    }
+
+    // Função para adicionar lavoura à lista
+    function adicionarLavoura(nome, data, cultura, lat, long) {
+      const id = Date.now().toString();
+      const cartaoLavoura = document.createElement('div');
+      cartaoLavoura.className = 'cartao-lavoura';
+      cartaoLavoura.setAttribute('data-id', id);
+      cartaoLavoura.innerHTML = `
+        <div class="info-lavoura">
+          <h3>${nome}</h3>
+          <p><strong>Data de plantio:</strong> ${data}</p>
+          <p><strong>Cultura:</strong> ${cultura}</p>
+          <p><strong>Localização:</strong> ${lat}, ${long}</p>
+        </div>
+        <div class="acoes-lavoura">
+          <button class="btn-acao btn-editar" title="Editar">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+          <button class="btn-acao btn-excluir" title="Excluir">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+      listaLavouras.appendChild(cartaoLavoura);
+
+      // Adicionar eventos aos botões
+      const btnEditar = cartaoLavoura.querySelector('.btn-editar');
+      const btnExcluir = cartaoLavoura.querySelector('.btn-excluir');
+
+      btnEditar.addEventListener('click', function() {
+        alert(`Editando lavoura: ${nome}`);
+      });
+
+      btnExcluir.addEventListener('click', function() {
+        if(confirm(`Tem certeza que deseja excluir a lavoura "${nome}"?`)) {
+          lavourasExcluidas.push({
+            id: id,
+            nome: nome,
+            data: data,
+            cultura: cultura,
+            lat: lat,
+            long: long,
+            elemento: cartaoLavoura
+          });
+          cartaoLavoura.remove();
+        }
+      });
+    }
+
+    // Salvar lavoura
+    btnSalvarLavoura.addEventListener('click', function() {
+      const nome = nomeLavouraInput.value || 'Lavoura sem nome';
+      const data = document.getElementById('dataPlantio').value || 'Não informada';
+      const cultura = document.getElementById('cultura').value || 'Não informada';
+      const lat = document.getElementById('latitude').value || 'Não informada';
+      const long = document.getElementById('longitude').value || 'Não informada';
+      
+      if (!nome || !data || !cultura) {
+        alert('Por favor, preencha pelo menos Nome, Data e Cultura.');
+        return;
+      }
+      
+      adicionarLavoura(nome, data, cultura, lat, long);
+      voltarParaLista();
+      limparFormularioCadastro();
+      alert('Lavoura cadastrada com sucesso!');
+    });
+
+    // Botão Restaurar
+    btnRestaurar.addEventListener('click', function() {
+      if (lavourasExcluidas.length === 0) {
+        alert('Nenhuma lavoura para restaurar.');
+        return;
+      }
+
+      const lavouraParaRestaurar = lavourasExcluidas.pop();
+      listaLavouras.appendChild(lavouraParaRestaurar.elemento);
+      alert(`Lavoura "${lavouraParaRestaurar.nome}" restaurada com sucesso!`);
+    });
+
+    // Adicionar algumas lavouras de exemplo
+    adicionarLavoura('Lavoura de tomate', '2024-01-15', 'Tomate', '-23.5505', '-46.6333');
+    adicionarLavoura('Lavoura de batata', '2024-02-01', 'Batata', '-23.5510', '-46.6340');
+    adicionarLavoura('Lavoura de cenoura', '2024-01-20', 'Cenoura', '-23.5520', '-46.6350');
+  </script>
 </body>
 </html>
