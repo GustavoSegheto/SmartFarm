@@ -6,7 +6,7 @@
   <title>SmartFarm - Lavouras</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-   * {
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -69,22 +69,20 @@
       z-index: 999;
     }
 
+    .logout {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
 
-.logout {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.logout:hover {
-  transform: translateY(-50%) scale(1.1);
-}
-
+    .logout:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
 
     .sidebar a {
       margin: 25px 0;
@@ -144,12 +142,13 @@
     .partelavouras {
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.95);
+      background: #1e1e1e;
       border-radius: 15px;
       padding: 25px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .botoes-superiores {
@@ -163,7 +162,7 @@
       border: none;
       border-radius: 8px;
       background: #2e7d32;
-      color: white;
+      color: #1e1e1e;
       font-size: 16px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -184,7 +183,7 @@
     }
 
     .cartao-lavoura {
-      background: white;
+      background: #414040;
       border-radius: 10px;
       padding: 20px;
       margin-bottom: 15px;
@@ -238,20 +237,31 @@
       transform: scale(1.1);
     }
 
-    /* FORMULÁRIOS NO ESTILO DO PROTÓTIPO */
+    /* FORMULÁRIOS NO ESTILO DO PROTÓTIPO - CORRIGIDOS */
     .tela-formulario {
       display: none;
       width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #1e1e1e;
+      border-radius: 15px;
       padding: 30px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      z-index: 10;
     }
 
     .tela-formulario.ativo {
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .form-prototype {
@@ -466,86 +476,90 @@
 
       <!-- Tela 1: Cadastro de Lavoura -->
       <div class="tela-formulario" id="telaCadastro">
-        <div class="form-prototype">
-          <h2 class="titulo-tela">Cadastro de Lavoura</h2>
-          
-          <div class="campo-form">
-            <label>Nome da lavoura:</label>
-            <div class="opcoes-lavoura">
-              <div class="opcao-lavoura" data-valor="Lavoura de tomate">Lavoura de tomate</div>
-              <div class="opcao-lavoura" data-valor="Lavoura de batata">Lavoura de batata</div>
-              <div class="opcao-lavoura" data-valor="Lavoura de cenoura">Lavoura de cenoura</div>
-              <div class="opcao-lavoura" data-valor="10 0001">10 0001</div>
+        <div class="form-container">
+          <div class="form-prototype">
+            <h2 class="titulo-tela">Cadastro de Lavoura</h2>
+            
+            <div class="campo-form">
+              <label>Nome da lavoura:</label>
+              <div class="opcoes-lavoura">
+                <div class="opcao-lavoura" data-valor="Lavoura de tomate">Lavoura de tomate</div>
+                <div class="opcao-lavoura" data-valor="Lavoura de batata">Lavoura de batata</div>
+                <div class="opcao-lavoura" data-valor="Lavoura de cenoura">Lavoura de cenoura</div>
+                <div class="opcao-lavoura" data-valor="10 0001">10 0001</div>
+              </div>
+              <input type="text" id="nomeLavoura" placeholder="Ou digite um nome personalizado">
             </div>
-            <input type="text" id="nomeLavoura" placeholder="Ou digite um nome personalizado">
-          </div>
 
-          <div class="campo-form">
-            <label for="dataPlantio">Data de início do plantio:</label>
-            <input type="date" id="dataPlantio">
-          </div>
-
-          <div class="campo-form">
-            <label for="cultura">Cultura:</label>
-            <input type="text" id="cultura" placeholder="Digite a cultura">
-          </div>
-
-          <div class="campo-form">
-            <label for="latitude">Latitude:</label>
-            <input type="text" id="latitude" placeholder="Ex: -23.5505">
-          </div>
-
-          <div class="campo-form">
-            <label for="longitude">Longitude:</label>
-            <input type="text" id="longitude" placeholder="Ex: -46.6333">
-          </div>
-
-          <div class="secao-sensores">
-            <div class="titulo-sensores">
-              <i class="fas fa-microchip"></i>
-              SENSORES
+            <div class="campo-form">
+              <label for="dataPlantio">Data de início do plantio:</label>
+              <input type="date" id="dataPlantio">
             </div>
-            <button type="button" class="botao-adicionar-sensor" id="btnAdicionarSensor">
-              <i class="fas fa-plus"></i> Adicionar
-            </button>
-          </div>
 
-          <div class="botoes-form">
-            <button type="button" class="botao-form botao-cancelar" id="btnCancelarCadastro">Cancelar</button>
-            <button type="button" class="botao-form botao-salvar" id="btnSalvarLavoura">Salvar Lavoura</button>
+            <div class="campo-form">
+              <label for="cultura">Cultura:</label>
+              <input type="text" id="cultura" placeholder="Digite a cultura">
+            </div>
+
+            <div class="campo-form">
+              <label for="latitude">Latitude:</label>
+              <input type="text" id="latitude" placeholder="Ex: -23.5505">
+            </div>
+
+            <div class="campo-form">
+              <label for="longitude">Longitude:</label>
+              <input type="text" id="longitude" placeholder="Ex: -46.6333">
+            </div>
+
+            <div class="secao-sensores">
+              <div class="titulo-sensores">
+                <i class="fas fa-microchip"></i>
+                SENSORES
+              </div>
+              <button type="button" class="botao-adicionar-sensor" id="btnAdicionarSensor">
+                <i class="fas fa-plus"></i> Adicionar
+              </button>
+            </div>
+
+            <div class="botoes-form">
+              <button type="button" class="botao-form botao-cancelar" id="btnCancelarCadastro">Cancelar</button>
+              <button type="button" class="botao-form botao-salvar" id="btnSalvarLavoura">Salvar Lavoura</button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Tela 2: Adicionar Sensor -->
       <div class="tela-formulario" id="telaSensor">
-        <div class="form-prototype">
-          <h2 class="titulo-tela">Adicionar Sensor</h2>
-          
-          <div class="campo-form">
-            <label for="tipoSensor">Tipo de Sensor:</label>
-            <select id="tipoSensor">
-              <option value="">Selecione o tipo de sensor</option>
-              <option value="umidade">Sensor de Umidade</option>
-              <option value="temperatura">Sensor de Temperatura</option>
-              <option value="ph">Sensor de pH</option>
-              <option value="luminosidade">Sensor de Luminosidade</option>
-            </select>
-          </div>
+        <div class="form-container">
+          <div class="form-prototype">
+            <h2 class="titulo-tela">Adicionar Sensor</h2>
+            
+            <div class="campo-form">
+              <label for="tipoSensor">Tipo de Sensor:</label>
+              <select id="tipoSensor">
+                <option value="">Selecione o tipo de sensor</option>
+                <option value="umidade">Sensor de Umidade</option>
+                <option value="temperatura">Sensor de Temperatura</option>
+                <option value="ph">Sensor de pH</option>
+                <option value="luminosidade">Sensor de Luminosidade</option>
+              </select>
+            </div>
 
-          <div class="campo-form">
-            <label for="modeloSensor">Modelo do Sensor:</label>
-            <input type="text" id="modeloSensor" placeholder="Digite o modelo do sensor">
-          </div>
+            <div class="campo-form">
+              <label for="modeloSensor">Modelo do Sensor:</label>
+              <input type="text" id="modeloSensor" placeholder="Digite o modelo do sensor">
+            </div>
 
-          <div class="campo-form">
-            <label for="localizacaoSensor">Localização na Lavoura:</label>
-            <input type="text" id="localizacaoSensor" placeholder="Ex: Setor A, Norte">
-          </div>
+            <div class="campo-form">
+              <label for="localizacaoSensor">Localização na Lavoura:</label>
+              <input type="text" id="localizacaoSensor" placeholder="Ex: Setor A, Norte">
+            </div>
 
-          <div class="botoes-form">
-            <button type="button" class="botao-form botao-cancelar" id="btnCancelarSensor">Voltar</button>
-            <button type="button" class="botao-form botao-salvar" id="btnSalvarSensor">Salvar Sensor</button>
+            <div class="botoes-form">
+              <button type="button" class="botao-form botao-cancelar" id="btnCancelarSensor">Voltar</button>
+              <button type="button" class="botao-form botao-salvar" id="btnSalvarSensor">Salvar Sensor</button>
+            </div>
           </div>
         </div>
       </div>
