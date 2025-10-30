@@ -162,7 +162,7 @@
       border: none;
       border-radius: 8px;
       background: #2e7d32;
-      color: #1e1e1e;
+      color: white;
       font-size: 16px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -195,13 +195,13 @@
     }
 
     .info-lavoura h3 {
-      color: #2e7d32;
+      color: #4CAF50;
       margin-bottom: 8px;
       font-size: 18px;
     }
 
     .info-lavoura p {
-      color: #666;
+      color: #ccc;
       margin-bottom: 4px;
       font-size: 14px;
     }
@@ -278,21 +278,27 @@
 
     .campo-form label {
       font-weight: bold;
-      color: #2e7d32;
+      color: #4CAF50;
       font-size: 16px;
     }
 
     .campo-form input, .campo-form select {
       padding: 12px;
-      border: 2px solid #e0e0e0;
+      border: 2px solid #555;
       border-radius: 8px;
       font-size: 16px;
       transition: border-color 0.3s ease;
+      background: #333;
+      color: white;
     }
 
     .campo-form input:focus, .campo-form select:focus {
       border-color: #4CAF50;
       outline: none;
+    }
+
+    .campo-form input::placeholder {
+      color: #888;
     }
 
     .opcoes-lavoura {
@@ -304,16 +310,17 @@
 
     .opcao-lavoura {
       padding: 10px 15px;
-      background: #e8f5e9;
-      border: 1px solid #c8e6c9;
+      background: #333;
+      border: 1px solid #555;
       border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s ease;
       font-size: 14px;
+      color: #ccc;
     }
 
     .opcao-lavoura:hover {
-      background: #c8e6c9;
+      background: #444;
     }
 
     .opcao-lavoura.selecionada {
@@ -325,12 +332,12 @@
     .secao-sensores {
       margin-top: 20px;
       padding-top: 20px;
-      border-top: 2px solid #e0e0e0;
+      border-top: 2px solid #555;
     }
 
     .titulo-sensores {
       font-size: 20px;
-      color: #2e7d32;
+      color: #4CAF50;
       margin-bottom: 15px;
       display: flex;
       align-items: center;
@@ -385,7 +392,7 @@
 
     /* Títulos */
     .titulo-tela {
-      color: #2e7d32;
+      color: #4CAF50;
       margin-bottom: 25px;
       text-align: center;
       font-size: 24px;
@@ -412,7 +419,7 @@
     }
 
     .lista-lavouras::-webkit-scrollbar-track {
-      background: #f1f1f1;
+      background: #333;
       border-radius: 4px;
     }
 
@@ -563,6 +570,51 @@
           </div>
         </div>
       </div>
+
+      <!-- Tela 3: Editar Lavoura -->
+      <div class="tela-formulario" id="telaEdicao">
+        <div class="form-container">
+          <div class="form-prototype">
+            <h2 class="titulo-tela">Editar Lavoura</h2>
+            
+            <div class="campo-form">
+              <label>Nome da lavoura:</label>
+              <div class="opcoes-lavoura" id="opcoesEdicao">
+                <div class="opcao-lavoura" data-valor="Lavoura de tomate">Lavoura de tomate</div>
+                <div class="opcao-lavoura" data-valor="Lavoura de batata">Lavoura de batata</div>
+                <div class="opcao-lavoura" data-valor="Lavoura de cenoura">Lavoura de cenoura</div>
+                <div class="opcao-lavoura" data-valor="10 0001">10 0001</div>
+              </div>
+              <input type="text" id="nomeLavouraEdicao" placeholder="Ou digite um nome personalizado">
+            </div>
+
+            <div class="campo-form">
+              <label for="dataPlantioEdicao">Data de início do plantio:</label>
+              <input type="date" id="dataPlantioEdicao">
+            </div>
+
+            <div class="campo-form">
+              <label for="culturaEdicao">Cultura:</label>
+              <input type="text" id="culturaEdicao" placeholder="Digite a cultura">
+            </div>
+
+            <div class="campo-form">
+              <label for="latitudeEdicao">Latitude:</label>
+              <input type="text" id="latitudeEdicao" placeholder="Ex: -23.5505">
+            </div>
+
+            <div class="campo-form">
+              <label for="longitudeEdicao">Longitude:</label>
+              <input type="text" id="longitudeEdicao" placeholder="Ex: -46.6333">
+            </div>
+
+            <div class="botoes-form">
+              <button type="button" class="botao-form botao-cancelar" id="btnCancelarEdicao">Cancelar</button>
+              <button type="button" class="botao-form botao-salvar" id="btnSalvarEdicao">Salvar Alterações</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -578,6 +630,7 @@
     const btnRestaurar = document.getElementById('btnRestaurar');
     const telaCadastro = document.getElementById('telaCadastro');
     const telaSensor = document.getElementById('telaSensor');
+    const telaEdicao = document.getElementById('telaEdicao');
     const listaLavouras = document.getElementById('listaLavouras');
 
     // Elementos do formulário de cadastro
@@ -591,14 +644,26 @@
     const btnCancelarSensor = document.getElementById('btnCancelarSensor');
     const btnSalvarSensor = document.getElementById('btnSalvarSensor');
 
+    // Elementos do formulário de edição
+    const opcoesEdicao = document.querySelectorAll('#opcoesEdicao .opcao-lavoura');
+    const nomeLavouraEdicao = document.getElementById('nomeLavouraEdicao');
+    const dataPlantioEdicao = document.getElementById('dataPlantioEdicao');
+    const culturaEdicao = document.getElementById('culturaEdicao');
+    const latitudeEdicao = document.getElementById('latitudeEdicao');
+    const longitudeEdicao = document.getElementById('longitudeEdicao');
+    const btnCancelarEdicao = document.getElementById('btnCancelarEdicao');
+    const btnSalvarEdicao = document.getElementById('btnSalvarEdicao');
+
     // Lavouras excluídas (para restaurar)
     let lavourasExcluidas = [];
+    let lavouraEditando = null;
 
     // Função para mostrar tela e esconder lista
     function mostrarTela(tela) {
       listaLavouras.style.display = 'none';
       telaCadastro.classList.remove('ativo');
       telaSensor.classList.remove('ativo');
+      telaEdicao.classList.remove('ativo');
       tela.classList.add('ativo');
     }
 
@@ -607,6 +672,7 @@
       listaLavouras.style.display = 'block';
       telaCadastro.classList.remove('ativo');
       telaSensor.classList.remove('ativo');
+      telaEdicao.classList.remove('ativo');
     }
 
     // Mostrar tela de cadastro ao clicar em Adicionar
@@ -630,6 +696,12 @@
       mostrarTela(telaCadastro);
     });
 
+    // Cancelar edição
+    btnCancelarEdicao.addEventListener('click', function() {
+      voltarParaLista();
+      lavouraEditando = null;
+    });
+
     // Salvar sensor
     btnSalvarSensor.addEventListener('click', function() {
       const tipoSensor = document.getElementById('tipoSensor').value;
@@ -644,7 +716,7 @@
       mostrarTela(telaCadastro);
     });
 
-    // Selecionar opção de lavoura
+    // Selecionar opção de lavoura (cadastro)
     opcoesLavoura.forEach(opcao => {
       opcao.addEventListener('click', function() {
         opcoesLavoura.forEach(o => o.classList.remove('selecionada'));
@@ -653,9 +725,23 @@
       });
     });
 
-    // Limpar seleção ao digitar no campo
+    // Selecionar opção de lavoura (edição)
+    opcoesEdicao.forEach(opcao => {
+      opcao.addEventListener('click', function() {
+        opcoesEdicao.forEach(o => o.classList.remove('selecionada'));
+        this.classList.add('selecionada');
+        nomeLavouraEdicao.value = this.getAttribute('data-valor');
+      });
+    });
+
+    // Limpar seleção ao digitar no campo (cadastro)
     nomeLavouraInput.addEventListener('input', function() {
       opcoesLavoura.forEach(o => o.classList.remove('selecionada'));
+    });
+
+    // Limpar seleção ao digitar no campo (edição)
+    nomeLavouraEdicao.addEventListener('input', function() {
+      opcoesEdicao.forEach(o => o.classList.remove('selecionada'));
     });
 
     // Função para limpar o formulário de cadastro
@@ -664,6 +750,25 @@
         input.value = '';
       });
       opcoesLavoura.forEach(o => o.classList.remove('selecionada'));
+    }
+
+    // Função para preencher o formulário de edição
+    function preencherFormularioEdicao(lavoura) {
+      nomeLavouraEdicao.value = lavoura.nome;
+      dataPlantioEdicao.value = lavoura.data;
+      culturaEdicao.value = lavoura.cultura;
+      latitudeEdicao.value = lavoura.lat;
+      longitudeEdicao.value = lavoura.long;
+      
+      // Limpar seleções anteriores
+      opcoesEdicao.forEach(o => o.classList.remove('selecionada'));
+      
+      // Verificar se o nome corresponde a alguma opção pré-definida
+      opcoesEdicao.forEach(opcao => {
+        if (opcao.getAttribute('data-valor') === lavoura.nome) {
+          opcao.classList.add('selecionada');
+        }
+      });
     }
 
     // Função para adicionar lavoura à lista
@@ -695,7 +800,22 @@
       const btnExcluir = cartaoLavoura.querySelector('.btn-excluir');
 
       btnEditar.addEventListener('click', function() {
-        alert(`Editando lavoura: ${nome}`);
+        // Armazenar a lavoura que está sendo editada
+        lavouraEditando = {
+          id: id,
+          nome: nome,
+          data: data,
+          cultura: cultura,
+          lat: lat,
+          long: long,
+          elemento: cartaoLavoura
+        };
+        
+        // Preencher o formulário de edição com os dados atuais
+        preencherFormularioEdicao(lavouraEditando);
+        
+        // Mostrar a tela de edição
+        mostrarTela(telaEdicao);
       });
 
       btnExcluir.addEventListener('click', function() {
@@ -714,7 +834,7 @@
       });
     }
 
-    // Salvar lavoura
+    // Salvar lavoura (cadastro)
     btnSalvarLavoura.addEventListener('click', function() {
       const nome = nomeLavouraInput.value || 'Lavoura sem nome';
       const data = document.getElementById('dataPlantio').value || 'Não informada';
@@ -731,6 +851,42 @@
       voltarParaLista();
       limparFormularioCadastro();
       alert('Lavoura cadastrada com sucesso!');
+    });
+
+    // Salvar edição
+    btnSalvarEdicao.addEventListener('click', function() {
+      if (!lavouraEditando) return;
+      
+      const nome = nomeLavouraEdicao.value || 'Lavoura sem nome';
+      const data = dataPlantioEdicao.value || 'Não informada';
+      const cultura = culturaEdicao.value || 'Não informada';
+      const lat = latitudeEdicao.value || 'Não informada';
+      const long = longitudeEdicao.value || 'Não informada';
+      
+      if (!nome || !data || !cultura) {
+        alert('Por favor, preencha pelo menos Nome, Data e Cultura.');
+        return;
+      }
+      
+      // Atualizar os dados da lavoura
+      lavouraEditando.nome = nome;
+      lavouraEditando.data = data;
+      lavouraEditando.cultura = cultura;
+      lavouraEditando.lat = lat;
+      lavouraEditando.long = long;
+      
+      // Atualizar o elemento na lista
+      const infoLavoura = lavouraEditando.elemento.querySelector('.info-lavoura');
+      infoLavoura.innerHTML = `
+        <h3>${nome}</h3>
+        <p><strong>Data de plantio:</strong> ${data}</p>
+        <p><strong>Cultura:</strong> ${cultura}</p>
+        <p><strong>Localização:</strong> ${lat}, ${long}</p>
+      `;
+      
+      voltarParaLista();
+      lavouraEditando = null;
+      alert('Lavoura atualizada com sucesso!');
     });
 
     // Botão Restaurar
