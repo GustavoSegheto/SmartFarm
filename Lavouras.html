@@ -591,6 +591,53 @@
     .tituloprincipal{
       color: white;
     }
+
+    /* Botões reposicionados para a parte inferior */
+    .botoes-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      gap: 15px;
+      z-index: 5;
+    }
+
+    .Botaoconclusao{
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .Botaoexcluir{
+      background: #ff0000;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .Botaoconclusao:hover, .Botaoexcluir:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
   </style>
 </head>
 
@@ -606,7 +653,6 @@
       <div class="icon-placeholder" style="display: none;">ZA</div>
     </a>
     <a href="marketplace.html"><img src="assets/ZMarketplace2.webp" alt="Estoque"></a>
-
   </nav>
 
   <!-- Conteúdo principal -->
@@ -616,7 +662,6 @@
         <!-- Gráfico Pizza (sup esquerdo) -->
         <div class="col-md-6 h-100">
           <div class="custom-card">
-            
             <div class="subcardPizza">
               <div class="titulosnutrientes">
                 <h4 class="corNitrogenio">Nitrogênio</h4>
@@ -751,6 +796,12 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Botões reposicionados para a parte inferior -->
+  <div class="botoes-container">
+    <button class="Botaoconclusao">Conclusão de lavoura</button>
+    <button class="Botaoexcluir">Excluir lavoura</button>
   </div>
 
   <!-- Topbar ATUALIZADA COM FOLHA -->
