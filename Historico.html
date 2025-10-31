@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SmartFarm - Sidebars</title>
+  <title>SmartFarm - Histórico</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     * {
@@ -126,19 +126,19 @@
     }
 
     .logout {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
 
-.logout:hover {
-  transform: translateY(-50%) scale(1.1);
-}
+    .logout:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
 
     /* Área de conteúdo */
     .content {
@@ -149,13 +149,13 @@
       height: calc(100% - 70px);
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* mais pra cima */
+      align-items: flex-start;
       padding: 20px;
       text-align: center;
       color: #2e7d32;
     }
 
-    /* CARD */
+    /* CARD PRINCIPAL */
     .card {
       width: 95%;
       height: 85vh;
@@ -165,112 +165,285 @@
       position: relative;
       overflow: hidden;
       text-align: center;
-      margin-top: 30px; /* mais pra cima */
-      
-      
-    }
-
-    .titles {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
-    }
-
-    .titles h2 {
-      font-size: 35px;
-      font-weight: bold;
-      color: white;
-    }
-
-    .filters {
-      display: flex;
-      justify-content: space-around;
-      margin: 40px 0;
-      color: white;
-    }
-
-    .filters div {
+      margin-top: 30px;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
 
-    .filters label {
+    /* TÍTULOS */
+    .page-title {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
       margin-bottom: 10px;
     }
 
-    .filters input {
-      padding: 5px;
-      border-radius: 6px;
-      border: none;
-      text-align: center;
+    .page-title p {
+      font-size: 16px;
+      color: #e5e5e5;
+      opacity: 0.8;
     }
 
-    .filters input[type="date"] {
+    /* FILTROS */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 30px 0;
+      color: white;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 180px;
+    }
+
+    .filter-group label {
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #e5e5e5;
+    }
+
+    .filter-group input {
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: none;
+      text-align: center;
+      width: 100%;
+      max-width: 200px;
+    }
+
+    .filter-group input[type="date"],
+    .filter-group input[type="text"] {
       background-color: #1e1e1e;
       color: #e5e5e5;
       border: 2px solid #09e6145d;
       border-radius: 10px;
-      padding: 8px 12px;
+      padding: 10px 15px;
       cursor: pointer;
       font-size: 15px;
       transition: all 0.3s ease;
     }
 
-    .filters input[type="date"]::-webkit-calendar-picker-indicator {
+    .filter-group input[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg) brightness(120%) contrast(95%);
       cursor: pointer;
     }
 
-    .filters input[type="date"]:hover {
+    .filter-group input:hover {
       border-color: #09e614;
       background-color: #2c2c2c;
     }
 
-    .filters input[type="date"]:focus {
+    .filter-group input:focus {
       outline: none;
       border-color: #09e614;
       box-shadow: 0 0 8px #09e61480;
     }
 
-    table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  th, td {
-    text-align: left;
-    padding: 8px 10px;
-  }
+    /* TABELA NOVA */
+    .table-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      margin-top: 20px;
+    }
 
-  th {
-    color: #333;
-    font-weight: bold;
-  }
+    .table-wrapper {
+      width: 95%;
+      max-height: 400px;
+      overflow-y: auto;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(76, 175, 80, 0.2);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
 
-  tr:nth-child(even) {
-    background-color: #f5f9f8;
-  }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: transparent;
+    }
 
-  td a {
-    color: #2e8b57;
-    text-decoration: none;
-    font-weight: bold;
-  }
+    .data-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-  td a:hover {
-    text-decoration: underline;
-  }
+    .data-table th {
+      background: linear-gradient(135deg, #4CAF50, #2e7d32);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 18px 15px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
 
-  /* Remove bordas visíveis */
-  table, th, td {
-    border: none;
-  }
+    .data-table th:first-child {
+      border-radius: 16px 0 0 0;
+    }
 
-  /* Pequeno destaque de seção */
-  .subtitulo {
-    font-size: 14px;
-    color: #666;
-  }
+    .data-table th:last-child {
+      border-radius: 0 16px 0 0;
+    }
+
+    .data-table td {
+      padding: 16px 15px;
+      text-align: center;
+      color: #e5e5e5;
+      border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+      transition: background-color 0.2s ease;
+    }
+
+    .data-table tbody tr {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .data-table tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(76, 175, 80, 0.15);
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .data-table tbody tr:last-child td:first-child {
+      border-radius: 0 0 0 16px;
+    }
+
+    .data-table tbody tr:last-child td:last-child {
+      border-radius: 0 0 16px 0;
+    }
+
+    .crop-name {
+      color: #4CAF50;
+      font-weight: 500;
+      text-align: left;
+      padding-left: 20px;
+    }
+
+    .info-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: rgba(76, 175, 80, 0.15);
+      color: #4CAF50;
+      text-decoration: none;
+      border-radius: 25px;
+      border: 1px solid rgba(76, 175, 80, 0.4);
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      min-width: 120px;
+    }
+
+    .info-btn:hover {
+      background: #4CAF50;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+      border-color: #4CAF50;
+    }
+
+    /* SCROLLBAR PERSONALIZADA */
+    .table-wrapper::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: #4CAF50;
+      border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+      background: #2e7d32;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1024px) {
+      .filters {
+        gap: 20px;
+      }
+      
+      .filter-group {
+        min-width: 150px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-title h1 {
+        font-size: 24px;
+      }
+      
+      .filters {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+      }
+      
+      .filter-group {
+        width: 100%;
+        max-width: 250px;
+      }
+      
+      .table-wrapper {
+        width: 100%;
+      }
+      
+      .data-table {
+        font-size: 14px;
+      }
+      
+      .data-table th,
+      .data-table td {
+        padding: 12px 8px;
+      }
+      
+      .info-btn {
+        padding: 8px 16px;
+        font-size: 12px;
+        min-width: 100px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 20px 15px;
+      }
+      
+      .data-table {
+        font-size: 12px;
+      }
+      
+      .data-table th,
+      .data-table td {
+        padding: 10px 5px;
+      }
+      
+      .crop-name {
+        padding-left: 10px;
+      }
+    }
   </style>
 </head>
 
@@ -319,53 +492,85 @@
   <!-- Conteúdo -->
   <div class="content">
     <div class="card">
-      <div class="titles">
-        <h2>Data de início</h2>
-        <h2>Data de colheita</h2>
-
-         <table>
-      <tr>
-        <th>Tipo</th>
-        <th>Data de início</th>
-        <th>Data de colheita</th>
-        <th></th>
-      </tr>
-
-      <tr>
-        <td>lavoura de tomate</td>
-        <td>30/05/2007</td>
-        <td>30/05/2007</td>
-        <td><a href="#">Informações</a></td>
-      </tr>
-      <tr>
-        <td>lavoura de batata</td>
-        <td>01/01/2007</td>
-        <td>31/12/2007</td>
-        <td><a href="#">Informações</a></td>
-      </tr>
-      <tr>
-        <td>lavoura de arroz</td>
-        <td>09/03/2010</td>
-        <td>14/05/2010</td>
-        <td><a href="#">Informações</a></td>
-      </tr>
-      <!-- Continue as linhas conforme necessário -->
-    </table>
-
+      <!-- Título da Página -->
+      <div class="page-title">
+        <h1>Histórico de Lavouras</h1>
+        <p>Visualize e gerencie o histórico completo das suas plantações</p>
       </div>
 
+      <!-- Filtros -->
       <div class="filters">
-        <div>
-          <label for="inicio">Data de início:</label>
+        <div class="filter-group">
+          <label for="inicio">Data de Início</label>
           <input type="date" id="inicio" name="inicio" />
         </div>
-        <div>
-          <label for="colheita">Data de colheita:</label>
+        <div class="filter-group">
+          <label for="colheita">Data de Colheita</label>
           <input type="date" id="colheita" name="colheita" /> 
         </div>
-        <div>
-          <label for="nome">Nome:</label>
-          <input type="text" id="nome" name="nome" />
+        <div class="filter-group">
+          <label for="nome">Nome da Lavoura</label>
+          <input type="text" id="nome" name="nome" placeholder="Digite o nome" />
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-section">
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tipo de Lavoura</th>
+                <th>Data de Início</th>
+                <th>Data de Colheita</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="crop-name">Lavoura de Tomate</td>
+                <td>30/05/2007</td>
+                <td>30/08/2007</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+              <tr>
+                <td class="crop-name">Lavoura de Batata</td>
+                <td>01/01/2007</td>
+                <td>31/12/2007</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+              <tr>
+                <td class="crop-name">Lavoura de Arroz</td>
+                <td>09/03/2010</td>
+                <td>14/05/2010</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+              <tr>
+                <td class="crop-name">Lavoura de Milho</td>
+                <td>15/04/2012</td>
+                <td>20/08/2012</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+              <tr>
+                <td class="crop-name">Lavoura de Soja</td>
+                <td>10/02/2015</td>
+                <td>25/06/2015</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+              <tr>
+                <td class="crop-name">Lavoura de Trigo</td>
+                <td>05/03/2018</td>
+                <td>15/07/2018</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+              <tr>
+                <td class="crop-name">Lavoura de Café</td>
+                <td>20/09/2019</td>
+                <td>30/04/2020</td>
+                <td><a href="TabelaHistoricos.html" class="info-btn">Informações</a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
