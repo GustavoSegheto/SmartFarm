@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartFarm - Marketplace</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../css/Marketplace.css" />
+  </head>
+
+  <body>
+    <nav class="sidenav">
+      <a href="Lavouras.html" title="Plantações">
+        <img
+          src="../assets/ZLavouras2.webp"
+          alt="Plantações"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZL</div>
+      </a>
+      <a href="CadastroLavoura.html" title="Nova Lavoura">
+        <img
+          src="../assets/ZNovalavoura2.webp"
+          alt="Nova Lavoura"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZN</div>
+      </a>
+      <a href="Historico.html" title="Calendário">
+        <img
+          src="../assets/ZCalendario2.webp"
+          alt="Calendário"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Avisos.html" title="Alertas">
+        <img
+          src="../assets/ZAvisos2.webp"
+          alt="Alertas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZA</div>
+      </a>
+      <a href="Cotas.html" title="Cotas">
+        <img
+          src="../assets/ZCifrao.png"
+          alt="Cotas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Marketplace.html" title="Estoque">
+        <img
+          src="../assets/ZMarketplace2.webp"
+          alt="Estoque"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZM</div>
+      </a>
+    </nav>
+
+    <nav class="topbar">
+      <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
+      <a href="/logout" class="logout" title="Sair">
+        <img src="../assets/ZLogout.png" alt="Sair" />
+      </a>
+    </nav>
+
+    <main class="content">
+      <header class="marketplace-header">
+        <h1>Marketplace de Insumos</h1>
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Pesquisar fertilizantes, sementes..."
+          />
+          <i class="fas fa-search"></i>
+        </div>
+      </header>
+
+      <section class="product-grid">
+        <div class="product-card" data-product-id="1">
+          <img
+            src="../assets/fertilizante.webp"
+            alt="Fertilizante Sementes S.A."
+            class="product-image"
+          />
+          <div class="product-info">
+            <h2 class="product-title">Fertilizante NPK 10-10-10</h2>
+            <p class="product-description">
+              Ideal para a fase vegetativa, enriquecido com micronutrientes.
+            </p>
+            <p class="product-price">
+              R$ 150,00 <span class="unit">/ 20kg</span>
+            </p>
+          </div>
+          <div class="product-actions">
+            <button class="add-to-cart" data-text="Adicionar ao Carrinho">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Adicionar ao Carrinho</span>
+            </button>
+            <button class="favorite-btn" title="Adicionar aos Favoritos">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="product-card" data-product-id="2">
+          <img
+            src="../assets/semente.webp"
+            alt="Semente de Milho Híbrido"
+            class="product-image"
+          />
+          <div class="product-info">
+            <h2 class="product-title">Semente de Milho Híbrido XYZ</h2>
+            <p class="product-description">
+              Alta produtividade e resistência a secas. Safra 2024.
+            </p>
+            <p class="product-price">
+              R$ 89,90 <span class="unit">/ pacote (1000 sementes)</span>
+            </p>
+          </div>
+          <div class="product-actions">
+            <button class="add-to-cart" data-text="Adicionar ao Carrinho">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Adicionar ao Carrinho</span>
+            </button>
+            <button class="favorite-btn" title="Adicionar aos Favoritos">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="product-card" data-product-id="3">
+          <img
+            src="../assets/defensivo.webp"
+            alt="Defensivo Orgânico"
+            class="product-image"
+          />
+          <div class="product-info">
+            <h2 class="product-title">Defensivo Orgânico "VerdeMais"</h2>
+            <p class="product-description">
+              Controle biológico de pragas, certificado para agricultura
+              orgânica.
+            </p>
+            <p class="product-price">
+              R$ 220,00 <span class="unit">/ 5L</span>
+            </p>
+          </div>
+          <div class="product-actions">
+            <button class="add-to-cart" data-text="Adicionar ao Carrinho">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Adicionar ao Carrinho</span>
+            </button>
+            <button class="favorite-btn" title="Adicionar aos Favoritos">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="marketplace-footer">
+        <p>&copy; 2025 SmartFarm | Preços e Estoque sujeitos a alteração.</p>
+      </footer>
+    </main>
+
+    <script src="../js/Marketplace.js" defer></script>
+  </body>
+</html>

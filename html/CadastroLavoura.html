@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartFarm - Lavouras</title>
+
+    <link rel="stylesheet" href="../css/CadastroLavoura.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <nav class="topbar">
+      <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
+
+      <a href="/logout" class="logout" title="Sair">
+        <img src="../assets/ZLogout.png" alt="Sair" />
+      </a>
+    </nav>
+
+    <nav class="sidenav">
+      <a href="Lavouras.html" title="Plantações">
+        <img
+          src="../assets/ZLavouras2.webp"
+          alt="Plantações"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZL</div>
+      </a>
+      <a href="CadastroLavoura.html" title="Nova Lavoura">
+        <img
+          src="../assets/ZNovalavoura2.webp"
+          alt="Nova Lavoura"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZN</div>
+      </a>
+      <a href="Historico.html" title="Calendário">
+        <img
+          src="../assets/ZCalendario2.webp"
+          alt="Calendário"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Avisos.html" title="Alertas">
+        <img
+          src="../assets/ZAvisos2.webp"
+          alt="Alertas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZA</div>
+      </a>
+      <a href="Cotas.html" title="Cotas">
+        <img
+          src="../assets/ZCifrao.png"
+          alt="Cotas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="marketplace.html" title="Estoque">
+        <img
+          src="../assets/ZMarketplace2.webp"
+          alt="Estoque"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZM</div>
+      </a>
+    </nav>
+
+    <main class="content">
+      <section class="partelavouras">
+        <div class="botoes-superiores">
+          <button type="button" id="btnRestaurar">Restaurar</button>
+          <button type="button" id="btnAdicionar">Adicionar</button>
+        </div>
+
+        <div class="lista-lavouras" id="listaLavouras"></div>
+
+        <div class="tela-formulario" id="telaCadastro">
+          <div class="form-container">
+            <form
+              id="formCadastro"
+              class="form-prototype"
+              method="POST"
+              action="/lavoura/salvar"
+            >
+              <h2 class="titulo-tela">Cadastro de Lavoura</h2>
+
+              <div class="campo-form">
+                <label>Nome da lavoura:</label>
+                <div class="opcoes-lavoura">
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="Lavoura de tomate"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Lavoura de tomate
+                  </div>
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="Lavoura de batata"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Lavoura de batata
+                  </div>
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="Lavoura de cenoura"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Lavoura de cenoura
+                  </div>
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="10 0001"
+                    role="button"
+                    tabindex="0"
+                  >
+                    10 0001
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  id="nomeLavoura"
+                  name="nomeLavoura"
+                  placeholder="Ou digite um nome personalizado"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="dataPlantio">Data de início do plantio:</label>
+                <input type="date" id="dataPlantio" name="dataPlantio" />
+              </div>
+
+              <div class="campo-form">
+                <label for="cultura">Cultura:</label>
+                <input
+                  type="text"
+                  id="cultura"
+                  name="cultura"
+                  placeholder="Digite a cultura"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="latitude">Latitude:</label>
+                <input
+                  type="text"
+                  id="latitude"
+                  name="latitude"
+                  placeholder="Ex: -23.5505"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="longitude">Longitude:</label>
+                <input
+                  type="text"
+                  id="longitude"
+                  name="longitude"
+                  placeholder="Ex: -46.6333"
+                />
+              </div>
+
+              <div class="secao-sensores">
+                <div class="titulo-sensores">
+                  <i class="fas fa-microchip"></i>
+                  SENSORES
+                </div>
+                <button
+                  type="button"
+                  class="botao-adicionar-sensor"
+                  id="btnAdicionarSensor"
+                >
+                  <i class="fas fa-plus"></i> Adicionar
+                </button>
+              </div>
+
+              <div class="botoes-form">
+                <button
+                  type="button"
+                  class="botao-form botao-cancelar"
+                  id="btnCancelarCadastro"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="botao-form botao-salvar"
+                  id="btnSalvarLavoura"
+                >
+                  Salvar Lavoura
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="tela-formulario" id="telaSensor">
+          <div class="form-container">
+            <form id="formSensor" class="form-prototype" method="POST">
+              <h2 class="titulo-tela">Adicionar Sensor</h2>
+
+              <div class="campo-form">
+                <label for="tipoSensor">Tipo de Sensor:</label>
+                <select id="tipoSensor" name="tipoSensor">
+                  <option value="">Selecione o tipo de sensor</option>
+                  <option value="umidade">Sensor de Umidade</option>
+                  <option value="temperatura">Sensor de Temperatura</option>
+                  <option value="ph">Sensor de pH</option>
+                  <option value="luminosidade">Sensor de Luminosidade</option>
+                </select>
+              </div>
+
+              <div class="campo-form">
+                <label for="modeloSensor">Modelo do Sensor:</label>
+                <input
+                  type="text"
+                  id="modeloSensor"
+                  name="modeloSensor"
+                  placeholder="Digite o modelo do sensor"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="localizacaoSensor">Localização na Lavoura:</label>
+                <input
+                  type="text"
+                  id="localizacaoSensor"
+                  name="localizacaoSensor"
+                  placeholder="Ex: Setor A, Norte"
+                />
+              </div>
+
+              <div class="botoes-form">
+                <button
+                  type="button"
+                  class="botao-form botao-cancelar"
+                  id="btnCancelarSensor"
+                >
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  class="botao-form botao-salvar"
+                  id="btnSalvarSensor"
+                >
+                  Salvar Sensor
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="tela-formulario" id="telaEdicao">
+          <div class="form-container">
+            <form
+              id="formEdicao"
+              class="form-prototype"
+              method="POST"
+              action="/lavoura/editar"
+            >
+              <h2 class="titulo-tela">Editar Lavoura</h2>
+
+              <input type="hidden" id="lavouraEditId" name="lavouraId" />
+
+              <div class="campo-form">
+                <label>Nome da lavoura:</label>
+                <div class="opcoes-lavoura" id="opcoesEdicao">
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="Lavoura de tomate"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Lavoura de tomate
+                  </div>
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="Lavoura de batata"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Lavoura de batata
+                  </div>
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="Lavoura de cenoura"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Lavoura de cenoura
+                  </div>
+                  <div
+                    class="opcao-lavoura"
+                    data-valor="10 0001"
+                    role="button"
+                    tabindex="0"
+                  >
+                    10 0001
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  id="nomeLavouraEdicao"
+                  name="nomeLavoura"
+                  placeholder="Ou digite um nome personalizado"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="dataPlantioEdicao"
+                  >Data de início do plantio:</label
+                >
+                <input type="date" id="dataPlantioEdicao" name="dataPlantio" />
+              </div>
+
+              <div class="campo-form">
+                <label for="culturaEdicao">Cultura:</label>
+                <input
+                  type="text"
+                  id="culturaEdicao"
+                  name="cultura"
+                  placeholder="Digite a cultura"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="latitudeEdicao">Latitude:</label>
+                <input
+                  type="text"
+                  id="latitudeEdicao"
+                  name="latitude"
+                  placeholder="Ex: -23.5505"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label for="longitudeEdicao">Longitude:</label>
+                <input
+                  type="text"
+                  id="longitudeEdicao"
+                  name="longitude"
+                  placeholder="Ex: -46.6333"
+                />
+              </div>
+
+              <div class="botoes-form">
+                <button
+                  type="button"
+                  class="botao-form botao-cancelar"
+                  id="btnCancelarEdicao"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="botao-form botao-salvar"
+                  id="btnSalvarEdicao"
+                >
+                  Salvar Alterações
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../js/CadastroLavoura.js" defer></script>
+  </body>
+</html>

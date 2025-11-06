@@ -1,0 +1,435 @@
+/* --- Resets Globais e Fontes --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Nexa", sans-serif;
+}
+
+@font-face {
+  font-family: "Nexa";
+  /* CAMINHO CORRIGIDO: Aponta para a pasta assets/ */
+  src: url(../assets/Nexa\ Light.otf);
+  font-weight: 300;
+  font-style: normal;
+}
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
+}
+
+/* --- Layout (Topbar/Sidenav) --- */
+/* NOTA: Este CSS de layout é compartilhado com outras páginas. */
+/* Considere movê-lo para um arquivo 'layout.css' no futuro. */
+
+/* Topbar (antigo .sidebarsuperior) */
+.topbar {
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.topbar h2 {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar h2 i {
+  color: #4caf50;
+  font-size: 28px;
+}
+
+.logout {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.logout:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Sidenav (antigo .sidebar) */
+.sidenav {
+  width: 70px;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  height: 100vh;
+  z-index: 999;
+}
+
+.sidenav a {
+  margin: 25px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 90px;
+  text-decoration: none;
+  position: relative;
+}
+
+.sidenav a img {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.sidenav a:hover img {
+  transform: scale(1.2);
+  filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg)
+    brightness(120%) contrast(95%);
+}
+
+.sidenav a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: #4caf50;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.sidenav a:hover::after {
+  width: 30px;
+}
+
+/* --- Fim do CSS de Layout Compartilhado --- */
+
+/* --- Área de Conteúdo (Lavouras) --- */
+main.content {
+  position: relative;
+  top: 70px;
+  left: 70px;
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+section.partelavouras {
+  width: 100%;
+  height: 100%;
+  background: #1e1e1e;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.botoes-superiores {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.botoes-superiores button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  background: #2e7d32;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.botoes-superiores button:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Lista e Cartões de Lavouras --- */
+.lista-lavouras {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.cartao-lavoura {
+  background: #414040;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #4caf50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-lavoura h3 {
+  color: #4caf50;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.info-lavoura p {
+  color: #ccc;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.acoes-lavoura {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-acao {
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-editar {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-excluir {
+  background: #f44336;
+  color: white;
+}
+
+.btn-acao:hover {
+  transform: scale(1.1);
+}
+
+/* --- Telas de Formulário --- */
+.tela-formulario {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #1e1e1e;
+  border-radius: 15px;
+  padding: 30px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.tela-formulario.ativo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* A classe '.form-prototype' agora está na tag <form> */
+.form-prototype {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.titulo-tela {
+  color: #4caf50;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* --- Componentes de Formulário (Campos, Botões) --- */
+.campo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo-form label {
+  font-weight: bold;
+  color: #4caf50;
+  font-size: 16px;
+}
+
+.campo-form input,
+.campo-form select {
+  padding: 12px;
+  border: 2px solid #555;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  background: #333;
+  color: white;
+}
+
+.campo-form input:focus,
+.campo-form select:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.campo-form input::placeholder {
+  color: #888;
+}
+
+.opcoes-lavoura {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.opcao-lavoura {
+  padding: 10px 15px;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.opcao-lavoura:hover {
+  background: #444;
+}
+
+.opcao-lavoura.selecionada {
+  background: #4caf50;
+  color: white;
+  border-color: #2e7d32;
+}
+
+.secao-sensores {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #555;
+}
+
+.titulo-sensores {
+  font-size: 20px;
+  color: #4caf50;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.botoes-form {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  justify-content: flex-end;
+}
+
+.botao-form {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.botao-cancelar {
+  background: #6c757d;
+  color: white;
+}
+
+.botao-salvar {
+  background: #4caf50;
+  color: white;
+}
+
+.botao-form:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botao-adicionar-sensor {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.botao-adicionar-sensor:hover {
+  background: #2e7d32;
+}
+
+/* --- Utilitários --- */
+.icon-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #333;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.lista-lavouras::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lista-lavouras::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.lista-lavouras::-webkit-scrollbar-thumb {
+  background: #4caf50;
+  border-radius: 4px;
+}
+
+.lista-lavouras::-webkit-scrollbar-thumb:hover {
+  background: #2e7d32;
+}

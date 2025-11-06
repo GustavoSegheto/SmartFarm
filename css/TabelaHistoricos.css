@@ -1,0 +1,294 @@
+/* --- Resets Globais e Fontes --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Nexa", sans-serif;
+}
+
+@font-face {
+  font-family: "Nexa";
+  /* CAMINHO CORRIGIDO: Aponta para a pasta assets/ */
+  src: url(../assets/Nexa\ Light.otf);
+  font-weight: 300;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
+}
+
+/* --- Layout (Topbar/Sidenav) --- */
+/* ATENÇÃO: CSS duplicado. Considere um 'layout.css' compartilhado. */
+
+.topbar {
+  /* Antigo .sidebarsuperior */
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.topbar h2 {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar h2 i {
+  color: #4caf50;
+  font-size: 28px;
+}
+
+.sidenav {
+  /* Antigo .sidebar */
+  width: 70px;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  height: 100vh;
+  z-index: 999;
+}
+
+.sidenav a {
+  margin: 25px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 90px;
+  text-decoration: none;
+  position: relative;
+}
+
+.sidenav a img {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.sidenav a:hover img {
+  transform: scale(1.2);
+  filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg)
+    brightness(120%) contrast(95%);
+}
+
+.sidenav a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: #4caf50;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.sidenav a:hover::after {
+  width: 30px;
+}
+
+.icon-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #333;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.logout {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.logout img {
+  width: 100%;
+  height: 100%;
+}
+
+.logout:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+/* --- Fim do CSS de Layout Compartilhado --- */
+
+/* --- Área de Conteúdo (Detalhes) --- */
+main.content {
+  position: relative;
+  top: 70px;
+  left: 70px;
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  text-align: center;
+  color: #2e7d32;
+  overflow-y: auto; /* Permite rolagem da página */
+}
+
+/* CARD PRINCIPAL (agora <section>) */
+section.card {
+  width: 95%;
+  height: 85vh;
+  background-color: #2c2c2c;
+  border-radius: 32px;
+  padding: 32px 20px;
+  position: relative;
+  text-align: center;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column; /* Organiza o card verticalmente */
+}
+
+/* --- Cabeçalho do Card --- */
+
+/* Link de "Voltar" (Substitui a regra 'card img' com 7000px) */
+.back-link {
+  position: absolute;
+  top: 25px; /* Alinha com o padding */
+  left: 20px;
+  width: 50px;
+  height: 70px;
+  z-index: 20; /* Garante que fique acima */
+}
+
+.back-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Mantém a proporção da seta */
+  transition: transform 0.2s ease;
+}
+.back-link:hover img {
+  transform: scale(1.1);
+}
+
+.card-header {
+  text-align: center;
+  flex-shrink: 0; /* Impede o header de encolher */
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  /* Antigo .infounicas */
+  color: #00ff0d;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.header-info {
+  /* Antigo .TitulosInfo */
+  color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  margin-bottom: 20px;
+}
+
+.header-info p {
+  font-size: 1rem;
+}
+
+/* --- Tabela de Dados --- */
+.table-container {
+  width: 100%;
+  flex: 1; /* Ocupa o espaço restante */
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* Define uma altura máxima para garantir que não estoure o card */
+  max-height: calc(100% - 100px); /* Ajuste conforme o header */
+}
+
+/* Estilos da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+thead {
+  background-color: #1a1a1a;
+  position: sticky; /* Cabeçalho fixo */
+  top: 0;
+  z-index: 10;
+}
+
+th,
+td {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 1px solid #444;
+}
+
+th {
+  font-weight: 600;
+  color: #00ff0d;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #333;
+}
+
+tbody tr:hover {
+  background-color: #3a3a3a;
+}
+
+/* Scrollbar personalizada */
+.table-container::-webkit-scrollbar {
+  width: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #00ff0d;
+  border-radius: 10px;
+  border: 2px solid #1a1a1a;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #00cc0a;
+}
+
+/* Para Firefox */
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #00ff0d #1a1a1a;
+}

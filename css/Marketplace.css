@@ -1,0 +1,356 @@
+/* --- Resets Globais e Fontes --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Nexa", sans-serif;
+}
+
+@font-face {
+  font-family: "Nexa";
+  /* CAMINHO CORRIGIDO: Aponta para a pasta assets/ */
+  src: url(../assets/Nexa\ Light.otf);
+  font-weight: 300;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
+}
+
+/* --- Layout (Topbar/Sidenav) --- */
+/* ATENÇÃO: CSS duplicado. Considere um 'layout.css' compartilhado. */
+
+.topbar {
+  /* Antigo .sidebarsuperior */
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.topbar h2 {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar h2 i {
+  color: #4caf50;
+  font-size: 28px;
+}
+
+.sidenav {
+  /* Antigo .sidebar */
+  width: 70px;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  height: 100vh;
+  z-index: 999;
+}
+
+.logout {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.logout img {
+  width: 100%;
+  height: 100%;
+}
+
+.logout:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.sidenav a {
+  margin: 25px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 90px;
+  text-decoration: none;
+  position: relative;
+}
+
+.sidenav a img {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.sidenav a:hover img {
+  transform: scale(1.2);
+  filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg)
+    brightness(120%) contrast(95%);
+}
+
+.sidenav a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: #4caf50;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.sidenav a:hover::after {
+  width: 30px;
+}
+
+.icon-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #333;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+/* --- Fim do CSS de Layout Compartilhado --- */
+
+/* --- Conteúdo Principal (Marketplace) --- */
+main.content {
+  position: relative;
+  top: 70px;
+  left: 70px;
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.marketplace-header {
+  width: 95%;
+  max-width: 1200px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.marketplace-header h1 {
+  color: #1e1e1e;
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  font-weight: 300;
+}
+
+/* Barra de Pesquisa */
+.search-bar {
+  position: relative;
+  width: 80%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.search-bar input[type="text"] {
+  width: 100%;
+  padding: 12px 20px 12px 50px;
+  border: 2px solid #4caf50;
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar i {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4caf50;
+  font-size: 18px;
+}
+
+/* --- Grid de Produtos --- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  width: 95%;
+  max-width: 1200px;
+  padding-bottom: 30px;
+}
+
+.product-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 3px solid #4caf50;
+}
+
+.product-info {
+  padding: 15px;
+  flex-grow: 1; /* Ocupa o espaço entre a imagem e as ações */
+}
+
+.product-title {
+  font-size: 1.3rem;
+  color: #1e1e1e;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.product-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.product-price {
+  font-size: 1.4rem;
+  color: #4caf50;
+  font-weight: 700;
+}
+
+.product-price .unit {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #888;
+}
+
+/* --- Ações (Botões) --- */
+.product-actions {
+  display: flex;
+  padding: 15px;
+  gap: 10px;
+  border-top: 1px solid #eee;
+}
+
+.add-to-cart {
+  flex-grow: 1;
+  background-color: #2e7d32;
+  color: white;
+  padding: 12px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.add-to-cart:hover {
+  background-color: #388e3c;
+}
+
+.add-to-cart i {
+  font-size: 16px;
+}
+
+.favorite-btn {
+  background-color: #f4f4f4;
+  color: #999;
+  width: 50px;
+  height: 50px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.favorite-btn:hover {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+/* Estado 'Ativo' para quando é favorito */
+.favorite-btn.active {
+  background-color: #f44336;
+  color: white;
+  border-color: #f44336;
+}
+
+.favorite-btn.active:hover {
+  background-color: #e53935;
+}
+
+/* --- Rodapé --- */
+.marketplace-footer {
+  width: 100%;
+  padding: 15px 0;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  color: #555;
+  font-size: 0.85rem;
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+
+/* --- Scrollbar Personalizada --- */
+main.content::-webkit-scrollbar {
+  width: 10px;
+}
+
+main.content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+main.content::-webkit-scrollbar-thumb {
+  background: #4caf50;
+  border-radius: 5px;
+}
+
+main.content::-webkit-scrollbar-thumb:hover {
+  background: #2e7d32;
+}

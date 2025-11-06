@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartFarm - Avisos</title>
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../css/avisos.css" />
+  </head>
+
+  <body>
+    <nav class="sidenav">
+      <a href="Lavouras.html" title="Plantações">
+        <img
+          src="../assets/ZLavouras2.webp"
+          alt="Plantações"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZL</div>
+      </a>
+      <a href="CadastroLavoura.html" title="Nova Lavoura">
+        <img
+          src="../assets/ZNovalavoura2.webp"
+          alt="Nova Lavoura"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZN</div>
+      </a>
+      <a href="Historico.html" title="Calendário">
+        <img
+          src="../assets/ZCalendario2.webp"
+          alt="Calendário"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Avisos.html" title="Alertas">
+        <img
+          src="../assets/ZAvisos2.webp"
+          alt="Alertas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZA</div>
+      </a>
+      <a href="Cotas.html" title="Cotas">
+        <img
+          src="../assets/ZCifrao.png"
+          alt="Cotas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Marketplace.html" title="Estoque">
+        <img
+          src="../assets/ZMarketplace2.webp"
+          alt="Estoque"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZM</div>
+      </a>
+    </nav>
+
+    <nav class="topbar">
+      <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
+      <a href="/logout" class="logout" title="Sair">
+        <img src="../assets/ZLogout.png" alt="Sair" />
+      </a>
+    </nav>
+
+    <main class="content">
+      <section class="card">
+        <div class="avisos-container">
+          <h2 class="avisos-titulo">Avisos</h2>
+
+          <div class="filtro-status">
+            <button class="botao-filtro todos ativo" data-filtro="todos">
+              <i class="fas fa-list"></i> Todos
+            </button>
+            <button class="botao-filtro verde" data-filtro="verde">
+              <i class="fas fa-check-circle"></i> Verde
+            </button>
+            <button class="botao-filtro amarelo" data-filtro="amarelo">
+              <i class="fas fa-exclamation-triangle"></i> Amarelo
+            </button>
+            <button class="botao-filtro vermelho" data-filtro="vermelho">
+              <i class="fas fa-times-circle"></i> Vermelho
+            </button>
+          </div>
+
+          <table class="avisos-tabela">
+            <thead>
+              <tr>
+                <th>LAVOURA</th>
+                <th>STATUS</th>
+                <th>DATA</th>
+                <th>HORA</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-avisos">
+              <tr data-status="vermelho">
+                <td class="lavoura-nome">LAVOURA DE MILHO 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status vermelho"></span>
+                    <span class="status-seco">SECO</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="verde">
+                <td class="lavoura-nome">LAVOURA DE FEIJÃO 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status verde"></span>
+                    <span class="status-pronto">Pronto a colheita</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="amarelo">
+                <td class="lavoura-nome">LAVOURA DE BATATA 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status amarelo"></span>
+                    <span class="status-regar">PRECISANDO REGAR</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="vermelho">
+                <td class="lavoura-nome">LAVOURA DE LIMÃO 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status vermelho"></span>
+                    <span class="status-seco">SECO</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="verde">
+                <td class="lavoura-nome">LAVOURA DE FEIJÃO 2</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status verde"></span>
+                    <span class="status-pronto">Pronto a colheita</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="amarelo">
+                <td class="lavoura-nome">LAVOURA DE BATATA 2</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status amarelo"></span>
+                    <span class="status-regar">PRECISANDO REGAR</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="verde">
+                <td class="lavoura-nome">LAVOURA DE MILHO 2</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status verde"></span>
+                    <span class="status-normal">Normal</span>
+                  </div>
+                </td>
+                <td class="data-hora">-</td>
+                <td class="data-hora">-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="catalogo-container">
+            <button class="botao-catalogo ativo" data-pagina="1">1</button>
+            <button class="botao-catalogo" data-pagina="2">2</button>
+            <button class="botao-catalogo" data-pagina="3">3</button>
+            <button class="botao-catalogo" data-pagina="4">4</button>
+            <button class="botao-catalogo" data-pagina="5">5</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../js/Avisos.js" defer></script>
+  </body>
+</html>
