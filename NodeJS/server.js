@@ -52,7 +52,7 @@ app.post('/cadastro', (req, res) => {
     const { nome, email, telefone, senha } = req.body;
 
     // SQL: Usamos '?' para placeholders, o que ajuda a prevenir SQL Injection
-    const sql = 'INSERT INTO usuarios (nome, email, telefone, senha) VALUES (?, ?, ?, ?)';
+    const sql = 'INSERT INTO usuario (nome, email, telefone, senha) VALUES (?, ?, ?, ?)';
 
     // Valores a serem inseridos
     const values = [nome, email, telefone, senha];
