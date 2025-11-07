@@ -1,30 +1,61 @@
 // server.js
+"use strict";
 
-// 1. Importa Express
-const express = require('express');
+const express = require("express");
+const path = require("path");
+const db = require('./config/conexao');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// 2. Importa a Conexão com o Banco de Dados
-// Certifique-se de que conexao.js está no mesmo diretório ou ajuste o caminho (./)
-const db = require('./conexao');
-
-// 3. Middlewares: Permite ao Express ler JSON e dados de formulário
+// Middleware para ler JSON/formulários, caso você use POST depois
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// === Arquivos estáticos do frontend ===
+// HTML está em /public
+app.use(express.static(path.join(__dirname, "..", "public")));
+
+// CSS, JS e imagens estão fora de /public
+app.use("/css", express.static(path.join(__dirname, "..", "css")));
+app.use("/js", express.static(path.join(__dirname, "..", "js")));
+app.use("/assets", express.static(path.join(__dirname, "..", "assets")));
+
+// === Rotas de páginas ===
+
+// Rota principal -> public/index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
+});
+
+// Rotas amigáveis opcionais (se você quiser acessar sem .html)
+app.get("/lavouras", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "Lavouras.html"));
+});
+
+app.get("/avisos", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "Avisos.html"));
+});
+
+app.get("/cotas", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "Cotas.html"));
+});
+
+app.get("/historico", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "Historico.html"));
+});
 
 // =========================================================================
 // ROTA DE CADASTRO (POST)
 // =========================================================================
 app.post('/cadastro', (req, res) => {
     // req.body contém os dados enviados pelo formulário (ex: { nome: 'João', email: 'joao@ex.com', ... })
-    const { nome, email, senha } = req.body;
+    const { nome, email, telefone, senha } = req.body;
 
     // SQL: Usamos '?' para placeholders, o que ajuda a prevenir SQL Injection
-    const sql = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
+    const sql = 'INSERT INTO usuarios (nome, email, telefone, senha) VALUES (?, ?, ?, ?)';
 
     // Valores a serem inseridos
-    const values = [nome, email, senha];
+    const values = [nome, email, telefone, senha];
 
     // Executa a consulta no banco de dados
     db.query(sql, values, (err, result) => {
@@ -39,23 +70,8 @@ app.post('/cadastro', (req, res) => {
         res.status(201).json({ status: 'success', message: 'Usuário cadastrado com sucesso!' });
     });
 });
-// =========================================================================
 
-// Rota de Teste Simples
-app.get('/', (req, res) => {
-    res.send('Servidor SmartFarm está rodando!');
-});
-
-
-// 4. Inicia o servidor
+// Inicia o servidor
 app.listen(PORT, () => {
-    // Conecta ao DB quando o servidor inicia (Opcional, mas útil para testes)
-    db.connect((err) => {
-        if (err) {
-            console.error('Erro ao conectar com o banco de dados:', err.stack);
-            return;
-        }
-        console.log('Conectado ao MySQL como id ' + db.threadId);
-    });
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

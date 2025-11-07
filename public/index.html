@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Cadastro</title>
+
+    <link rel="stylesheet" href="../css/LoginCadastro.css" />
+  </head>
+  <body>
+    <section class="containerPai">
+      <div class="card loginActive">
+        <div class="esquerda">
+          <div class="FormLogin">
+            <h2>Fazer Login</h2>
+            <form method="POST" action="/login">
+              <label for="login-email" class="sr-only">E-mail</label>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                placeholder="E-mail"
+                required
+              />
+
+              <label for="login-senha" class="sr-only">Senha</label>
+              <input
+                type="password"
+                id="login-senha"
+                name="senha"
+                placeholder="Senha"
+                required
+              />
+
+              <button type="submit">Entrar</button>
+            </form>
+          </div>
+
+          <div class="FacaLogin">
+            <h2>Já tem <br />uma conta?</h2>
+            <p>
+              Se você já possui uma conta, faça o login para acessar a
+              plataforma.
+            </p>
+            <button type="button" class="loginButton">Faça login</button>
+          </div>
+        </div>
+
+        <div class="direita">
+          <div class="formCadastro">
+            <h2>Cadastro</h2>
+            <form method="POST" action="/cadastro">
+              <label for="cadastro-nome" class="sr-only">Nome</label>
+              <input
+                type="text"
+                id="cadastro-nome"
+                name="nome"
+                placeholder="Nome"
+                required
+              />
+
+              <label for="cadastro-email" class="sr-only">E-mail</label>
+              <input
+                type="email"
+                id="cadastro-email"
+                name="email"
+                placeholder="E-mail"
+                required
+              />
+
+              <label for="cadastro-telefone" class="sr-only">Telefone</label>
+              <input
+                type="tel"
+                id="cadastro-telefone"
+                name="telefone"
+                placeholder="Telefone"
+                required
+              />
+
+              <label for="cadastro-senha" class="sr-only">Senha</label>
+              <input
+                type="password"
+                id="cadastro-senha"
+                name="senha"
+                placeholder="Senha"
+                required
+              />
+
+              <label for="cadastro-confirma" class="sr-only"
+                >Confirme a senha</label
+              >
+              <input
+                type="password"
+                id="cadastro-confirma"
+                name="confirmaSenha"
+                placeholder="Confirme a senha"
+                required
+              />
+
+              <button type="submit">Cadastrar</button>
+            </form>
+          </div>
+
+          <div class="FacaCadastro">
+            <h2>
+              Não tem <br />
+              uma conta?
+            </h2>
+            <p>
+              Cadastre-se para ter acesso a todos os recursos da nossa
+              plataforma. É rápido e fácil!
+            </p>
+            <button type="button" class="cadastroButton">Cadastre-se</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="../js/LoginCadastro.js" defer></script>
+  </body>
+</html>
