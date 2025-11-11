@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuários cadastrados | SmartFarm</title>
+
+    <link rel="stylesheet" href="../css/Usuarios.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__content">
+        <h1 class="topbar__title">Usuários cadastrados</h1>
+        <nav class="topbar__nav">
+          <a href="/" class="topbar__link">Tela inicial</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title">Lista de usuários</h2>
+          <p class="card__subtitle">
+            Abaixo estão todos os usuários cadastrados no sistema.
+          </p>
+        </header>
+
+        <div class="card__body">
+          <div id="usuarios-alert" class="alert alert--hidden"></div>
+
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Telefone</th>
+                </tr>
+              </thead>
+              <tbody id="usuarios-tbody">
+                <!-- linhas preenchidas via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="../js/Usuarios.js" defer></script>
+  </body>
+</html>

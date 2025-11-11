@@ -1,3 +1,71 @@
+// js/Lavouras.js
+"use strict";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const userArea = document.getElementById("usuario-area");
+  const nomeSpan = document.getElementById("usuario-nome");
+  const btnLogout = document.getElementById("btnLogout");
+
+  // 1) Checa sessão
+  try {
+    const resp = await fetch("/api/sessao", { credentials: "same-origin" });
+
+    if (!resp.ok) {
+      // não autenticado -> volta para login
+      window.location.href = "/";
+      return;
+    }
+
+    const data = await resp.json();
+
+    if (!data.authenticated || !data.user) {
+      window.location.href = "/";
+      return;
+    }
+
+    // Sessão ok: preenche nome e mostra área do usuário
+    if (nomeSpan) {
+      nomeSpan.textContent = data.user.nome || data.user.email || "Usuário";
+    }
+    if (userArea) {
+      userArea.classList.remove("d-none");
+    }
+  } catch (error) {
+    console.error("Erro ao verificar sessão:", error);
+    window.location.href = "/";
+    return;
+  }
+
+  // 2) Logout
+  if (btnLogout) {
+    btnLogout.addEventListener("click", async () => {
+      const desejaSair = window.confirm("Você deseja sair da sua conta?");
+
+      if (!desejaSair) {
+        // Usuário cancelou o logout
+        return;
+      }
+
+      try {
+        const resp = await fetch("/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+        });
+
+        // Independente do resultado, redireciona para a tela inicial
+        window.location.href = "/";
+      } catch (_) {
+        // Em caso de erro na requisição, força o retorno ao index
+        window.location.href = "/";
+      }
+    });
+  }
+
+});
+
+
+
 /**
  * Aguarda o DOM ser totalmente carregado antes de executar
  * os scripts dos gráficos e sensores.

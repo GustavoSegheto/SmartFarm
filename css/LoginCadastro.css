@@ -212,3 +212,61 @@ p {
   opacity: 0;
   pointer-events: none;
 }
+
+/*Popup cadastro*?
+/* Container do popup */
+.feedback {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 999;
+}
+
+.feedback.hidden {
+  display: none;
+}
+
+.feedback__content {
+  background-color: #111827;       /* ajuste conforme seu tema */
+  color: #f9fafb;
+  padding: 24px 32px;
+  border-radius: 16px;
+  min-width: 260px;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  
+  /* garante alinhamento interno */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Estados opcionais (sucesso/erro) */
+.feedback--success .feedback__content {
+  border: 2px solid #10b981;
+}
+
+.feedback--error .feedback__content {
+  border: 2px solid #f97373;
+}
+
+/* Botão OK do popup */
+#feedback-close {
+  margin-top: 16px;
+  padding: 10px 32px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background-color: #10b981;  /* verde */
+  color: #111827;
+
+  /* evita estourar para fora do card */
+  width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
