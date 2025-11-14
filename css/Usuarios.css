@@ -1,0 +1,157 @@
+/* css/Usuarios.css */
+
+/* Fonte base (igual ao LoginCadastro, se quiser pode compartilhar via @font-face) */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Nexa", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #111827, #065f46);
+  color: #f9fafb;
+}
+
+/* Topbar */
+.topbar {
+  background-color: rgba(15, 23, 42, 0.95);
+  padding: 12px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.topbar__content {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar__title {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.topbar__nav {
+  display: flex;
+  gap: 12px;
+}
+
+.topbar__link {
+  color: #a7f3d0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.topbar__link:hover {
+  text-decoration: underline;
+}
+
+/* Página */
+.page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px 32px;
+}
+
+/* Card */
+.card {
+  width: 100%;
+  max-width: 1080px;
+  background-color: rgba(15, 23, 42, 0.96);
+  border-radius: 24px;
+  padding: 24px 24px 32px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.card__header {
+  margin-bottom: 16px;
+}
+
+.card__title {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+}
+
+.card__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #9ca3af;
+}
+
+/* Alertas */
+.alert {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.alert--hidden {
+  display: none;
+}
+
+.alert--error {
+  background-color: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.8);
+  color: #fecaca;
+}
+
+.alert--info {
+  background-color: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(96, 165, 250, 0.8);
+  color: #bfdbfe;
+}
+
+/* Tabela */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.95rem;
+}
+
+.table thead {
+  background-color: rgba(15, 118, 110, 0.8);
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: rgba(15, 23, 42, 0.7);
+}
+
+.table tbody tr:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.table__empty {
+  text-align: center;
+  color: #9ca3af;
+}
+
+/* Responsivo básico */
+@media (max-width: 600px) {
+  .card {
+    padding: 16px 16px 24px;
+  }
+
+  .topbar__content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

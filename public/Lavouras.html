@@ -1,18 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SmartFarm - Dashboard da Lavoura</title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <link rel="stylesheet" href="../css/Lavouras.css" />
   </head>
@@ -20,59 +15,66 @@
   <body>
     <nav class="sidenav">
       <a href="Lavouras.html" title="Plantações">
-        <img
-          src="../assets/ZLavouras2.webp"
-          alt="Plantações"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
+        <img src="../assets/ZLavouras2.webp" alt="Plantações"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="icon-placeholder" style="display: none">ZL</div>
       </a>
       <a href="CadastroLavoura.html" title="Nova Lavoura">
-        <img
-          src="../assets/ZNovalavoura2.webp"
-          alt="Nova Lavoura"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
+        <img src="../assets/ZNovalavoura2.webp" alt="Nova Lavoura"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="icon-placeholder" style="display: none">ZN</div>
       </a>
       <a href="Historico.html" title="Calendário">
-        <img
-          src="../assets/ZCalendario2.webp"
-          alt="Calendário"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
+        <img src="../assets/ZCalendario2.webp" alt="Calendário"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="icon-placeholder" style="display: none">ZC</div>
       </a>
       <a href="Avisos.html" title="Alertas">
-        <img
-          src="../assets/ZAvisos2.webp"
-          alt="Alertas"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
+        <img src="../assets/ZAvisos2.webp" alt="Alertas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="icon-placeholder" style="display: none">ZA</div>
       </a>
       <a href="Cotas.html" title="Cotas">
-        <img
-          src="../assets/ZCifrao.png"
-          alt="Cotas"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
+        <img src="../assets/ZCifrao.png" alt="Cotas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="icon-placeholder" style="display: none">ZC</div>
       </a>
       <a href="marketplace.html" title="Estoque">
-        <img
-          src="../assets/ZMarketplace2.webp"
-          alt="Estoque"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
+        <img src="../assets/ZMarketplace2.webp" alt="Estoque"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <div class="icon-placeholder" style="display: none">ZM</div>
       </a>
     </nav>
 
     <nav class="topbar">
-      <h2 class="tituloprincipal">
-        <i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!
-      </h2>
+      <div class="container-fluid d-flex align-items-center justify-content-between">
+        <h2 class="tituloprincipal m-0">
+          <i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!
+        </h2>
+
+        <div id="usuario-area" class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button"
+            id="usuarioMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle"></i>
+            <span id="usuario-nome" class="fw-semibold"></span>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioMenuButton">
+            <li>
+              <h6 class="dropdown-header">Conta</h6>
+            </li>
+            <li><button class="dropdown-item" type="button" disabled>Perfil (em breve)</button></li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <button class="dropdown-item text-danger" type="button" id="btnLogout">
+                Sair
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
     </nav>
 
     <main class="content">
@@ -159,16 +161,12 @@
               <div class="col-6 h-100">
                 <section class="custom-card">
                   <div class="subcardAPI h-100">
-                    <a href="apiimagem.html"
-                      ><img src="../assets/APIIMAGEM.webp" alt="apiimagem"
-                    /></a>
+                    <a href="apiimagem.html"><img src="../assets/APIIMAGEM.webp" alt="apiimagem" /></a>
                   </div>
                 </section>
               </div>
               <div class="col-6 h-100">
-                <section
-                  class="custom-card h-100 d-flex flex-column justify-content-between"
-                >
+                <section class="custom-card h-100 d-flex flex-column justify-content-between">
                   <div class="subcardPHSolo">
                     <div class="sensor-title">
                       <i class="fas fa-flask sensor-icon"></i>
@@ -228,6 +226,23 @@
       </button>
     </div>
 
+
+
+    <!-- Popup de confirmação de logout -->
+    <div id="logout-popup" class="feedback hidden">
+      <div class="feedback__content">
+        <p id="logout-message">Você deseja sair da sua conta?</p>
+        <div class="feedback__actions">
+          <button id="logout-confirm" type="button" class="btn btn-sm btn-danger">
+            Sair
+          </button>
+          <button id="logout-cancel" type="button" class="btn btn-sm btn-secondary">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/justgage@1.6.1/justgage.min.js"></script>
@@ -235,4 +250,5 @@
 
     <script src="../js/Lavouras.js" defer></script>
   </body>
+
 </html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Cadastro</title>
+
+    <link rel="stylesheet" href="../css/LoginCadastro.css" />
+  </head>
+
+  <body>
+    <section class="containerPai">
+      <div class="card loginActive">
+        <div class="esquerda">
+          <div class="FormLogin">
+            <h2>Fazer Login</h2>
+            <form method="POST" action="/login">
+              <input type="email" name="email" placeholder="E-mail" required autofocus/>
+              <input type="password" name="senha" placeholder="Senha" required />
+              <button type="submit">Entrar</button>
+            </form>
+          </div>
+
+          <div class="FacaLogin">
+            <h2>Já tem <br />uma conta?</h2>
+            <p>Entre na sua conta para acessar a plataforma.</p>
+            <button type="button" class="loginButton">Faça login</button>
+          </div>
+        </div>
+
+        <div class="direita">
+          <div class="formCadastro">
+            <h2>Cadastro</h2>
+            <form method="POST" action="/cadastro">
+              <input type="text" name="nome" placeholder="Nome" required />
+              <input type="email" name="email" placeholder="E-mail" required />
+              <input type="tel" name="telefone" placeholder="Telefone" />
+              <input type="password" name="senha" placeholder="Senha" required />
+              <input type="password" name="confirmaSenha" placeholder="Confirme a senha" required />
+              <button type="submit">Cadastrar</button>
+            </form>
+          </div>
+
+          <div class="FacaCadastro">
+            <h2>
+              Não tem <br />
+              uma conta?
+            </h2>
+            <p>Cadastre-se para ter acesso à plataforma.</p>
+            <button type="button" class="cadastroButton">Cadastre-se</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popup de feedback -->
+    <div id="feedback" class="feedback hidden">
+      <div class="feedback__content">
+        <p id="feedback-message"></p>
+        <button type="button" id="feedback-close">OK</button>
+      </div>
+    </div>
+
+    <!-- Popup de usuário não autenticado / sessão expirada -->
+    <div id="auth-popup" class="feedback hidden">
+      <div class="feedback__content auth-popup-content">
+        <p class="feedback__text">
+          Sua sessão expirou ou você não está autenticado.<br />
+          Faça login para continuar.
+        </p>
+
+        <div class="feedback__actions">
+          <button id="auth-popup-ok" type="button" class="feedback__button">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="../js/LoginCadastro.js" defer></script>
+
+    <!-- Script para exibir o popup de autenticação baseado no parâmetro URL -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const authFlag = params.get("auth");
+
+        if (authFlag === "0") {
+          const popup = document.getElementById("auth-popup");
+          const btnOk = document.getElementById("auth-popup-ok");
+
+          if (popup && btnOk) {
+            popup.classList.remove("hidden");
+
+            btnOk.addEventListener("click", () => {
+              popup.classList.add("hidden");
+
+              // Remove o parâmetro ?auth=0 da URL (limpa a barra do navegador)
+              const url = new URL(window.location.href); // Cria um objeto URL
+              url.searchParams.delete("auth"); // Remove o parâmetro 'auth'
+              window.history.replaceState({}, "", url.pathname + url.search); // Atualiza a URL sem recarregar a página
+              //Foco no campo de email da tela de login
+              document.querySelector('.loginActive .esquerda input[name="email"]').focus();
+            });
+          }
+        }
+      });
+    </script>
+
+  </body>
+
+</html>

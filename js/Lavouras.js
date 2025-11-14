@@ -1,3 +1,77 @@
+document.addEventListener("DOMContentLoaded", async () => {
+  const userArea = document.getElementById("usuario-area");
+  const nomeSpan = document.getElementById("usuario-nome");
+  const btnLogout = document.getElementById("btnLogout");
+
+  const logoutPopup = document.getElementById("logout-popup");
+  const logoutConfirm = document.getElementById("logout-confirm");
+  const logoutCancel = document.getElementById("logout-cancel");
+
+  // 1) Verificar sessão do usuário
+  try {
+    const resp = await fetch("/api/sessao", { credentials: "same-origin" });
+
+    if (!resp.ok) {
+      window.location.href = "/";
+      return;
+    }
+
+    const data = await resp.json();
+
+    if (!data.authenticated || !data.user) {
+      window.location.href = "/";
+      return;
+    }
+
+    if (nomeSpan) {
+      nomeSpan.textContent = data.user.nome || data.user.email || "Usuário";
+    }
+    if (userArea) {
+      userArea.classList.remove("d-none");
+    }
+  } catch (error) {
+    console.error("Erro ao verificar sessão:", error);
+    window.location.href = "/";
+    return;
+  }
+
+  // 2) Popup de logout
+  if (btnLogout && logoutPopup && logoutConfirm && logoutCancel) {
+    // Abrir popup ao clicar em "Sair"
+    btnLogout.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // evita conflito com o dropdown
+      logoutPopup.classList.remove("hidden");
+    });
+
+    // Cancelar
+    logoutCancel.addEventListener("click", () => {
+      logoutPopup.classList.add("hidden");
+    });
+
+    // Confirmar
+    logoutConfirm.addEventListener("click", async () => {
+      try {
+        await fetch("/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+        });
+
+        logoutPopup.classList.add("hidden");
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Erro ao fazer logout:", error);
+        logoutPopup.classList.add("hidden");
+        window.location.href = "/";
+      }
+    });
+  } else {
+    console.error("Elementos de logout não encontrados no DOM.");
+  }
+});
+
+
 /**
  * Aguarda o DOM ser totalmente carregado antes de executar
  * os scripts dos gráficos e sensores.
