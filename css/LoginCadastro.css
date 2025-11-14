@@ -222,11 +222,7 @@ p {
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.45);
-<<<<<<< HEAD
-  z-index: 2000;
-=======
   z-index: 999;
->>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
 }
 
 .feedback.hidden {
@@ -239,11 +235,7 @@ p {
   padding: 24px 32px;
   border-radius: 16px;
   min-width: 260px;
-<<<<<<< HEAD
-  max-width: 560px;
-=======
   max-width: 360px;
->>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
   text-align: center;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   
@@ -278,47 +270,3 @@ p {
   max-width: 100%;
   box-sizing: border-box;
 }
-<<<<<<< HEAD
-
-/
-
-/* Texto da mensagem */
-.feedback__text {
-  margin: 0;
-  font-size: 18px;
-  line-height: 1.4;
-  color: #ffffff;
-}
-
-/* Área do(s) botão(ões) */
-.feedback__actions {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-/* Botão padrão do popup */
-.feedback__button {
-  padding: 10px 40px;
-  border-radius: 999px;
-  border: none;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  background: #38c172;          /* verde ou a cor que você usa nos outros */
-  color: #0b1220;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-}
-
-.feedback__button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  opacity: 0.95;
-}
-
-/* Utilitário para esconder popups */
-.hidden {
-  display: none;
-}
-=======
->>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
