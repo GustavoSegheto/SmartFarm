@@ -1,17 +1,31 @@
+<<<<<<< HEAD
+=======
+// js/Lavouras.js
+"use strict";
+
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
 document.addEventListener("DOMContentLoaded", async () => {
   const userArea = document.getElementById("usuario-area");
   const nomeSpan = document.getElementById("usuario-nome");
   const btnLogout = document.getElementById("btnLogout");
 
+<<<<<<< HEAD
   const logoutPopup = document.getElementById("logout-popup");
   const logoutConfirm = document.getElementById("logout-confirm");
   const logoutCancel = document.getElementById("logout-cancel");
 
   // 1) Verificar sessão do usuário
+=======
+  // 1) Checa sessão
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
   try {
     const resp = await fetch("/api/sessao", { credentials: "same-origin" });
 
     if (!resp.ok) {
+<<<<<<< HEAD
+=======
+      // não autenticado -> volta para login
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
       window.location.href = "/";
       return;
     }
@@ -23,6 +37,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    // Sessão ok: preenche nome e mostra área do usuário
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
     if (nomeSpan) {
       nomeSpan.textContent = data.user.nome || data.user.email || "Usuário";
     }
@@ -35,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+<<<<<<< HEAD
   // 2) Popup de logout
   if (btnLogout && logoutPopup && logoutConfirm && logoutCancel) {
     // Abrir popup ao clicar em "Sair"
@@ -53,11 +72,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     logoutConfirm.addEventListener("click", async () => {
       try {
         await fetch("/logout", {
+=======
+  // 2) Logout
+  if (btnLogout) {
+    btnLogout.addEventListener("click", async () => {
+      const desejaSair = window.confirm("Você deseja sair da sua conta?");
+
+      if (!desejaSair) {
+        // Usuário cancelou o logout
+        return;
+      }
+
+      try {
+        const resp = await fetch("/logout", {
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "same-origin",
         });
 
+<<<<<<< HEAD
         logoutPopup.classList.add("hidden");
         window.location.href = "/";
       } catch (error) {
@@ -72,6 +106,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
+=======
+        // Independente do resultado, redireciona para a tela inicial
+        window.location.href = "/";
+      } catch (_) {
+        // Em caso de erro na requisição, força o retorno ao index
+        window.location.href = "/";
+      }
+    });
+  }
+
+});
+
+
+
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
 /**
  * Aguarda o DOM ser totalmente carregado antes de executar
  * os scripts dos gráficos e sensores.

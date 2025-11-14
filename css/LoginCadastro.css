@@ -222,7 +222,11 @@ p {
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.45);
+<<<<<<< HEAD
   z-index: 2000;
+=======
+  z-index: 999;
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
 }
 
 .feedback.hidden {
@@ -235,7 +239,11 @@ p {
   padding: 24px 32px;
   border-radius: 16px;
   min-width: 260px;
+<<<<<<< HEAD
   max-width: 560px;
+=======
+  max-width: 360px;
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
   text-align: center;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   
@@ -270,6 +278,7 @@ p {
   max-width: 100%;
   box-sizing: border-box;
 }
+<<<<<<< HEAD
 
 /
 
@@ -311,3 +320,5 @@ p {
 .hidden {
   display: none;
 }
+=======
+>>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
