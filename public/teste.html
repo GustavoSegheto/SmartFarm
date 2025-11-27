@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartFarm - Marketplace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Nexa", sans-serif;
+    }
+
+    @font-face {
+      font-family: "Nexa";
+      src: url(assets/Nexa\ Light.otf);
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: #f5f5f5;
+    }
+
+    /* Sidebar Superior */
+    .sidebarsuperior {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background-color: #2e7d32;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+    }
+
+    .sidebarsuperior h2 {
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .sidebarsuperior i {
+      margin-right: 10px;
+    }
+
+    .logout {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .logout:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Sidebar Lateral */
+    .sidebar {
+      position: fixed;
+      top: 70px;
+      left: 0;
+      width: 80px;
+      height: calc(100% - 70px);
+      background-color: #2e7d32;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      z-index: 998;
+    }
+
+    .sidebar a {
+      margin: 25px 0;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      transition: background-color 0.3s;
+      position: relative;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a img {
+      width: 30px;
+      height: 30px;
+      filter: brightness(0) invert(1);
+      transition: transform 0.2s, filter 0.2s;
+    }
+
+    .sidebar a:hover img {
+      transform: scale(1.1);
+    }
+
+    .icon-placeholder {
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2e7d32;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* Área de conteúdo do marketplace */
+    .content {
+      position: relative;
+      top: 70px;
+      left: 80px;
+      width: calc(100% - 80px);
+      height: calc(100% - 70px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #2e7d32;
+    }
+
+    /* Header do marketplace */
+    .marketplace-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .marketplace-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .marketplace-title h1 {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .minilogosmart {
+      width: 50px;
+    }
+
+    .marketplace-subtitle {
+      font-size: 18px;
+      color: #2e7d32;
+      opacity: 0.8;
+    }
+
+    /* Card único do produto */
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+      width: 300px;
+      margin: 0 auto;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-image {
+      height: 200px;
+      background: linear-gradient(135deg, #e7ebe7de 0%, #09e6145d 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .product-image i {
+      font-size: 70px;
+      color: #4CAF50;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #4CAF50;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .product-info {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .product-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #1e1e1e;
+    }
+
+    .product-description {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .product-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    .product-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .add-to-cart {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 25px;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .add-to-cart:hover {
+      background: #3d8b40;
+    }
+
+    .favorite-btn {
+      background: transparent;
+      border: 2px solid #4CAF50;
+      color: #4CAF50;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .favorite-btn.active {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .favorite-btn:hover {
+      background: #4CAF50;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Topbar COM FOLHA -->
+  <nav class="sidebarsuperior">
+    <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
+    <div class="logout"> <img src="assets/ZLogout.png" alt="logout"></div>
+  </nav>
+
+  <!-- Sidebar Lateral COMPLETA -->
+  <nav class="sidebar">
+    <a href="Lavouras.html" title="Plantações">
+      <img src="assets/ZLavouras2.webp" alt="Plantações" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZL</div>
+    </a>
+
+    <a href="Estufa.html" title="Estufa">
+      <img src="assets/ZEstufa2.webp" alt="Estufa" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZE</div>
+    </a>
+
+    <a href="Irrigacao.html" title="Irrigação">
+      <img src="assets/ZIrrigacao2.webp" alt="Irrigação" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZI</div>
+    </a>
+
+    <a href="Marketplace.html" title="Marketplace">
+      <img src="assets/ZMarketplace2.webp" alt="Marketplace" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZM</div>
+    </a>
+
+    <a href="Relatorios.html" title="Relatórios">
+      <img src="assets/ZRelatorios2.webp" alt="Relatórios" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="icon-placeholder" style="display: none;">ZR</div>
+    </a>
+  </nav>
+
+  <!-- Área de Conteúdo do Marketplace -->
+  <div class="content">
+    <div class="marketplace-header">
+      <div class="marketplace-title">
+        <h1>Marketplace SmartFarm</h1>
+      </div>
+      <p class="marketplace-subtitle">Produtos de qualidade para sua agricultura</p>
+    </div>
+
+    <!-- Card único do produto -->
+    <div class="product-card">
+      <div class="product-image">
+        <div class="product-badge">Mais Vendido</div>
+        <i class="fas fa-tint"></i>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Sensor de Umidade</div>
+        <div class="product-description">Sensor preciso para medição de umidade do solo, ideal para agricultura de precisão e monitoramento remoto.</div>
+        <div class="product-price">R$ 89,90</div>
+        <div class="product-actions">
+          <button class="add-to-cart"><i class="fas fa-shopping-cart"></i> Comprar</button>
+          <button class="favorite-btn"><i class="far fa-heart"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Interatividade básica
+    document.addEventListener('DOMContentLoaded', function() {
+      // Alternar favorito
+      const favoriteBtn = document.querySelector('.favorite-btn');
+      favoriteBtn.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        if (icon.classList.contains('far')) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          this.classList.add('active');
+        } else {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+          this.classList.remove('active');
+        }
+      });
+
+      // Adicionar ao carrinho
+      const addToCartBtn = document.querySelector('.add-to-cart');
+      addToCartBtn.addEventListener('click', function() {
+        // Efeito visual
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+        this.style.background = '#2e7d32';
+        
+        setTimeout(() => {
+          this.innerHTML = originalText;
+          this.style.background = '#4CAF50';
+        }, 1500);
+      });
+    });
+  </script>
+</body>
+</html>
