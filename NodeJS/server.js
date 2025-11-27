@@ -3,126 +3,13 @@
 //testando
 const express = require("express");
 const path = require("path");
-<<<<<<< HEAD
-const session = require("express-session");
-const bcrypt = require("bcryptjs");
-const db = require("./config/conexao"); // conexão já existente
-=======
 const bcrypt = require("bcryptjs");
 const db = require("./config/conexao");
 const session = require("express-session"); // <--- NOVO
->>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-<<<<<<< HEAD
-/* ============================================================
- * HELPER PARA CONSULTAS AO BANCO (aceita promise OU callback)
- * ============================================================ */
-
-/**
- * runQuery(sql, params)
- * - Se db.query retornar Promise (mysql2/promise), usamos await.
- * - Se for estilo callback (mysql), encapsulamos em Promise.
- */
-async function runQuery(sql, params = []) {
-  // Tentativa de detectar assinatura: 2 argumentos → estilo promise
-  if (db.query.length <= 2) {
-    // db.query(sql, params) → Promise<[rows, fields]>
-    const [rows] = await db.query(sql, params);
-    return rows;
-  }
-
-  // 3 argumentos → estilo callback: db.query(sql, params, callback)
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (err, results) => {
-      if (err) return reject(err);
-      resolve(results);
-    });
-  });
-}
-
-/* ============================================================
- * MIDDLEWARES BÁSICOS
- * ============================================================ */
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Sessão
-app.use(
-  session({
-    secret: "um-segredo-bem-forte-aqui", // em produção, usar variável de ambiente
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 1000 * 60 * 60, // 1h
-      httpOnly: true,
-      sameSite: "lax",
-    },
-  })
-);
-
-// Evitar cache (principalmente em páginas protegidas)
-app.use((req, res, next) => {
-  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
-  res.set("Pragma", "no-cache");
-  res.set("Expires", "0");
-  next();
-});
-
-// Log de requisições para depuração
-app.use((req, res, next) => {
-  console.log(
-    `[REQ] ${req.method} ${req.url}  user=`,
-    req.session?.user || null
-  );
-  next();
-});
-
-/* ============================================================
- * ARQUIVOS ESTÁTICOS (apenas CSS / JS / ASSETS)
- * ============================================================ *
- * Não exponho /public inteira para não permitir acesso direto
- * a Lavouras.html sem passar pela rota protegida.
- */
-
-app.use("/css", express.static(path.join(__dirname, "..", "css")));
-app.use("/js", express.static(path.join(__dirname, "..", "js")));
-app.use("/assets", express.static(path.join(__dirname, "..", "assets")));
-
-/* ============================================================
- * MIDDLEWARE DE AUTENTICAÇÃO
- * ============================================================ */
-
-function ensureAuthenticated(req, res, next) {
-  if (req.session && req.session.user) {
-    return next();
-  }
-
-  // Se for chamada de API (AJAX/JSON), responde 401 em JSON
-  const aceitaJson = req.xhr || (req.headers.accept || "").includes("application/json");
-  if (aceitaJson) {
-    return res.status(401).json({
-      authenticated: false,
-      message: "Usuário não autenticado.",
-    });
-  }
-
-  // Se for rota de página (como /lavouras), redireciona para o login com um flag
-  return res.redirect("/?auth=0");
-}
-
-
-/* ============================================================
- * ROTAS DE PÁGINA (HTML)
- * ============================================================ */
-
-// Tela inicial (login/cadastro)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
-=======
 console.log(">>> SERVER.JS DA PASTA NODEJS FOI CARREGADO <<<");
 
 // Middlewares para ler JSON e formulários
@@ -324,7 +211,6 @@ app.get("/api/usuarios", async (req, res) => {
       message: "Erro ao listar usuários.",
     });
   }
->>>>>>> a57b40f1e1b1546f75570f3467d2ed7c34026813
 });
 
 // Tela de Lavouras – PROTEGIDA
