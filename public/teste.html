@@ -1,384 +1,775 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SmartFarm - Marketplace</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Nexa", sans-serif;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartFarm - Avisos</title>
 
-    @font-face {
-      font-family: "Nexa";
-      src: url(assets/Nexa\ Light.otf);
-      font-weight: 300;
-      font-style: normal;
-    }
+  </head>
 
-    html, body {
-      height: 100%;
-      background-color: #f5f5f5;
-    }
+  <body>
+    <nav class="sidenav">
+      <a href="Lavouras.html" title="Plantações">
+        <img
+          src="../assets/ZLavouras2.webp"
+          alt="Plantações"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZL</div>
+      </a>
+      <a href="CadastroLavoura.html" title="Nova Lavoura">
+        <img
+          src="../assets/ZNovalavoura2.webp"
+          alt="Nova Lavoura"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZN</div>
+      </a>
+      <a href="Historico.html" title="Calendário">
+        <img
+          src="../assets/ZCalendario2.webp"
+          alt="Calendário"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Avisos.html" title="Alertas">
+        <img
+          src="../assets/ZAvisos2.webp"
+          alt="Alertas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZA</div>
+      </a>
+      <a href="Cotas.html" title="Cotas">
+        <img
+          src="../assets/ZCifrao.png"
+          alt="Cotas"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZC</div>
+      </a>
+      <a href="Marketplace.html" title="Estoque">
+        <img
+          src="../assets/ZMarketplace2.webp"
+          alt="Estoque"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <div class="icon-placeholder" style="display: none">ZM</div>
+      </a>
+    </nav>
 
-    /* Sidebar Superior */
-    .sidebarsuperior {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 70px;
-      background-color: #2e7d32;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      z-index: 999;
-    }
+    <nav class="topbar">
+      <h2><i class="fas fa-leaf"></i> AVISOS</h2>
 
-    .sidebarsuperior h2 {
-      font-weight: 300;
-      letter-spacing: 1px;
-    }
+      <!-- Área do usuário: começa oculta e é exibida via JS ao confirmar login -->
+      <div id="usuario-area" class="dropdown d-none">
+        <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button"
+          id="usuarioMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-circle"></i>
+          <span id="usuario-nome" class="fw-semibold">Usuário</span>
+        </button>
 
-    .sidebarsuperior i {
-      margin-right: 10px;
-    }
-
-    .logout {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .logout:hover {
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    /* Sidebar Lateral */
-    .sidebar {
-      position: fixed;
-      top: 70px;
-      left: 0;
-      width: 80px;
-      height: calc(100% - 70px);
-      background-color: #2e7d32;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 20px;
-      z-index: 998;
-    }
-
-    .sidebar a {
-      margin: 25px 0;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      transition: background-color 0.3s;
-      position: relative;
-    }
-
-    .sidebar a:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar a img {
-      width: 30px;
-      height: 30px;
-      filter: brightness(0) invert(1);
-      transition: transform 0.2s, filter 0.2s;
-    }
-
-    .sidebar a:hover img {
-      transform: scale(1.1);
-    }
-
-    .icon-placeholder {
-      width: 30px;
-      height: 30px;
-      background-color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2e7d32;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    /* Área de conteúdo do marketplace */
-    .content {
-      position: relative;
-      top: 70px;
-      left: 80px;
-      width: calc(100% - 80px);
-      height: calc(100% - 70px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      color: #2e7d32;
-    }
-
-    /* Header do marketplace */
-    .marketplace-header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .marketplace-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 10px;
-    }
-
-    .marketplace-title h1 {
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: 1px;
-    }
-
-    .minilogosmart {
-      width: 50px;
-    }
-
-    .marketplace-subtitle {
-      font-size: 18px;
-      color: #2e7d32;
-      opacity: 0.8;
-    }
-
-    /* Card único do produto */
-    .product-card {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s, box-shadow 0.3s;
-      width: 300px;
-      margin: 0 auto;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .product-image {
-      height: 200px;
-      background: linear-gradient(135deg, #e7ebe7de 0%, #09e6145d 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    .product-image i {
-      font-size: 70px;
-      color: #4CAF50;
-    }
-
-    .product-badge {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: #4CAF50;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .product-info {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .product-name {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #1e1e1e;
-    }
-
-    .product-description {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    .product-price {
-      font-size: 24px;
-      font-weight: bold;
-      color: #4CAF50;
-      margin-bottom: 20px;
-    }
-
-    .product-actions {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    .add-to-cart {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 12px 25px;
-      cursor: pointer;
-      transition: background 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .add-to-cart:hover {
-      background: #3d8b40;
-    }
-
-    .favorite-btn {
-      background: transparent;
-      border: 2px solid #4CAF50;
-      color: #4CAF50;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .favorite-btn.active {
-      background: #4CAF50;
-      color: white;
-    }
-
-    .favorite-btn:hover {
-      background: #4CAF50;
-      color: white;
-    }
-  </style>
-</head>
-
-<body>
-  <!-- Topbar COM FOLHA -->
-  <nav class="sidebarsuperior">
-    <h2><i class="fas fa-leaf"></i> BEM-VINDO AO SMARTFARM!</h2>
-    <div class="logout"> <img src="assets/ZLogout.png" alt="logout"></div>
-  </nav>
-
-  <!-- Sidebar Lateral COMPLETA -->
-  <nav class="sidebar">
-    <a href="Lavouras.html" title="Plantações">
-      <img src="assets/ZLavouras2.webp" alt="Plantações" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="icon-placeholder" style="display: none;">ZL</div>
-    </a>
-
-    <a href="Estufa.html" title="Estufa">
-      <img src="assets/ZEstufa2.webp" alt="Estufa" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="icon-placeholder" style="display: none;">ZE</div>
-    </a>
-
-    <a href="Irrigacao.html" title="Irrigação">
-      <img src="assets/ZIrrigacao2.webp" alt="Irrigação" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="icon-placeholder" style="display: none;">ZI</div>
-    </a>
-
-    <a href="Marketplace.html" title="Marketplace">
-      <img src="assets/ZMarketplace2.webp" alt="Marketplace" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="icon-placeholder" style="display: none;">ZM</div>
-    </a>
-
-    <a href="Relatorios.html" title="Relatórios">
-      <img src="assets/ZRelatorios2.webp" alt="Relatórios" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="icon-placeholder" style="display: none;">ZR</div>
-    </a>
-  </nav>
-
-  <!-- Área de Conteúdo do Marketplace -->
-  <div class="content">
-    <div class="marketplace-header">
-      <div class="marketplace-title">
-        <h1>Marketplace SmartFarm</h1>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="usuarioMenuButton">
+          <li>
+            <h6 class="dropdown-header">Conta</h6>
+          </li>
+          <!-- Exemplo de item extra de conta; pode ser removido ou implementado depois -->
+          <li>
+            <button class="dropdown-item" type="button" disabled>
+              Perfil (em breve)
+            </button>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <button class="dropdown-item text-danger" type="button" id="btnLogout">
+              Sair
+            </button>
+          </li>
+        </ul>
       </div>
-      <p class="marketplace-subtitle">Produtos de qualidade para sua agricultura</p>
     </div>
 
-    <!-- Card único do produto -->
-    <div class="product-card">
-      <div class="product-image">
-        <div class="product-badge">Mais Vendido</div>
-        <i class="fas fa-tint"></i>
-      </div>
-      <div class="product-info">
-        <div class="product-name">Sensor de Umidade</div>
-        <div class="product-description">Sensor preciso para medição de umidade do solo, ideal para agricultura de precisão e monitoramento remoto.</div>
-        <div class="product-price">R$ 89,90</div>
-        <div class="product-actions">
-          <button class="add-to-cart"><i class="fas fa-shopping-cart"></i> Comprar</button>
-          <button class="favorite-btn"><i class="far fa-heart"></i></button>
+    </nav>
+        
+    <main class="content">
+      <section class="card">
+        <div class="avisos-container">
+          <h2 class="avisos-titulo">Avisos</h2>
+
+          <div class="filtro-status">
+            <button class="botao-filtro todos ativo" data-filtro="todos">
+              <i class="fas fa-list"></i> Todos
+            </button>
+            <button class="botao-filtro verde" data-filtro="verde">
+              <i class="fas fa-check-circle"></i> Verde
+            </button>
+            <button class="botao-filtro amarelo" data-filtro="amarelo">
+              <i class="fas fa-exclamation-triangle"></i> Amarelo
+            </button>
+            <button class="botao-filtro vermelho" data-filtro="vermelho">
+              <i class="fas fa-times-circle"></i> Vermelho
+            </button>
+          </div>
+
+          <table class="avisos-tabela">
+            <thead>
+              <tr>
+                <th>LAVOURA</th>
+                <th>STATUS</th>
+                <th>DATA</th>
+                <th>HORA</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-avisos">
+              <tr data-status="vermelho">
+                <td class="lavoura-nome">LAVOURA DE MILHO 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status vermelho"></span>
+                    <span class="status-seco">SECO</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="verde">
+                <td class="lavoura-nome">LAVOURA DE FEIJÃO 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status verde"></span>
+                    <span class="status-pronto">Pronto a colheita</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="amarelo">
+                <td class="lavoura-nome">LAVOURA DE BATATA 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status amarelo"></span>
+                    <span class="status-regar">PRECISANDO REGAR</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="vermelho">
+                <td class="lavoura-nome">LAVOURA DE LIMÃO 1</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status vermelho"></span>
+                    <span class="status-seco">SECO</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="verde">
+                <td class="lavoura-nome">LAVOURA DE FEIJÃO 2</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status verde"></span>
+                    <span class="status-pronto">Pronto a colheita</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="amarelo">
+                <td class="lavoura-nome">LAVOURA DE BATATA 2</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status amarelo"></span>
+                    <span class="status-regar">PRECISANDO REGAR</span>
+                  </div>
+                </td>
+                <td class="data-hora">11/09/2001</td>
+                <td class="data-hora">12:32</td>
+              </tr>
+              <tr data-status="verde">
+                <td class="lavoura-nome">LAVOURA DE MILHO 2</td>
+                <td>
+                  <div class="status-texto">
+                    <span class="status verde"></span>
+                    <span class="status-normal">Normal</span>
+                  </div>
+                </td>
+                <td class="data-hora">-</td>
+                <td class="data-hora">-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="catalogo-container">
+            <button class="botao-catalogo ativo" data-pagina="1">1</button>
+            <button class="botao-catalogo" data-pagina="2">2</button>
+            <button class="botao-catalogo" data-pagina="3">3</button>
+            <button class="botao-catalogo" data-pagina="4">4</button>
+            <button class="botao-catalogo" data-pagina="5">5</button>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </section>
+    </main>
 
-  <script>
-    // Interatividade básica
-    document.addEventListener('DOMContentLoaded', function() {
-      // Alternar favorito
-      const favoriteBtn = document.querySelector('.favorite-btn');
-      favoriteBtn.addEventListener('click', function() {
-        const icon = this.querySelector('i');
-        if (icon.classList.contains('far')) {
-          icon.classList.remove('far');
-          icon.classList.add('fas');
-          this.classList.add('active');
+    <script src="../js/Avisos.js" defer></script>
+  </body>
+</html>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Nexa", sans-serif;
+}
+
+@font-face {
+  font-family: "Nexa";
+  /* CAMINHO CORRIGIDO: Aponta para a pasta assets/ */
+  src: url(../assets/Nexa\ Light.otf);
+  font-weight: 300;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
+}
+
+/* --- Layout (Topbar/Sidenav) --- */
+/* ATENÇÃO: CSS duplicado. Considere um 'layout.css' compartilhado. */
+
+.topbar {
+  /* Antigo .sidebarsuperior */
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #1e1e1e;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.topbar h2 {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar h2 i {
+  color: #4caf50;
+  font-size: 28px;
+}
+
+.sidenav {
+  /* Antigo .sidebar */
+  width: 70px;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 70px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+  position: fixed;
+  height: 100vh;
+  z-index: 999;
+}
+
+.logout {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.logout img {
+  width: 100%;
+  height: 100%;
+}
+
+.logout:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.sidenav a {
+  margin: 25px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 90px;
+  text-decoration: none;
+  position: relative;
+}
+
+.sidenav a img {
+  width: 40px;
+  height: 40px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.sidenav a:hover img {
+  transform: scale(1.2);
+  filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(90deg)
+    brightness(120%) contrast(95%);
+}
+
+.sidenav a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: #4caf50;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.sidenav a:hover::after {
+  width: 30px;
+}
+
+.icon-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #333;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+/* --- Fim do CSS de Layout Compartilhado --- */
+
+/* --- Área de Conteúdo (Avisos) --- */
+main.content {
+  position: relative;
+  top: 70px;
+  left: 70px;
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #2e7d32;
+  padding: 20px;
+  overflow-y: auto; /* Permite rolagem se o card for maior */
+}
+
+section.card {
+  width: 95%;
+  height: 85vh;
+  background-color: #2c2c2c;
+  border-radius: 32px;
+  padding: 32px 20px;
+  position: relative;
+  overflow: hidden; /* Controla o overflow interno */
+  text-align: center;
+  margin-top: 30px;
+  display: flex; /* Para centralizar o container */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.avisos-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avisos-titulo {
+  color: #ffffff;
+  font-size: 28px;
+  margin-bottom: 25px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+/* --- Filtros de Status --- */
+.filtro-status {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+  flex-shrink: 0;
+}
+
+.botao-filtro {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botao-filtro.todos {
+  background-color: #555;
+  color: white;
+}
+
+.botao-filtro.verde {
+  background-color: #4caf50;
+  color: white;
+}
+
+.botao-filtro.amarelo {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.botao-filtro.vermelho {
+  background-color: #f44336;
+  color: white;
+}
+
+.botao-filtro:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Classe 'ativo' é controlada via JS */
+.botao-filtro.ativo {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Tabela de Avisos --- */
+/* Wrapper para permitir rolagem da tabela */
+.tabela-wrapper {
+  width: 95%;
+  flex: 1; /* Ocupa o espaço restante */
+  overflow-y: auto; /* Permite rolagem SÓ da tabela */
+  border-radius: 12px;
+  background: #3a3a3a;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  overflow-x: hidden; /* Evita rolagem horizontal desnecessária */
+}
+
+.avisos-tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.avisos-tabela thead {
+  background: #4caf50;
+  position: sticky; /* Cabeçalho fixo */
+  top: 0;
+  z-index: 10;
+}
+
+.avisos-tabela th {
+  padding: 16px 12px;
+  text-align: center;
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  border-bottom: 2px solid #45a049;
+}
+
+.avisos-tabela tbody tr {
+  border-bottom: 1px solid #555;
+  transition: background-color 0.2s;
+}
+
+.avisos-tabela tbody tr:last-child {
+  border-bottom: none; /* Remove borda da última linha */
+}
+
+.avisos-tabela tbody tr:hover {
+  background: #4a4a4a;
+}
+
+.avisos-tabela td {
+  padding: 14px 12px;
+  color: #e0e0e0;
+  font-size: 14px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.lavoura-nome {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* --- Status (Ícones e Texto) --- */
+.status {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status.verde {
+  background-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+.status.amarelo {
+  background-color: #ffc107;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.status.vermelho {
+  background-color: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+}
+
+.status-texto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.status-seco {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.status-pronto {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.status-regar {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.status-normal {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.data-hora {
+  color: #b0b0b0;
+  font-size: 13px;
+}
+
+/* --- Paginação (Catálogo) --- */
+.catalogo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.botao-catalogo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.botao-catalogo:hover {
+  transform: scale(1.1);
+  background-color: #45a049;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.botao-catalogo.ativo {
+  background-color: #2e7d32;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Scrollbar --- */
+.tabela-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.tabela-wrapper::-webkit-scrollbar-track {
+  background: #3a3a3a;
+  border-radius: 4px;
+}
+.tabela-wrapper::-webkit-scrollbar-thumb {
+  background: #4caf50;
+  border-radius: 4px;
+}
+.tabela-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #2e7d32;
+}
+
+</style>
+
+<script>
+  /**
+ * Aguarda o DOM ser totalmente carregado antes de adicionar
+ * os event listeners (ouvintes de eventos).
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Seleção dos Elementos ---
+  const botoesFiltro = document.querySelectorAll(".botao-filtro");
+  const botoesPagina = document.querySelectorAll(".botao-catalogo");
+  const tabelaAvisos = document.getElementById("tabela-avisos");
+  const linhasTabela = tabelaAvisos ? tabelaAvisos.querySelectorAll("tr") : [];
+
+  // --- Lógica de Filtragem ---
+  botoesFiltro.forEach((botao) => {
+    botao.addEventListener("click", () => {
+      const statusFiltro = botao.getAttribute("data-filtro");
+
+      // 1. Atualiza a classe 'ativo' nos botões de filtro
+      botoesFiltro.forEach((btn) => btn.classList.remove("ativo"));
+      botao.classList.add("ativo");
+
+      // 2. Filtra as linhas da tabela
+      linhasTabela.forEach((linha) => {
+        const statusLinha = linha.getAttribute("data-status");
+
+        if (statusFiltro === "todos" || statusFiltro === statusLinha) {
+          linha.style.display = ""; // Mostra a linha
         } else {
-          icon.classList.remove('fas');
-          icon.classList.add('far');
-          this.classList.remove('active');
+          linha.style.display = "none"; // Esconde a linha
         }
       });
-
-      // Adicionar ao carrinho
-      const addToCartBtn = document.querySelector('.add-to-cart');
-      addToCartBtn.addEventListener('click', function() {
-        // Efeito visual
-        const originalText = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
-        this.style.background = '#2e7d32';
-        
-        setTimeout(() => {
-          this.innerHTML = originalText;
-          this.style.background = '#4CAF50';
-        }, 1500);
-      });
     });
-  </script>
-</body>
-</html>
+  });
+
+  // --- Lógica de Paginação ---
+  botoesPagina.forEach((botao) => {
+    botao.addEventListener("click", () => {
+      const numeroPagina = botao.getAttribute("data-pagina");
+
+      // 1. Atualiza a classe 'ativo' nos botões de página
+      botoesPagina.forEach((btn) => btn.classList.remove("ativo"));
+      botao.classList.add("ativo");
+
+      // 2. Lógica futura para carregar dados
+      // (O Node.js/Backend entraria aqui)
+      console.log(`Página ${numeroPagina} selecionada.`);
+      // Exemplo: carregarDadosDaPagina(numeroPagina);
+
+      // Por enquanto, apenas simula a troca de página
+      // (pode-se adicionar um 'alert' ou nada)
+    });
+  });
+
+  // Função futura (exemplo para Node.js):
+  // async function carregarDadosDaPagina(pagina) {
+  //   const response = await fetch(`/api/avisos?pagina=${pagina}`);
+  //   const novosAvisos = await response.json();
+  //
+  //   // Limpa a tabela e preenche com os novosAvisos
+  //   tabelaAvisos.innerHTML = '';
+  //   // ... (cria novas <tr> com os dados)
+  // }
+});
+
+
+
+
+
+"use strict";
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const userArea = document.getElementById("usuario-area");
+  const nomeSpan = document.getElementById("usuario-nome");
+  const btnLogout = document.getElementById("btnLogout");
+
+  // 1) Checa sessão
+  try {
+    const resp = await fetch("/api/sessao", { credentials: "same-origin" });
+
+    if (!resp.ok) {
+      // não autenticado -> volta para login
+      window.location.href = "/";
+      return;
+    }
+
+    const data = await resp.json();
+
+    if (!data.authenticated || !data.user) {
+      window.location.href = "/";
+      return;
+    }
+
+    // Sessão ok: preenche nome e mostra área do usuário
+    if (nomeSpan) {
+      nomeSpan.textContent = data.user.nome || data.user.email || "Usuário";
+    }
+    if (userArea) {
+      userArea.classList.remove("d-none");
+    }
+  } catch (error) {
+    console.error("Erro ao verificar sessão:", error);
+    window.location.href = "/";
+    return;
+  }
+
+  // 2) Logout
+  if (btnLogout) {
+    btnLogout.addEventListener("click", async () => {
+      const desejaSair = window.confirm("Você deseja sair da sua conta?");
+
+      if (!desejaSair) {
+        // Usuário cancelou o logout
+        return;
+      }
+
+      try {
+        const resp = await fetch("/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+        });
+
+        // Independente do resultado, redireciona para a tela inicial
+        window.location.href = "/";
+      } catch (_) {
+        // Em caso de erro na requisição, força o retorno ao index
+        window.location.href = "/";
+      }
+    });
+  }
+
+});
+</script>

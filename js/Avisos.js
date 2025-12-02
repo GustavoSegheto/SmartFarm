@@ -60,3 +60,4 @@ document.addEventListener("DOMContentLoaded", () => {
   //   // ... (cria novas <tr> com os dados)
   // }
 });
+
