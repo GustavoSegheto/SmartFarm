@@ -51,7 +51,7 @@ app.get("/lavouras", ensureAuthenticated, (req, res) => {
 });
 
 // API para checar sessão
-app.get("/api/sessao", (req, res) => { 
+app.get("/api/sessao", (req, res) => {
   if (req.session && req.session.user) { // autenticado
     return res.json({
       authenticated: true,
@@ -66,7 +66,7 @@ app.get("/api/sessao", (req, res) => {
 // ====================================================================
 // ROTA DE LOGIN
 // ====================================================================
-app.post("/login", async (req, res) => { 
+app.post("/login", async (req, res) => {
   console.log("=== POST /login ===");
   console.log("Body recebido:", req.body);
 
@@ -85,9 +85,9 @@ app.post("/login", async (req, res) => {
       "SELECT ID_usuario, nome, email, senha FROM usuario WHERE email = ? LIMIT 1";
     const params = [email];
 
-    const [rows] = await db.query(sql, params); 
+    const [rows] = await db.query(sql, params);
 
-    if (!rows || rows.length === 0) { 
+    if (!rows || rows.length === 0) {
       // Nenhum usuário com esse e-mail
       return res.status(401).json({
         status: "error",
@@ -116,7 +116,7 @@ app.post("/login", async (req, res) => {
 
     console.log("[/login] Login OK para ID_usuario =", usuario.ID_usuario);
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       status: "success",
       message: "Login realizado com sucesso!",
       redirect: "/lavouras", // o front vai redirecionar para cá
@@ -217,3 +217,34 @@ app.get("/api/usuarios", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+//Request de latitude e longitude da lavoura
+import { weatherApi } from "./js/Lavouras.js"
+
+const weatherRequest = async () => {
+
+
+  const sql = "SELECT latitude, longitude FROM lavoura WHERE ID_lavoura = ?";
+  const params = [idLavoura];
+
+
+  try {
+    const [rows] = await db.query(sql, params);
+
+    if (!rows || rows.length === 0) {
+      return res.status(401).json({
+        status: "error",
+        message: "Erro em obter a latitude e longitude da lavoura",
+      });
+    }
+
+    weatherApi(latitude, longitude);
+
+  } catch (error) {
+    console.error("Erro: ", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro em obter a latitude e longitude da lavoura",
+    });
+  }
+}

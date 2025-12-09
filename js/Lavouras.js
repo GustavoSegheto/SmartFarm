@@ -309,3 +309,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+export const weatherApi = async (longitude, latitude) => {
+
+  const apiWeatherURL = `https://weather.googleapis.com/v1/forecast/days:lookup?key=${apiKey}&location.latitude=${lat}&location.longitude=${long}&days=${days}`;
+
+  const res = await fetch(apiWeatherURL);
+  const data = await res.json();
+
+  return data;
+
+}
