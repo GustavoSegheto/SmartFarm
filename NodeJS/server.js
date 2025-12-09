@@ -213,6 +213,239 @@ app.get("/api/usuarios", async (req, res) => {
   }
 });
 
+// Tela de Lavouras – PROTEGIDA
+app.get("/lavouras", ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "Lavouras.html"));
+});
+
+// Tela de Usuários – PROTEGIDA
+app.get("/usuarios", ensureAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "usuarios.html"));
+});
+
+// Bloqueio de acesso direto ao arquivo HTML
+app.get("/Lavouras.html", (req, res) => {
+  return res.redirect("/lavouras");
+});
+
+/* ============================================================
+ * APIS DE SESSÃO / AUTENTICAÇÃO
+ * ============================================================ */
+
+// Verificar sessão (usado em Lavouras.js)
+app.get("/api/sessao", (req, res) => {
+  if (req.session && req.session.user) {
+    return res.json({
+      authenticated: true,
+      user: req.session.user,
+    });
+  }
+  return res.status(401).json({ authenticated: false });
+});
+
+// Login
+app.post("/login", async (req, res) => {
+  console.log("=== POST /login ===");
+  console.log("Body recebido:", req.body);
+
+  const { email, senha } = req.body;
+
+  if (!email || !senha) {
+    return res.status(400).json({
+      status: "error",
+      message: "E-mail e senha são obrigatórios.",
+    });
+  }
+
+  try {
+    const sql =
+      "SELECT ID_usuario, nome, email, senha FROM usuario WHERE email = ? LIMIT 1";
+
+    const rows = await runQuery(sql, [email]);
+
+    if (!rows || rows.length === 0) {
+      return res.status(401).json({
+        status: "error",
+        message: "E-mail ou senha inválidos.",
+      });
+    }
+
+    const usuario = rows[0];
+
+    const senhaConfere = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaConfere) {
+      return res.status(401).json({
+        status: "error",
+        message: "E-mail ou senha inválidos.",
+      });
+    }
+
+    // Login OK → grava usuário na sessão
+    req.session.user = {
+      id: usuario.ID_usuario,
+      nome: usuario.nome,
+      email: usuario.email,
+    };
+
+    console.log("[/login] Login OK para ID_usuario =", usuario.ID_usuario);
+
+    return res.status(200).json({
+      status: "success",
+      message: "Login realizado com sucesso!",
+      redirect: "/lavouras",
+    });
+  } catch (error) {
+    console.error("[/login] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao realizar login.",
+    });
+  }
+});
+
+// Logout (usado pelo popup da Lavouras)
+app.post("/logout", (req, res) => {
+  console.log("[POST /logout] session.user antes =", req.session?.user || null);
+
+  if (!req.session) {
+    return res.json({
+      status: "success",
+      message: "Já estava deslogado.",
+    });
+  }
+
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("[/logout] ERRO ao destruir sessão:", err);
+      return res.status(500).json({
+        status: "error",
+        message: "Erro ao fazer logout.",
+      });
+    }
+
+    res.clearCookie("connect.sid");
+    return res.json({
+      status: "success",
+      message: "Logout realizado com sucesso.",
+    });
+  });
+});
+
+/* ============================================================
+ * APIS DE USUÁRIOS
+ * ============================================================ */
+
+// Cadastro de usuário
+app.post("/cadastro", async (req, res) => {
+  console.log("=== POST /cadastro ===");
+  console.log("Body recebido:", req.body);
+
+  const { nome, email, telefone, senha } = req.body;
+
+  if (!nome || !email || !senha) {
+    return res.status(400).json({
+      status: "error",
+      message: "Nome, e-mail e senha são obrigatórios.",
+    });
+  }
+
+  try {
+    const saltRounds = 10;
+    const senhaHash = await bcrypt.hash(senha, saltRounds);
+
+    const sql =
+      "INSERT INTO usuario (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
+    const params = [nome, email, senhaHash, telefone || null];
+
+    const result = await runQuery(sql, params);
+
+    console.log(
+      `[/cadastro] Usuário cadastrado com sucesso! ID: ${result.insertId || "?"}`
+    );
+
+    return res.status(201).json({
+      status: "success",
+      message: "Usuário cadastrado com sucesso!",
+    });
+  } catch (error) {
+    console.error("[/cadastro] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao registrar usuário.",
+    });
+  }
+});
+
+// Listar usuários (para usuarios.html) – protegido
+app.get("/api/usuarios", ensureAuthenticated, async (req, res) => {
+  try {
+    const sql =
+      "SELECT ID_usuario, nome, email, telefone FROM usuario ORDER BY nome";
+
+    const rows = await runQuery(sql);
+
+    return res.json({
+      status: "success",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("[/api/usuarios] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao listar usuários.",
+    });
+  }
+});
+
+// ====================================================================
+// API PARA DADOS DO SENSOR (GRÁFICO PIZZA)
+// ====================================================================
+app.get("/api/sensor/ultimo", ensureAuthenticated, async (req, res) => {
+  try {
+    // Busca a última leitura inserida (ordenada pelo ID decrescente)
+    const sql = `
+      SELECT nitrogenio, fosforo, potassio 
+      FROM info_sensor 
+      ORDER BY ID_info DESC 
+      LIMIT 1
+    `;
+    
+    const [rows] = await db.query(sql);
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({
+        status: "error",
+        message: "Nenhuma leitura de sensor encontrada.",
+      });
+    }
+
+    // Retorna os dados encontrados
+    return res.json({
+      status: "success",
+      data: rows[0],
+    });
+
+  } catch (error) {
+    console.error("[/api/sensor/ultimo] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar dados do sensor.",
+    });
+  }
+});
+
+/* ============================================================
+ * 404 GENÉRICO
+ * ============================================================ */
+
+app.use((req, res) => {
+  console.log("[404] Rota não encontrada:", req.method, req.url);
+  res.status(404).send("Página não encontrada.");
+});
+
+/* ============================================================
+ * SUBIDA DO SERVIDOR
+ * ============================================================ */
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);

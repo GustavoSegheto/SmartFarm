@@ -131,53 +131,93 @@ document.addEventListener("DOMContentLoaded", function () {
     console.error("Raphael ou JustGage não carregado.");
   }
 
-  // --- 2. Script do Gráfico de Pizza (Chart.js) ---
+  // --- 2. Script do Gráfico de Pizza (Chart.js) INTEGRADO AO BD ---
   const ctxPizza = document.getElementById("graficoPizza");
-  if (ctxPizza) {
-    const dados = {
-      labels: ["Nitrogênio", "Fósforo", "Potássio", "Outros"],
-      datasets: [
-        {
-          label: "Distribuição",
-          data: [25, 35, 20, 20],
-          backgroundColor: [
-            "#1b5e20", // Verde escuro (Nitrogênio)
-            "#2e7d32", // Verde médio (Fósforo)
-            "#43a047", // Verde claro (Potássio)
-            "#81c784", // Verde bem claro (Outros)
-          ],
-          borderColor: "#ffffff",
-          borderWidth: 3,
-          hoverOffset: 15,
-        },
-      ],
-    };
 
-    const configPizza = {
-      type: "doughnut",
-      data: dados,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: "60%",
-        plugins: {
-          legend: {
-            display: false, // Legenda está no HTML
+  if (ctxPizza) {
+    // Função assíncrona para buscar dados e renderizar o gráfico
+    const carregarGraficoPizza = async () => {
+      let valoresNutrientes = [0, 0, 0, 0]; // Padrão: N, P, K, Outros
+
+      try {
+        const response = await fetch("/api/sensor/ultimo");
+        const json = await response.json();
+
+        if (json.status === "success" && json.data) {
+          const { nitrogenio, fosforo, potassio } = json.data;
+          
+          // Converte para número (caso venha como string do banco)
+          const n = parseFloat(nitrogenio);
+          const p = parseFloat(fosforo);
+          const k = parseFloat(potassio);
+
+          // Cálculo simples para "Outros" (assumindo base 100% ou apenas preenchimento)
+          // Se a soma for maior que 100, definimos Outros como 0 para não quebrar o gráfico
+          const soma = n + p + k;
+          const outros = soma < 100 ? 100 - soma : 0;
+
+          valoresNutrientes = [n, p, k, outros];
+        } else {
+          console.warn("Dados do sensor não encontrados ou vazios via API.");
+          // Usa valores de fallback se não tiver dados no banco
+          valoresNutrientes = [25, 25, 25, 25]; 
+        }
+
+      } catch (error) {
+        console.error("Erro ao carregar dados do gráfico pizza:", error);
+        valoresNutrientes = [25, 25, 25, 25]; // Fallback em caso de erro
+      }
+
+      // Configuração do Gráfico
+      const dados = {
+        labels: ["Nitrogênio", "Fósforo", "Potássio", "Outros"],
+        datasets: [
+          {
+            label: "Distribuição (%)",
+            data: valoresNutrientes, // Usa os dados vindos do banco
+            backgroundColor: [
+              "#1b5e20", // Nitrogênio
+              "#2e7d32", // Fósforo
+              "#43a047", // Potássio
+              "#81c784", // Outros
+            ],
+            borderColor: "#ffffff",
+            borderWidth: 3,
+            hoverOffset: 15,
           },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                let label = context.label || "";
-                let value = context.raw || 0;
-                return `${label}: ${value}%`;
+        ],
+      };
+
+      const configPizza = {
+        type: "doughnut",
+        data: dados,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "60%",
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.label || "";
+                  let value = context.raw || 0;
+                  return `${label}: ${value}%`;
+                },
               },
             },
           },
         },
-      },
+      };
+
+      new Chart(ctxPizza.getContext("2d"), configPizza);
     };
 
-    const graficoPizza = new Chart(ctxPizza.getContext("2d"), configPizza);
+    // Chama a função para iniciar o gráfico
+    carregarGraficoPizza();
+    
   } else {
     console.error("Elemento canvas 'graficoPizza' não encontrado.");
   }
