@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mapeamento de dados de exemplo para simulação
     const dadosCotas = {
-        tomate: {
+        feijao: {
             preco: 'R$ 150,00',
             futura: 'R$ 155,50',
             local: 'CEASA-MG'
@@ -22,15 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
             futura: 'R$ 72,80',
             local: 'Bolsa de Chicago'
         },
-        soja: {
+        batata: {
             preco: 'R$ 135,20',
             futura: 'R$ 130,10',
             local: 'Porto de Paranaguá'
-        },
-        cafe: {
-            preco: 'R$ 780,00',
-            futura: 'R$ 805,00',
-            local: 'Nova Iorque (ICE)'
         }
     };
     
