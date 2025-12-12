@@ -636,3 +636,93 @@ h2 {
     font-size: 14px;
   }
 }
+
+.lavoura-selector {
+  display: inline-block;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+.lavoura-selector label {
+  display: block;
+  font-size: 14px;
+  color: #1b5e20;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#seletorLavouras {
+  width: 280px;
+  padding: 12px 40px 12px 16px;
+  font-size: 15px;
+  color: #1b5e20;
+  background-color: #f8fff8;
+  border: 2px solid #66bb6a;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  transition: all 0.25s ease;
+  font-weight: 500;
+  
+  /* Seta personalizada */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231b5e20' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  
+  /* Sombra suave */
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.15);
+}
+
+/* Hover com elevação */
+#seletorLavouras:hover {
+  border-color: #388e3c;
+  background-color: #f1f8e9;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Foco com destaque */
+#seletorLavouras:focus {
+  border-color: #1b5e20;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.4);
+  background-color: #ffffff;
+}
+
+/* Opções com estilo */
+#seletorLavouras option {
+  padding: 12px;
+  background-color: white;
+  color: #1b5e20;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Primeira opção ligeiramente destacada */
+#seletorLavouras option:first-child {
+  font-weight: 600;
+}
+
+/* Efeito de seleção */
+#seletorLavouras option:checked {
+  background: linear-gradient(90deg, #e8f5e9, #c8e6c9);
+  color: #1b5e20;
+  font-weight: 600;
+}
+
+
+/* Responsivo */
+@media (max-width: 480px) {
+  #seletorLavouras {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+/* Efeito ativo (clicado) */
+#seletorLavouras:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
