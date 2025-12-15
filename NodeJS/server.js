@@ -435,6 +435,162 @@ app.get("/api/sensor/ultimo", ensureAuthenticated, async (req, res) => {
 });
 
 /* ============================================================
+ * CRUD DE LAVOURAS
+ * ============================================================ */
+
+// 1. CREATE (Criar nova lavoura)
+app.post("/api/lavouras", ensureAuthenticated, async (req, res) => {
+  try {
+    const { nomeLavoura, dataPlantio, cultura, latitude, longitude } = req.body;
+    const idUsuario = req.session.user.id;
+
+    // Validação básica
+    if (!cultura || !dataPlantio) {
+      return res.status(400).json({
+        status: "error",
+        message: "Cultura e Data de Plantio são obrigatórios.",
+      });
+    }
+
+    // Mapeamento:
+    // nomeLavoura (form) -> apelido_sensor (db) - Usado como identificador
+    // cultura (form) -> tipo_cultura (db)
+    const sql = `
+      INSERT INTO lavoura 
+      (ID_usuario, nome_lavoura, tipo_cultura, data_inicio_plantio, latitude, longitude) 
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    
+    const values = [
+      idUsuario,
+      nomeLavoura || "Minha Lavoura", // Valor padrão se vazio
+      cultura,
+      dataPlantio,
+      latitude || null,
+      longitude || null
+    ];
+
+    const [result] = await db.query(sql, values);
+
+    return res.status(201).json({
+      status: "success",
+      message: "Lavoura criada com sucesso!",
+      id: result.insertId,
+    });
+
+  } catch (error) {
+    console.error("[POST /api/lavouras] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao salvar lavoura.",
+    });
+  }
+});
+
+// 2. READ (Listar lavouras do usuário logado)
+app.get("/api/lavouras", ensureAuthenticated, async (req, res) => {
+  try {
+    const idUsuario = req.session.user.id;
+
+    // Formata a data para YYYY-MM-DD para facilitar no input type="date"
+    const sql = `
+      SELECT 
+        ID_lavoura, 
+        nome_lavoura AS nome, 
+        tipo_cultura AS cultura, 
+        DATE_FORMAT(data_inicio_plantio, '%Y-%m-%d') AS data, 
+        latitude, 
+        longitude 
+      FROM lavoura 
+      WHERE ID_usuario = ?
+      ORDER BY ID_lavoura DESC
+    `;
+
+    const [rows] = await db.query(sql, [idUsuario]);
+
+    return res.json({
+      status: "success",
+      data: rows,
+    });
+
+  } catch (error) {
+    console.error("[GET /api/lavouras] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar lavouras.",
+    });
+  }
+});
+
+// 3. UPDATE (Atualizar lavoura)
+app.put("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nomeLavoura, dataPlantio, cultura, latitude, longitude } = req.body;
+    const idUsuario = req.session.user.id;
+
+    // Verifica se a lavoura pertence ao usuário antes de editar
+    const checkSql = "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+
+    if (checkRows.length === 0) {
+      return res.status(403).json({ status: "error", message: "Permissão negada ou lavoura não encontrada." });
+    }
+
+    const updateSql = `
+      UPDATE lavoura 
+      SET nome_lavoura = ?, tipo_cultura = ?, data_inicio_plantio = ?, latitude = ?, longitude = ?
+      WHERE ID_lavoura = ?
+    `;
+
+    await db.query(updateSql, [nomeLavoura, cultura, dataPlantio, latitude, longitude, id]);
+
+    return res.json({
+      status: "success",
+      message: "Lavoura atualizada com sucesso!",
+    });
+
+  } catch (error) {
+    console.error("[PUT /api/lavouras] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao atualizar lavoura.",
+    });
+  }
+});
+
+// 4. DELETE (Excluir lavoura)
+app.delete("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+
+    // Verifica propriedade
+    const checkSql = "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+
+    if (checkRows.length === 0) {
+      return res.status(403).json({ status: "error", message: "Permissão negada." });
+    }
+
+    const deleteSql = "DELETE FROM lavoura WHERE ID_lavoura = ?";
+    await db.query(deleteSql, [id]);
+
+    return res.json({
+      status: "success",
+      message: "Lavoura excluída com sucesso!",
+    });
+
+  } catch (error) {
+    console.error("[DELETE /api/lavouras] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao excluir lavoura.",
+    });
+  }
+});
+
+/* ============================================================
  * 404 GENÉRICO
  * ============================================================ */
 
