@@ -280,8 +280,49 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Botão de salvar sensor apenas visual por enquanto
   btnSalvarSensor.addEventListener("click", (e) => {
-    e.preventDefault(); // Evita reload se estiver dentro de form
-    alert("Sensor vinculado (Simulação visual). Prossiga com o salvamento da lavoura.");
+    // --- Lógica de Cadastro de Sensor (Integrada ao Banco) ---
+
+  const inputApelidoSensor = document.getElementById("apelidoSensor"); // Pegamos pelo novo ID
+
+  // Transformamos o botão em submit real do formulário ou manipulamos o click
+  // Como o HTML tem type="submit" no botão salvar dentro do formSensor,
+  // o ideal é ouvir o evento 'submit' do formSensor, igual fizemos no formCadastro.
+  
+  formSensor.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const apelido = inputApelidoSensor.value;
+    
+    // (Opcional) Se quiser usar o tipo ou localização, você pode concatenar no apelido
+    // ou precisaria criar colunas no banco para eles. 
+    // Por enquanto enviaremos apenas o apelido conforme sua tabela SQL.
+
+    if (!apelido) {
+      alert("Por favor, informe um apelido ou modelo para o sensor.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/sensores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ apelido: apelido }),
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        alert("Sensor cadastrado com sucesso!");
+        formSensor.reset(); // Limpa o formulário
+        mostrarTela(telaCadastro); // Volta para a tela anterior
+      } else {
+        alert("Erro ao salvar sensor: " + result.message);
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      alert("Erro de conexão ao tentar salvar o sensor.");
+    }
+  });
     mostrarTela(telaCadastro);
   });
 

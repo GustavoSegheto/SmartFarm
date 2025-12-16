@@ -590,6 +590,44 @@ app.delete("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
   }
 });
 
+// ============================================================
+// CRUD DE SENSORES
+// ============================================================
+
+// CRIAR NOVO SENSOR
+app.post("/api/sensores", ensureAuthenticated, async (req, res) => {
+  try {
+    // O front-end enviará 'apelido' (que pode vir do campo modelo ou nome do sensor)
+    const { apelido } = req.body;
+    const idUsuario = req.session.user.id;
+
+    if (!apelido) {
+      return res.status(400).json({
+        status: "error",
+        message: "O apelido do sensor é obrigatório.",
+      });
+    }
+
+    // A coluna 'atividade' tem default '1', então não precisamos enviar
+    const sql = "INSERT INTO sensor (ID_usuario, apelido, atividade) VALUES (?, ?, 1)";
+    
+    const [result] = await db.query(sql, [idUsuario, apelido]);
+
+    return res.status(201).json({
+      status: "success",
+      message: "Sensor cadastrado com sucesso!",
+      id: result.insertId,
+    });
+
+  } catch (error) {
+    console.error("[POST /api/sensores] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao salvar sensor.",
+    });
+  }
+});
+
 /* ============================================================
  * 404 GENÉRICO
  * ============================================================ */

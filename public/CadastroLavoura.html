@@ -177,34 +177,23 @@
             <form id="formSensor" class="form-prototype" method="POST">
               <h2 class="titulo-tela">Adicionar Sensor</h2>
 
-              <div class="campo-form">
-                <label for="tipoSensor">Tipo de Sensor:</label>
-                <select id="tipoSensor" name="tipoSensor">
-                  <option value="">Selecione o tipo de sensor</option>
-                  <option value="umidade">Sensor de Umidade</option>
-                  <option value="temperatura">Sensor de Temperatura</option>
-                  <option value="ph">Sensor de pH</option>
-                  <option value="luminosidade">Sensor de Luminosidade</option>
-                </select>
-              </div>
-
-              <div class="campo-form">
-                <label for="modeloSensor">Modelo do Sensor:</label>
+            <!--<div class="campo-form">
+                <label for="idSensor">ID do Sensor:</label>
                 <input
                   type="text"
-                  id="modeloSensor"
-                  name="modeloSensor"
-                  placeholder="Digite o modelo do sensor"
+                  id="idSensor"
+                  name="idSensor"
+                  placeholder="Digite o ID do sensor"
                 />
-              </div>
+              </div> -->
 
               <div class="campo-form">
-                <label for="localizacaoSensor">Localização na Lavoura:</label>
+                <label for="apelidoSensor">Apelido do Sensor:</label>
                 <input
                   type="text"
-                  id="localizacaoSensor"
-                  name="localizacaoSensor"
-                  placeholder="Ex: Setor A, Norte"
+                  id="apelidoSensor"
+                  name="apelidoSensor"
+                  placeholder="Ex: Sensor 1 do seu zé"
                 />
               </div>
 
@@ -242,45 +231,12 @@
 
               <div class="campo-form">
                 <label>Nome da lavoura:</label>
-                <div class="opcoes-lavoura" id="opcoesEdicao">
-                  <div
-                    class="opcao-lavoura"
-                    data-valor="Lavoura de tomate"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Lavoura de tomate
-                  </div>
-                  <div
-                    class="opcao-lavoura"
-                    data-valor="Lavoura de batata"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Lavoura de batata
-                  </div>
-                  <div
-                    class="opcao-lavoura"
-                    data-valor="Lavoura de cenoura"
-                    role="button"
-                    tabindex="0"
-                  >
-                    Lavoura de cenoura
-                  </div>
-                  <div
-                    class="opcao-lavoura"
-                    data-valor="10 0001"
-                    role="button"
-                    tabindex="0"
-                  >
-                    10 0001
-                  </div>
-                </div>
+                                  
                 <input
                   type="text"
                   id="nomeLavouraEdicao"
                   name="nomeLavoura"
-                  placeholder="Ou digite um nome personalizado"
+                  placeholder="Nome da lavoura"
                 />
               </div>
 
