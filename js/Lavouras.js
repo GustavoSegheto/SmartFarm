@@ -349,3 +349,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+// Em seu Lavouras.js, adicione:
+document.addEventListener('DOMContentLoaded', function() {
+  // Dados de exemplo para a API
+  document.getElementById('temp-atual').textContent = '24°C';
+  document.getElementById('clima-atual').textContent = 'Ensolarado';
+  document.getElementById('mm-chuva').textContent = '0 mm';
+  document.getElementById('prob-chuva').textContent = '10%';
+});
+
+// Verifique se os elementos existem
+console.log('Probabilidade elemento:', document.getElementById('prob-chuva'));
+console.log('Altura container:', document.querySelector('.api-dados-container').offsetHeight);
