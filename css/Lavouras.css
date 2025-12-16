@@ -210,40 +210,20 @@ section.custom-card:hover {
   justify-content: center;
 }
 
-.subcardAPI img {
-  width: 85%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.subcardTempAtual,
-.subcardClima,
-.subcardmmChuva,
-.subcardPRBchuva
- {
+.subcardAPI {
   width: 100%;
-  height: 40%; /* Ocupa metade do card pai, com um gap */
+  height: 100%;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 16px;
   padding: 15px;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
-  text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.subcardTempAtual::before,
-.subcardClima::before,
-.subcardmmChuva::before,
-.subcardPRBchuva::before
-{
+.subcardAPI::before {
   content: "";
   position: absolute;
   top: 0;
@@ -253,7 +233,122 @@ section.custom-card:hover {
   background: linear-gradient(90deg, #4caf50, #8bc34a);
 }
 
+/* Container dos dados meteorológicos - AGORA COM SCROLL */
+.api-dados-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  flex: 1; /* Ocupa todo o espaço disponível */
+  min-height: 0; /* ESSENCIAL para scroll funcionar */
+  overflow-y: auto; /* Adiciona scroll vertical se necessário */
+  padding-right: 5px; /* Espaço para a scrollbar */
+}
 
+/* Estilizando a scrollbar */
+.api-dados-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.api-dados-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.api-dados-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+/* Cada linha de dados - MAIS COMPACTO */
+.api-dado-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(248, 249, 250, 0.7);
+  border-radius: 8px;
+  border-left: 3px solid #4caf50;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0; /* Não deixa os itens encolherem */
+}
+
+.api-dado-item:hover {
+  background: rgba(232, 245, 233, 0.9);
+  transform: translateX(2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Labels dos dados - MAIS COMPACTO */
+.api-dado-label {
+  font-weight: 600;
+  color: #1b5e20;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap; /* Evita quebra de linha */
+}
+
+/* Valores dos dados - MAIS COMPACTO */
+.api-dado-valor {
+  font-weight: 700;
+  color: #333;
+  font-size: 1rem;
+  text-align: right;
+  min-width: 50px; /* Largura mínima para alinhar */
+}
+
+/* Ícones específicos para cada tipo de dado */
+.api-dado-label i {
+  width: 18px;
+  text-align: center;
+  color: #4caf50;
+  font-size: 0.9rem;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .subcardAPI {
+    padding: 12px;
+  }
+  
+  .api-dados-container {
+    gap: 8px;
+  }
+  
+  .api-dado-item {
+    padding: 6px 10px;
+  }
+  
+  .api-dado-label {
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+  
+  .api-dado-valor {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .api-dado-label {
+    font-size: 0.8rem;
+  }
+  
+  .api-dado-valor {
+    font-size: 0.85rem;
+    min-width: 45px;
+  }
+  
+  .api-dado-label i {
+    width: 16px;
+    font-size: 0.8rem;
+  }
+}
+  
+  
 /* Gauges (Velocímetro) */
 #velocimetro,
 #umidsolo {
