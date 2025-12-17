@@ -438,32 +438,32 @@ app.get("/api/sensor/ultimo", ensureAuthenticated, async (req, res) => {
  * CRUD DE LAVOURAS
  * ============================================================ */
 
-// 1. CREATE (Criar nova lavoura)
+/* ============================================================
+ * AJUSTE NA ROTA DE CRIAR LAVOURA
+ * ============================================================ */
 app.post("/api/lavouras", ensureAuthenticated, async (req, res) => {
   try {
-    const { nomeLavoura, dataPlantio, cultura, latitude, longitude } = req.body;
+    // Agora recebemos 'idSensor' vindo diretamente do <select>
+    const { nomeLavoura, dataPlantio, cultura, latitude, longitude, idSensor } = req.body;
     const idUsuario = req.session.user.id;
 
-    // Validação básica
     if (!cultura || !dataPlantio) {
-      return res.status(400).json({
-        status: "error",
-        message: "Cultura e Data de Plantio são obrigatórios.",
-      });
+      return res.status(400).json({ status: "error", message: "Campos obrigatórios faltando." });
     }
 
-    // Mapeamento:
-    // nomeLavoura (form) -> apelido_sensor (db) - Usado como identificador
-    // cultura (form) -> tipo_cultura (db)
     const sql = `
       INSERT INTO lavoura 
-      (ID_usuario, nome_lavoura, tipo_cultura, data_inicio_plantio, latitude, longitude) 
-      VALUES (?, ?, ?, ?, ?, ?)
+      (ID_usuario, ID_sensor, nome_lavoura, tipo_cultura, data_inicio_plantio, latitude, longitude) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     
+    // Se idSensor for string vazia ou "0", gravamos NULL
+    const sensorParaGravar = (idSensor && idSensor !== "0") ? idSensor : null;
+
     const values = [
       idUsuario,
-      nomeLavoura || "Minha Lavoura", // Valor padrão se vazio
+      sensorParaGravar,
+      nomeLavoura || "Minha Lavoura",
       cultura,
       dataPlantio,
       latitude || null,
@@ -472,18 +472,11 @@ app.post("/api/lavouras", ensureAuthenticated, async (req, res) => {
 
     const [result] = await db.query(sql, values);
 
-    return res.status(201).json({
-      status: "success",
-      message: "Lavoura criada com sucesso!",
-      id: result.insertId,
-    });
+    return res.status(201).json({ status: "success", message: "Lavoura criada!", id: result.insertId });
 
   } catch (error) {
-    console.error("[POST /api/lavouras] ERRO:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro ao salvar lavoura.",
-    });
+    console.error("Erro ao criar lavoura:", error);
+    return res.status(500).json({ status: "error", message: "Erro ao salvar lavoura." });
   }
 });
 
@@ -590,41 +583,48 @@ app.delete("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
   }
 });
 
-// ============================================================
-// CRUD DE SENSORES
-// ============================================================
+/* ============================================================
+ * ROTAS DE SENSORES (NOVA LÓGICA)
+ * ============================================================ */
 
-// CRIAR NOVO SENSOR
-app.post("/api/sensores", ensureAuthenticated, async (req, res) => {
+// 1. LISTAR SENSORES DO USUÁRIO (Para preencher a Combobox)
+app.get("/api/sensores/usuario", ensureAuthenticated, async (req, res) => {
   try {
-    // O front-end enviará 'apelido' (que pode vir do campo modelo ou nome do sensor)
-    const { apelido } = req.body;
+    const idUsuario = req.session.user.id;
+    // Busca apenas ID e Apelido dos sensores deste usuário
+    const sql = "SELECT ID_sensor, apelido FROM sensor WHERE ID_usuario = ?";
+    const [rows] = await db.query(sql, [idUsuario]);
+
+    return res.json({ status: "success", data: rows });
+  } catch (error) {
+    console.error("Erro ao listar sensores:", error);
+    return res.status(500).json({ status: "error", message: "Erro ao buscar sensores." });
+  }
+});
+
+// 2. EDITAR APELIDO DO SENSOR
+app.put("/api/sensores/:id", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params; // ID do sensor
+    const { apelido } = req.body; // Novo nome
     const idUsuario = req.session.user.id;
 
     if (!apelido) {
-      return res.status(400).json({
-        status: "error",
-        message: "O apelido do sensor é obrigatório.",
-      });
+      return res.status(400).json({ status: "error", message: "Apelido é obrigatório." });
     }
 
-    // A coluna 'atividade' tem default '1', então não precisamos enviar
-    const sql = "INSERT INTO sensor (ID_usuario, apelido, atividade) VALUES (?, ?, 1)";
-    
-    const [result] = await db.query(sql, [idUsuario, apelido]);
+    // Garante que só edita se o sensor pertencer ao usuário logado
+    const sql = "UPDATE sensor SET apelido = ? WHERE ID_sensor = ? AND ID_usuario = ?";
+    const [result] = await db.query(sql, [apelido, id, idUsuario]);
 
-    return res.status(201).json({
-      status: "success",
-      message: "Sensor cadastrado com sucesso!",
-      id: result.insertId,
-    });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ status: "error", message: "Sensor não encontrado ou não pertence a você." });
+    }
 
+    return res.json({ status: "success", message: "Sensor atualizado com sucesso!" });
   } catch (error) {
-    console.error("[POST /api/sensores] ERRO:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro ao salvar sensor.",
-    });
+    console.error("Erro ao editar sensor:", error);
+    return res.status(500).json({ status: "error", message: "Erro ao atualizar sensor." });
   }
 });
 
