@@ -488,7 +488,8 @@ app.get("/api/lavouras", ensureAuthenticated, async (req, res) => {
     // Formata a data para YYYY-MM-DD para facilitar no input type="date"
     const sql = `
       SELECT 
-        ID_lavoura, 
+        ID_lavoura,
+        ID_sensor, 
         nome_lavoura AS nome, 
         tipo_cultura AS cultura, 
         DATE_FORMAT(data_inicio_plantio, '%Y-%m-%d') AS data, 
@@ -625,6 +626,48 @@ app.put("/api/sensores/:id", ensureAuthenticated, async (req, res) => {
   } catch (error) {
     console.error("Erro ao editar sensor:", error);
     return res.status(500).json({ status: "error", message: "Erro ao atualizar sensor." });
+  }
+});
+
+/* ============================================================
+ * AJUSTE NA ROTA DE CRIAR LAVOURA
+ * ============================================================ */
+app.post("/api/lavouras", ensureAuthenticated, async (req, res) => {
+  try {
+    // Agora recebemos 'idSensor' vindo diretamente do <select>
+    const { nomeLavoura, dataPlantio, cultura, latitude, longitude, idSensor } = req.body;
+    const idUsuario = req.session.user.id;
+
+    if (!cultura || !dataPlantio) {
+      return res.status(400).json({ status: "error", message: "Campos obrigatórios faltando." });
+    }
+
+    const sql = `
+      INSERT INTO lavoura 
+      (ID_usuario, ID_sensor, nome_lavoura, tipo_cultura, data_inicio_plantio, latitude, longitude) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+    // Se idSensor for string vazia ou "0", gravamos NULL
+    const sensorParaGravar = (idSensor && idSensor !== "0") ? idSensor : null;
+
+    const values = [
+      idUsuario,
+      sensorParaGravar,
+      nomeLavoura || "Minha Lavoura",
+      cultura,
+      dataPlantio,
+      latitude || null,
+      longitude || null
+    ];
+
+    const [result] = await db.query(sql, values);
+
+    return res.status(201).json({ status: "success", message: "Lavoura criada!", id: result.insertId });
+
+  } catch (error) {
+    console.error("Erro ao criar lavoura:", error);
+    return res.status(500).json({ status: "error", message: "Erro ao salvar lavoura." });
   }
 });
 
