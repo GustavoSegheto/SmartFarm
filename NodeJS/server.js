@@ -516,14 +516,15 @@ app.get("/api/lavouras", ensureAuthenticated, async (req, res) => {
   }
 });
 
-// 3. UPDATE (Atualizar lavoura)
+// 3. UPDATE (Atualizar lavoura - Versão Corrigida e Unificada)
 app.put("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
-    const { nomeLavoura, dataPlantio, cultura, latitude, longitude } = req.body;
+    // ADICIONADO: idSensor na leitura do corpo da requisição
+    const { nomeLavoura, dataPlantio, cultura, latitude, longitude, idSensor } = req.body;
     const idUsuario = req.session.user.id;
 
-    // Verifica se a lavoura pertence ao usuário antes de editar
+    // 1. Verifica se a lavoura pertence ao usuário antes de editar
     const checkSql = "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
     const [checkRows] = await db.query(checkSql, [id, idUsuario]);
 
@@ -531,13 +532,33 @@ app.put("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
       return res.status(403).json({ status: "error", message: "Permissão negada ou lavoura não encontrada." });
     }
 
+    // 2. Lógica para tratar o sensor: 
+    // Se vier vazio ou "0", gravamos NULL (remove o sensor).
+    const sensorParaGravar = (idSensor && idSensor !== "0") ? idSensor : null;
+
+    // 3. SQL Atualizado com ID_sensor
     const updateSql = `
       UPDATE lavoura 
-      SET nome_lavoura = ?, tipo_cultura = ?, data_inicio_plantio = ?, latitude = ?, longitude = ?
+      SET 
+        nome_lavoura = ?, 
+        tipo_cultura = ?, 
+        data_inicio_plantio = ?, 
+        latitude = ?, 
+        longitude = ?,
+        ID_sensor = ? 
       WHERE ID_lavoura = ?
     `;
 
-    await db.query(updateSql, [nomeLavoura, cultura, dataPlantio, latitude, longitude, id]);
+    // 4. Executa a atualização (A ordem dos parâmetros deve bater com os '?' acima)
+    await db.query(updateSql, [
+      nomeLavoura, 
+      cultura, 
+      dataPlantio, 
+      latitude, 
+      longitude, 
+      sensorParaGravar, // Novo campo
+      id
+    ]);
 
     return res.json({
       status: "success",

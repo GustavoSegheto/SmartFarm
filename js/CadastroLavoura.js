@@ -2,19 +2,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Elementos ---
   const listaLavouras = document.getElementById("listaLavouras");
   const telaCadastro = document.getElementById("telaCadastro");
-  const telaSensor = document.getElementById("telaSensor"); // Modal de Edição
+  const telaSensor = document.getElementById("telaSensor");
   const telaEdicao = document.getElementById("telaEdicao");
 
   const btnAdicionar = document.getElementById("btnAdicionar");
+  const btnRestaurar = document.getElementById("btnRestaurar"); // Botão RESTAURAR
   
   // Formulários
   const formCadastro = document.getElementById("formCadastro");
   const formSensor = document.getElementById("formSensor");
   const formEdicao = document.getElementById("formEdicao");
 
-  // Inputs Lavoura
-  const nomeLavouraInput = document.getElementById("nomeLavoura");
-  const selectSensorLavoura = document.getElementById("selecaoSensor"); // Combobox principal
+  // Inputs Cadastro
+  const selectSensorLavoura = document.getElementById("selecaoSensor");
   const btnCancelarCadastro = document.getElementById("btnCancelarCadastro");
   const btnGerenciarSensor = document.getElementById("btnGerenciarSensor");
 
@@ -30,29 +30,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const culturaEdicao = document.getElementById("culturaEdicao");
   const latitudeEdicao = document.getElementById("latitudeEdicao");
   const longitudeEdicao = document.getElementById("longitudeEdicao");
+  const selectSensorEdicao = document.getElementById("selecaoSensorEdicao"); // Novo select
   const btnCancelarEdicao = document.getElementById("btnCancelarEdicao");
   
-  let lavouraEditando = null;
+  // PILHA DE RESTAURAÇÃO (CTRL+Z)
+  let lavourasExcluidas = []; 
 
-  // --- Funções Auxiliares ---
+  // --- Funções de Navegação ---
 
   function mostrarTela(tela) {
-    listaLavouras.style.display = "none";
-    telaCadastro.classList.remove("ativo");
-    telaSensor.classList.remove("ativo");
-    telaEdicao.classList.remove("ativo");
-    tela.classList.add("ativo");
+    [listaLavouras, telaCadastro, telaSensor, telaEdicao].forEach(el => el.style.display = 'none');
+    
+    if (tela === listaLavouras) {
+        listaLavouras.style.display = "block";
+        telaCadastro.classList.remove("ativo");
+        telaSensor.classList.remove("ativo");
+        telaEdicao.classList.remove("ativo");
+    } else {
+        tela.style.display = "flex"; // Flex para centralizar modal
+        tela.classList.add("ativo");
+    }
   }
 
   function voltarParaLista() {
-    listaLavouras.style.display = "block";
-    telaCadastro.classList.remove("ativo");
-    telaSensor.classList.remove("ativo");
-    telaEdicao.classList.remove("ativo");
+    mostrarTela(listaLavouras);
     carregarLavouras();
   }
 
-  // --- API: Buscar Sensores do Usuário ---
+  // --- API e Lógica ---
+
   async function carregarSensoresNasCombos() {
     try {
       const resp = await fetch("/api/sensores/usuario");
@@ -61,14 +67,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (json.status === "success") {
         const sensores = json.data;
         
-        // 1. Preenche Combobox da Tela de Cadastro de Lavoura
-        let htmlLavoura = '<option value="0">-- Selecione um sensor --</option>';
+        // Gera as opções
+        let htmlOpcoes = '<option value="0">-- Sem Sensor --</option>';
         sensores.forEach(s => {
-          htmlLavoura += `<option value="${s.ID_sensor}">${s.apelido} (ID: ${s.ID_sensor})</option>`;
+          htmlOpcoes += `<option value="${s.ID_sensor}">${s.apelido}</option>`;
         });
-        selectSensorLavoura.innerHTML = htmlLavoura;
 
-        // 2. Preenche Combobox da Tela de Editar Sensor
+        // Preenche todas as combos de sensor
+        selectSensorLavoura.innerHTML = htmlOpcoes;
+        selectSensorEdicao.innerHTML = htmlOpcoes; // Combo da tela de edição
+
+        // Combo específica de "Editar Apelido" (não tem opção "sem sensor")
         let htmlEdit = '';
         sensores.forEach(s => {
           htmlEdit += `<option value="${s.ID_sensor}">${s.apelido}</option>`;
@@ -80,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- API: Carregar Lavouras ---
   async function carregarLavouras() {
     try {
       const response = await fetch("/api/lavouras");
@@ -92,24 +100,20 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         listaLavouras.innerHTML = "<p style='color:white; text-align:center;'>Nenhuma lavoura encontrada.</p>";
       }
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   }
 
   function renderizarCartao(lavoura) {
     const cartao = document.createElement("div");
     cartao.className = "cartao-lavoura";
     
-    // Lógica para exibir o texto do sensor
     let textoSensor = "Nenhum sensor vinculado";
-    let corIcone = "#ccc"; // Cinza
+    let corIcone = "#ccc";
 
     if (lavoura.ID_sensor) {
-      // Se tiver apelido (nome_sensor), usa ele. Se não, usa o ID.
       const nomeOuId = lavoura.nome_sensor || `ID: ${lavoura.ID_sensor}`;
       textoSensor = `Conectado: ${nomeOuId}`;
-      corIcone = "#4caf50"; // Verde
+      corIcone = "#4caf50";
     }
 
     cartao.innerHTML = `
@@ -117,111 +121,164 @@ document.addEventListener("DOMContentLoaded", () => {
         <h3>${lavoura.nome || "Lavoura"}</h3>
         <p><strong>Cultura:</strong> ${lavoura.cultura}</p>
         <p><strong>Data:</strong> ${lavoura.data}</p>
-        
         <p style="color: ${corIcone}; margin-top: 5px;">
-          <small>
-            <i class="fas fa-wifi"></i> ${ lavoura.ID_sensor || textoSensor}
-          </small>
+          <small><i class="fas fa-wifi"></i> ${textoSensor}</small>
         </p>
       </div>
       <div class="acoes-lavoura">
-        <button class="btn-acao btn-excluir"><i class="fas fa-times"></i></button>
+        <button class="btn-acao btn-editar" title="Editar"><i class="fas fa-pencil-alt"></i></button>
+        <button class="btn-acao btn-excluir" title="Excluir"><i class="fas fa-trash-alt"></i></button>
       </div>
     `;
     
-    // Botão Excluir
-    cartao.querySelector(".btn-excluir").onclick = async () => {
-      if(confirm("Excluir esta lavoura?")) {
+    // --- LÓGICA DO BOTÃO EDITAR ---
+    const btnEditar = cartao.querySelector(".btn-editar");
+    btnEditar.onclick = () => {
+        carregarSensoresNasCombos().then(() => {
+            // Preenche o formulário de edição com os dados do cartão
+            lavouraEditIdInput.value = lavoura.ID_lavoura;
+            nomeLavouraEdicao.value = lavoura.nome;
+            dataPlantioEdicao.value = lavoura.data; // formato YYYY-MM-DD funciona direto no input date
+            culturaEdicao.value = lavoura.cultura;
+            latitudeEdicao.value = lavoura.latitude;
+            longitudeEdicao.value = lavoura.longitude;
+            selectSensorEdicao.value = lavoura.ID_sensor || "0"; 
+
+            mostrarTela(telaEdicao);
+        });
+    };
+
+    // --- LÓGICA DO BOTÃO EXCLUIR (Com "Ctrl+Z") ---
+    const btnExcluir = cartao.querySelector(".btn-excluir");
+    btnExcluir.onclick = async () => {
+      if(confirm(`Excluir a lavoura "${lavoura.nome}"?`)) {
+        
+        // 1. Salva na pilha antes de deletar
+        lavourasExcluidas.push(lavoura);
+        
+        // 2. Deleta do banco
         await fetch(`/api/lavouras/${lavoura.ID_lavoura}`, { method: "DELETE" });
+        
+        // 3. Atualiza interface
         carregarLavouras();
+        alert("Lavoura excluída. Use 'Restaurar' para desfazer.");
       }
     };
 
     listaLavouras.appendChild(cartao);
   }
 
-  // --- Eventos de Navegação ---
+  // --- LÓGICA RESTAURAR (CTRL + Z) ---
+  btnRestaurar.addEventListener("click", async () => {
+    if (lavourasExcluidas.length === 0) {
+        return alert("Não há lavouras recentes para restaurar.");
+    }
 
-  btnAdicionar.addEventListener("click", () => {
-    formCadastro.reset();
-    carregarSensoresNasCombos(); // Atualiza lista ao abrir
-    mostrarTela(telaCadastro);
+    // Pega o último item removido (Pop)
+    const itemRestaurar = lavourasExcluidas.pop();
+
+    const dadosParaSalvar = {
+        nomeLavoura: itemRestaurar.nome,
+        dataPlantio: itemRestaurar.data,
+        cultura: itemRestaurar.cultura,
+        latitude: itemRestaurar.latitude,
+        longitude: itemRestaurar.longitude,
+        idSensor: itemRestaurar.ID_sensor
+    };
+
+    try {
+        const resp = await fetch("/api/lavouras", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dadosParaSalvar)
+        });
+        
+        if(resp.ok) {
+            alert(`Lavoura "${itemRestaurar.nome}" restaurada com sucesso!`);
+            carregarLavouras();
+        } else {
+            alert("Erro ao restaurar lavoura.");
+        }
+    } catch(e) {
+        console.error(e);
+    }
   });
 
-  btnGerenciarSensor.addEventListener("click", () => {
-    carregarSensoresNasCombos(); // Garante lista atualizada
-    mostrarTela(telaSensor);
-  });
+  // --- SUBMITS DOS FORMULÁRIOS ---
 
-  btnCancelarCadastro.addEventListener("click", voltarParaLista);
-  btnCancelarSensor.addEventListener("click", () => mostrarTela(telaCadastro));
-  btnCancelarEdicao.addEventListener("click", voltarParaLista);
-
-  // --- SUBMIT: SALVAR LAVOURA ---
+  // 1. Cadastrar Lavoura
   formCadastro.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
     const dados = {
       nomeLavoura: document.getElementById("nomeLavoura").value,
       dataPlantio: document.getElementById("dataPlantio").value,
       cultura: document.getElementById("cultura").value,
       latitude: document.getElementById("latitude").value,
       longitude: document.getElementById("longitude").value,
-      // Pega o valor selecionado na combobox
       idSensor: selectSensorLavoura.value 
+    };
+    
+    const resp = await fetch("/api/lavouras", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dados)
+    });
+    if((await resp.json()).status === "success") {
+        alert("Criado!"); formCadastro.reset(); voltarParaLista();
+    }
+  });
+
+  // 2. Editar Lavoura (UPDATE)
+  formEdicao.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const id = lavouraEditIdInput.value;
+    const dados = {
+        nomeLavoura: nomeLavouraEdicao.value,
+        dataPlantio: dataPlantioEdicao.value,
+        cultura: culturaEdicao.value,
+        latitude: latitudeEdicao.value,
+        longitude: longitudeEdicao.value,
+        idSensor: selectSensorEdicao.value
     };
 
     try {
-      const resp = await fetch("/api/lavouras", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
-      });
-      const res = await resp.json();
+        const resp = await fetch(`/api/lavouras/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+        });
+        const res = await resp.json();
 
-      if(res.status === "success") {
-        alert("Lavoura criada com sucesso!");
-        formCadastro.reset();
-        voltarParaLista();
-      } else {
-        alert("Erro: " + res.message);
-      }
-    } catch(err) {
-      console.error(err);
-      alert("Erro de conexão.");
-    }
+        if (res.status === "success") {
+            alert("Lavoura atualizada!");
+            formEdicao.reset();
+            voltarParaLista();
+        } else {
+            alert("Erro: " + res.message);
+        }
+    } catch (err) { console.error(err); }
   });
 
-  // --- SUBMIT: EDITAR SENSOR (Renomear) ---
+  // 3. Renomear Sensor
   formSensor.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
     const idSensor = selectSensorEditar.value;
     const novoNome = inputNovoApelido.value;
-
-    if(!novoNome) return alert("Digite um novo apelido.");
-
-    try {
-      const resp = await fetch(`/api/sensores/${idSensor}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ apelido: novoNome })
-      });
-      const res = await resp.json();
-
-      if(res.status === "success") {
-        alert("Apelido do sensor atualizado!");
-        formSensor.reset();
-        carregarSensoresNasCombos(); // Atualiza as listas
-        mostrarTela(telaCadastro); // Volta para o cadastro de lavoura
-      } else {
-        alert("Erro: " + res.message);
-      }
-    } catch (err) {
-      console.error(err);
+    
+    const resp = await fetch(`/api/sensores/${idSensor}`, {
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ apelido: novoNome })
+    });
+    if((await resp.json()).status === "success") {
+        alert("Apelido atualizado!"); formSensor.reset(); carregarSensoresNasCombos(); voltarParaLista();
     }
   });
 
-  // Inicialização
+  // Eventos de Navegação Simples
+  btnAdicionar.addEventListener("click", () => { formCadastro.reset(); carregarSensoresNasCombos(); mostrarTela(telaCadastro); });
+  btnGerenciarSensor.addEventListener("click", () => { carregarSensoresNasCombos(); mostrarTela(telaSensor); });
+  btnCancelarCadastro.addEventListener("click", voltarParaLista);
+  btnCancelarSensor.addEventListener("click", () => mostrarTela(telaCadastro));
+  btnCancelarEdicao.addEventListener("click", voltarParaLista);
+
+  // Inicializa
   carregarLavouras();
 });

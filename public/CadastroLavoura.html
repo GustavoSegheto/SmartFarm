@@ -219,84 +219,51 @@
         </div>
 
         <div class="tela-formulario" id="telaEdicao">
-          <div class="form-container">
-            <form
-              id="formEdicao"
-              class="form-prototype"
-              method="POST"
-              action="/lavoura/editar"
-            >
-              <h2 class="titulo-tela">Editar Lavoura</h2>
+  <div class="form-container">
+    <form id="formEdicao" class="form-prototype">
+      <h2 class="titulo-tela">Editar Lavoura</h2>
+      
+      <input type="hidden" id="lavouraEditId" />
 
-              <input type="hidden" id="lavouraEditId" name="lavouraId" />
+      <div class="campo-form">
+        <label for="nomeLavouraEdicao">Nome/Talhão:</label>
+        <input type="text" id="nomeLavouraEdicao" required />
+      </div>
 
-              <div class="campo-form">
-                <label>Nome da lavoura:</label>
+      <div class="campo-form">
+        <label for="dataPlantioEdicao">Data de Início do Plantio:</label>
+        <input type="date" id="dataPlantioEdicao" required />
+      </div>
 
-                <input
-                  type="text"
-                  id="nomeLavouraEdicao"
-                  name="nomeLavoura"
-                  placeholder="Nome da lavoura"
-                />
-              </div>
+      <div class="campo-form">
+        <label for="culturaEdicao">Tipo de Cultura:</label>
+        <input type="text" id="culturaEdicao" required />
+      </div>
 
-              <div class="campo-form">
-                <label for="dataPlantioEdicao"
-                  >Data de início do plantio:</label
-                >
-                <input type="date" id="dataPlantioEdicao" name="dataPlantio" />
-              </div>
+      <div class="campo-form">
+        <label for="latitudeEdicao">Latitude:</label>
+        <input type="text" id="latitudeEdicao" />
+      </div>
+      
+      <div class="campo-form">
+        <label for="selecaoSensorEdicao">Vincular Sensor:</label>
+        <select id="selecaoSensorEdicao">
+           </select>
+      </div>
 
-              <div class="campo-form">
-                <label for="culturaEdicao">Cultura:</label>
-                <input
-                  type="text"
-                  id="culturaEdicao"
-                  name="cultura"
-                  placeholder="Digite a cultura"
-                />
-              </div>
+      <div class="campo-form">
+        <label for="longitudeEdicao">Longitude:</label>
+        <input type="text" id="longitudeEdicao" />
+      </div>
 
-              <div class="campo-form">
-                <label for="latitudeEdicao">Latitude:</label>
-                <input
-                  type="text"
-                  id="latitudeEdicao"
-                  name="latitude"
-                  placeholder="Ex: -23.5505"
-                />
-              </div>
-
-              <div class="campo-form">
-                <label for="longitudeEdicao">Longitude:</label>
-                <input
-                  type="text"
-                  id="longitudeEdicao"
-                  name="longitude"
-                  placeholder="Ex: -46.6333"
-                />
-              </div>
-
-              <div class="botoes-form">
-                <button
-                  type="button"
-                  class="botao-form botao-cancelar"
-                  id="btnCancelarEdicao"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  class="botao-form botao-salvar"
-                  id="btnSalvarEdicao"
-                >
-                  Salvar Alterações
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      <div class="botoes-form">
+        <button type="button" class="botao-form botao-cancelar" id="btnCancelarEdicao">Cancelar</button>
+        <button type="submit" class="botao-form botao-salvar">Salvar Alterações</button>
+      </div>
+    </form>
+  </div>
+</div>
+        
       </section>
     </main>
 
