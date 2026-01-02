@@ -1,0 +1,36 @@
+{
+  "name": "farm-weather-collector",
+  "version": "1.0.0",
+  "description": "Coletor meteorológico para sistema agrícola - TCC",
+  "main": "worker.js",
+  "scripts": {
+    "start": "node worker.js",
+    "dev": "nodemon worker.js",
+    "test": "node teste-rapido.js",
+    "test-collector": "node scripts/test-collector.js",
+    "test-db": "node scripts/test-db.js",
+    "collect-now": "node scripts/collect-now.js",
+    "stats": "node -e \"require('./src/services/weather-collector.service.js').getStats().then(s => console.log(s))\"",
+    "test-fast": "node teste-simples.js"
+  },
+  "keywords": [
+    "tcc",
+    "agricultura",
+    "meteorologia",
+    "openweather",
+    "farm",
+    "sistema-agricola"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "mysql2": "^3.6.1",
+    "node-cron": "^3.0.3",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
