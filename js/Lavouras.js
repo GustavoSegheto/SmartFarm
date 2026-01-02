@@ -350,6 +350,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+<<<<<<< HEAD
 // Em seu Lavouras.js, adicione:
 document.addEventListener('DOMContentLoaded', function() {
   // Dados de exemplo para a API
@@ -362,3 +363,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Verifique se os elementos existem
 console.log('Probabilidade elemento:', document.getElementById('prob-chuva'));
 console.log('Altura container:', document.querySelector('.api-dados-container').offsetHeight);
+=======
+export const weatherApi = async (longitude, latitude) => {
+
+  const apiWeatherURL = `https://weather.googleapis.com/v1/forecast/days:lookup?key=${apiKey}&location.latitude=${lat}&location.longitude=${long}&days=${days}`;
+
+  const res = await fetch(apiWeatherURL);
+  const data = await res.json();
+
+  return data;
+
+}
+>>>>>>> main
