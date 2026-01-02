@@ -708,34 +708,3 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-
-//Request de latitude e longitude da lavoura
-import { weatherApi } from "./js/Lavouras.js"
-
-const weatherRequest = async () => {
-
-
-  const sql = "SELECT latitude, longitude FROM lavoura WHERE ID_lavoura = ?";
-  const params = [idLavoura];
-
-
-  try {
-    const [rows] = await db.query(sql, params);
-
-    if (!rows || rows.length === 0) {
-      return res.status(401).json({
-        status: "error",
-        message: "Erro em obter a latitude e longitude da lavoura",
-      });
-    }
-
-    weatherApi(latitude, longitude);
-
-  } catch (error) {
-    console.error("Erro: ", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro em obter a latitude e longitude da lavoura",
-    });
-  }
-}
