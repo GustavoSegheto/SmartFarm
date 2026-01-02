@@ -24,7 +24,7 @@ class WeatherCollectorService {
       
       if (lavouras.length === 0) {
         console.log(' Nenhuma lavoura encontrada');
-        console.log(' Insira lavouras com: INSERT INTO lavoura (latitude, longitude, apelido_sensor) VALUES (-23.5505, -46.6333, "Fazenda Teste");');
+        console.log(' Insira lavouras com: INSERT INTO lavoura (latitude, longitude, nome_lavoura) VALUES (-23.5505, -46.6333, "Fazenda Teste");');
         return { error: 'Sem lavouras' };
       }
       
@@ -55,13 +55,13 @@ class WeatherCollectorService {
    */
   async collectAndSave(lavoura) {
     try {
-      console.log(`\n🌾 Processando: ${lavoura.apelido_sensor || 'Lavoura ' + lavoura.ID_lavoura}`);
+      console.log(`\n🌾 Processando: ${lavoura.nome_lavoura || 'Lavoura ' + lavoura.ID_lavoura}`);
       
       // Coleta dados da API
       const weatherData = await this.getWeatherFromAPI(lavoura.latitude, lavoura.longitude);
       
       // Salva no banco
-      await this.saveToDatabase(weatherData);
+      await this.saveToDatabase(weatherData, lavoura.ID_lavoura);
       
       console.log(`    Salvo: ${weatherData.temp_ar}°C, ${weatherData.clima}`);
       return true;
@@ -111,25 +111,27 @@ class WeatherCollectorService {
   /**
    * Salva dados no banco
    */
-  async saveToDatabase(weatherData) {
-    const connection = await this.getConnection();
-    
-    await connection.execute(
-      `INSERT INTO info_ambiente 
-       (temp_ar, umid_ar, vel_vento, pluviosidade, fotoperiodo, clima, data_leitura) 
-       VALUES (?, ?, ?, ?, ?, ?, NOW())`,
-      [
-        weatherData.temp_ar,
-        weatherData.umid_ar,
-        weatherData.vel_vento,
-        weatherData.pluviosidade,
-        weatherData.fotoperiodo,
-        weatherData.clima
-      ]
-    );
-    
-    await connection.end();
-  }
+  // Recebe idLavoura como segundo parâmetro
+async saveToDatabase(weatherData, idLavoura) {
+  const connection = await this.getConnection();
+  
+  await connection.execute(
+    `INSERT INTO info_ambiente 
+     (ID_lavoura, temp_ar, umid_ar, vel_vento, pluviosidade, fotoperiodo, clima, data_leitura) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
+    [
+      idLavoura, // Adiciona o ID no array de valores
+      weatherData.temp_ar,
+      weatherData.umid_ar,
+      weatherData.vel_vento,
+      weatherData.pluviosidade,
+      weatherData.fotoperiodo,
+      weatherData.clima
+    ]
+  );
+  
+  await connection.end();
+}
   
   /**
    * Busca lavouras do banco
@@ -139,7 +141,7 @@ class WeatherCollectorService {
       const connection = await this.getConnection();
       
       const [rows] = await connection.execute(`
-        SELECT ID_lavoura, latitude, longitude, apelido_sensor 
+        SELECT ID_lavoura, latitude, longitude, nome_lavoura 
         FROM lavoura 
         WHERE latitude IS NOT NULL 
           AND longitude IS NOT NULL

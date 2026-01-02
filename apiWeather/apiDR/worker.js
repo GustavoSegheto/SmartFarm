@@ -33,7 +33,7 @@ async function startSystem() {
     if (lavouras.length === 0) {
       console.log('     Nenhuma lavoura com coordenadas encontrada');
       console.log('    Insira dados na tabela lavoura:\n');
-      console.log('      INSERT INTO lavoura (latitude, longitude, apelido_sensor)');
+      console.log('      INSERT INTO lavoura (latitude, longitude, nome_lavoura)');
       console.log('      VALUES (-23.5505, -46.6333, "Fazenda São Paulo");\n');
     } else {
       console.log(`    ${lavouras.length} lavoura(s) encontrada(s)\n`);

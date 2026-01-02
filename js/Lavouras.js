@@ -1,17 +1,36 @@
 // js/Lavouras.js
 "use strict";
 
+// Variáveis globais para os gráficos
+let ventoGauge = null;
+let pizzaChart = null;
+let temperatureChart = null;
+
 document.addEventListener("DOMContentLoaded", async () => {
+  // 1. Verificar autenticação
+  await verificarSessao();
+  
+  // 2. Carregar lavouras no seletor
+  await carregarLavourasNoSeletor();
+  
+  // 3. Inicializar gráficos
+  inicializarGraficos();
+  
+  // 4. Configurar eventos
+  configurarEventos();
+});
+
+// --- FUNÇÕES PRINCIPAIS ---
+
+async function verificarSessao() {
   const userArea = document.getElementById("usuario-area");
   const nomeSpan = document.getElementById("usuario-nome");
   const btnLogout = document.getElementById("btnLogout");
 
-  // 1) Checa sessão
   try {
     const resp = await fetch("/api/sessao", { credentials: "same-origin" });
 
     if (!resp.ok) {
-      // não autenticado -> volta para login
       window.location.href = "/";
       return;
     }
@@ -23,220 +42,427 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    // Sessão ok: preenche nome e mostra área do usuário
+    // Sessão ok
     if (nomeSpan) {
       nomeSpan.textContent = data.user.nome || data.user.email || "Usuário";
     }
     if (userArea) {
       userArea.classList.remove("d-none");
     }
+
+    // Configurar logout
+    if (btnLogout) {
+      btnLogout.addEventListener("click", async () => {
+        const desejaSair = window.confirm("Você deseja sair da sua conta?");
+        if (!desejaSair) return;
+
+        try {
+          await fetch("/logout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+          });
+        } finally {
+          window.location.href = "/";
+        }
+      });
+    }
   } catch (error) {
     console.error("Erro ao verificar sessão:", error);
     window.location.href = "/";
+  }
+}
+
+async function carregarLavourasNoSeletor() {
+  const seletor = document.getElementById("seletorLavouras");
+  
+  if (!seletor) {
+    console.error("Seletor de lavouras não encontrado!");
     return;
   }
-
-  // 2) Logout
-  if (btnLogout) {
-    btnLogout.addEventListener("click", async () => {
-      const desejaSair = window.confirm("Você deseja sair da sua conta?");
-
-      if (!desejaSair) {
-        // Usuário cancelou o logout
-        return;
-      }
-
-      try {
-        const resp = await fetch("/logout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-        });
-
-        // Independente do resultado, redireciona para a tela inicial
-        window.location.href = "/";
-      } catch (_) {
-        // Em caso de erro na requisição, força o retorno ao index
-        window.location.href = "/";
-      }
+  
+  try {
+    seletor.innerHTML = '<option value="">Carregando lavouras...</option>';
+    
+    // ATENÇÃO: Verifique se esta rota existe no server.js
+    const response = await fetch("/api/lavouras/lista", {
+      credentials: "same-origin"
     });
+    
+    if (!response.ok) {
+      console.error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+      throw new Error("Erro ao buscar lavouras");
+    }
+    
+    const data = await response.json();
+    console.log("Dados recebidos da API lavouras:", data);
+    
+    if (data.status === "success" && data.data && data.data.length > 0) {
+      seletor.innerHTML = '<option value="">Selecione uma lavoura</option>';
+      
+      data.data.forEach(lavoura => {
+        const option = document.createElement("option");
+        option.value = lavoura.ID_lavoura;
+        option.textContent = lavoura.nome || `Lavoura ${lavoura.ID_lavoura}`;
+        seletor.appendChild(option);
+      });
+      
+      // Selecionar a primeira lavoura automaticamente
+      if (seletor.options.length > 1) {
+        seletor.selectedIndex = 1;
+        await carregarDadosLavoura(seletor.value);
+      }
+    } else {
+      console.warn("Nenhuma lavoura encontrada ou dados vazios");
+      seletor.innerHTML = '<option value="">Nenhuma lavoura encontrada</option>';
+    }
+  } catch (error) {
+    console.error("Erro ao carregar lavouras:", error);
+    seletor.innerHTML = '<option value="">Erro ao carregar. Clique para recarregar</option>';
+    
+    // Adiciona evento para recarregar ao clicar
+    seletor.onclick = async () => {
+      await carregarLavourasNoSeletor();
+    };
   }
+}
 
-});
+async function carregarDadosLavoura(idLavoura) {
+  if (!idLavoura) {
+    console.log("Nenhuma lavoura selecionada");
+    return;
+  }
+  
+  try {
+    console.log(`Carregando dados da lavoura ID: ${idLavoura}`);
+    const response = await fetch(`/api/lavouras/${idLavoura}/dados-completos`, {
+      credentials: "same-origin"
+    });
+    
+    if (!response.ok) {
+      console.error(`Erro HTTP: ${response.status} - ${response.statusText}`);
+      throw new Error("Erro ao buscar dados");
+    }
+    
+    const data = await response.json();
+    console.log("Dados recebidos da API dados-completos:", data);
+    
+    if (data.status === "success") {
+      atualizarDadosClima(data.data.clima);
+      atualizarDadosSensores(data.data.sensor);
+      atualizarGraficoPizza(data.data.sensor);
+      atualizarGraficoTemperatura(data.data.historicoTemperatura);
+      atualizarVelocimetro(data.data.clima);
+    } else {
+      console.warn("Status não é success:", data);
+      limparDados();
+    }
+  } catch (error) {
+    console.error("Erro ao carregar dados da lavoura:", error);
+    limparDados();
+  }
+}
 
+// --- FUNÇÕES DE ATUALIZAÇÃO DE DADOS ---
 
+function atualizarDadosClima(climaData) {
+  console.log("Atualizando dados do clima:", climaData);
+  
+  if (climaData) {
+    // Atualizar elementos da API de clima
+    const tempEl = document.getElementById('temp_ar_valor');
+    const umidEl = document.getElementById('umid_ar_valor');
+    const ventEl = document.getElementById('vel_vento_valor');
+    const pluvEl = document.getElementById('pluviosidade_valor');
+    const fotoEl = document.getElementById('fotoperiodo_valor');
+    const climaEl = document.getElementById('clima_valor');
+    
+    if(tempEl) tempEl.textContent = `${parseFloat(climaData.temp_ar || 0).toFixed(1)}°C`;
+    if(umidEl) umidEl.textContent = `${parseFloat(climaData.umid_ar || 0).toFixed(0)}%`;
+    if(ventEl) ventEl.textContent = `${parseFloat(climaData.vel_vento || 0).toFixed(1)} km/h`;
+    if(pluvEl) pluvEl.textContent = `${parseFloat(climaData.pluviosidade || 0).toFixed(1)} mm`;
+    if(fotoEl) fotoEl.textContent = `${parseFloat(climaData.fotoperiodo || 0).toFixed(1)} h`;
+    if(climaEl) climaEl.textContent = climaData.clima || '--';
+    
+    // Atualizar também o elemento do vento no título do velocímetro
+    const ventoTituloEl = document.querySelector('.subcardvento h2 span');
+    if (ventoTituloEl) {
+      ventoTituloEl.textContent = `${parseFloat(climaData.vel_vento || 0).toFixed(1)} km/h`;
+    }
+  } else {
+    console.log("Sem dados de clima para atualizar");
+  }
+}
 
-/**
- * Aguarda o DOM ser totalmente carregado antes de executar
- * os scripts dos gráficos e sensores.
- */
-document.addEventListener("DOMContentLoaded", function () {
-  // --- 1. Script do Velocímetro (JustGage) ---
+function atualizarDadosSensores(sensorData) {
+  console.log("Atualizando dados do sensor:", sensorData);
+  
+  if (sensorData) {
+    // Atualizar sensores do solo com dados REAIS do banco
+    const umidadeSoloEl = document.getElementById('umidadeSoloValor');
+    const phSoloEl = document.getElementById('phSoloValor');
+    
+    // Agora temos os dados reais da tabela info_sensor
+    if(umidadeSoloEl && sensorData.umidade_solo !== null && sensorData.umidade_solo !== undefined) {
+      umidadeSoloEl.textContent = `${parseFloat(sensorData.umidade_solo).toFixed(1)}%`;
+    } else if (umidadeSoloEl) {
+      umidadeSoloEl.textContent = "--%"; // Valor padrão se não houver dados
+    }
+    
+    if(phSoloEl && sensorData.ph_solo !== null && sensorData.ph_solo !== undefined) {
+      phSoloEl.textContent = parseFloat(sensorData.ph_solo).toFixed(1);
+    } else if (phSoloEl) {
+      phSoloEl.textContent = "--"; // Valor padrão se não houver dados
+    }
+    
+    // Atualizar também no título
+    const umidadeSoloTituloEl = document.querySelector('.subcardumidsolo h2 span');
+    if (umidadeSoloTituloEl && sensorData.umidade_solo !== null) {
+      umidadeSoloTituloEl.textContent = `${parseFloat(sensorData.umidade_solo).toFixed(1)}%`;
+    }
+    
+    const phSoloTituloEl = document.querySelector('.subcardPHSolo h2 span');
+    if (phSoloTituloEl && sensorData.ph_solo !== null) {
+      phSoloTituloEl.textContent = parseFloat(sensorData.ph_solo).toFixed(1);
+    }
+    
+  } else {
+    console.log("Sem dados do sensor para atualizar");
+    // Se não houver dados do sensor, mostra valores padrão
+    const umidadeSoloEl = document.getElementById('umidadeSoloValor');
+    const phSoloEl = document.getElementById('phSoloValor');
+    
+    if(umidadeSoloEl) umidadeSoloEl.textContent = "--%";
+    if(phSoloEl) phSoloEl.textContent = "--";
+  }
+}
 
-  // Verifica se as bibliotecas JustGage e Raphael estão carregadas
+function atualizarGraficoPizza(sensorData) {
+  if (!pizzaChart) {
+    console.error("Gráfico pizza não inicializado");
+    return;
+  }
+  
+  let valoresNutrientes = [25, 25, 25, 25]; // Valores padrão
+  
+  if (sensorData && sensorData.nitrogenio !== undefined && 
+      sensorData.fosforo !== undefined && sensorData.potassio !== undefined) {
+    
+    const n = parseFloat(sensorData.nitrogenio) || 0;
+    const p = parseFloat(sensorData.fosforo) || 0;
+    const k = parseFloat(sensorData.potassio) || 0;
+    
+    console.log(`Nutrientes: N=${n}, P=${p}, K=${k}`);
+    
+    const soma = n + p + k;
+    const outros = soma < 100 ? Math.max(0, 100 - soma) : 0;
+    
+    valoresNutrientes = [n, p, k, outros];
+  } else {
+    console.log("Dados de nutrientes não disponíveis para gráfico");
+  }
+  
+  pizzaChart.data.datasets[0].data = valoresNutrientes;
+  pizzaChart.update();
+  console.log("Gráfico pizza atualizado:", valoresNutrientes);
+}
+
+function atualizarGraficoTemperatura(historicoData) {
+  if (!temperatureChart) {
+    console.error("Gráfico temperatura não inicializado");
+    return;
+  }
+  
+  if (!historicoData || historicoData.length === 0) {
+    console.log("Sem dados históricos de temperatura");
+    // Usar dados simulados se não houver dados reais
+    const labels = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+    const maxTemps = [28, 30, 32, 29, 31, 33, 30];
+    const minTemps = [18, 19, 20, 17, 19, 21, 20];
+    
+    temperatureChart.data.labels = labels;
+    temperatureChart.data.datasets[0].data = maxTemps;
+    temperatureChart.data.datasets[1].data = minTemps;
+    temperatureChart.update();
+    
+    // Atualizar valores de texto
+    const maxTempEl = document.getElementById("maxTempValue");
+    const minTempEl = document.getElementById("minTempValue");
+    
+    if (maxTempEl && maxTemps.length > 0) {
+      const max = Math.max(...maxTemps);
+      maxTempEl.textContent = max.toFixed(1) + "°C";
+    }
+    
+    if (minTempEl && minTemps.length > 0) {
+      const min = Math.min(...minTemps);
+      minTempEl.textContent = min.toFixed(1) + "°C";
+    }
+    
+    return;
+  }
+  
+  // Preparar arrays para o gráfico
+  const labels = [];
+  const maxTemps = [];
+  const minTemps = [];
+  
+  historicoData.forEach(dia => {
+    const dataObj = new Date(dia.data);
+    labels.push(dataObj.toLocaleDateString('pt-BR', { weekday: 'short' }));
+    maxTemps.push(parseFloat(dia.temp_max || 0));
+    minTemps.push(parseFloat(dia.temp_min || 0));
+  });
+  
+  // Atualizar gráfico
+  temperatureChart.data.labels = labels;
+  temperatureChart.data.datasets[0].data = maxTemps;
+  temperatureChart.data.datasets[1].data = minTemps;
+  temperatureChart.update();
+  
+  // Atualizar valores de texto
+  const maxTempEl = document.getElementById("maxTempValue");
+  const minTempEl = document.getElementById("minTempValue");
+  
+  if (maxTempEl && maxTemps.length > 0) {
+    const max = Math.max(...maxTemps);
+    maxTempEl.textContent = max.toFixed(1) + "°C";
+  }
+  
+  if (minTempEl && minTemps.length > 0) {
+    const min = Math.min(...minTemps);
+    minTempEl.textContent = min.toFixed(1) + "°C";
+  }
+  
+  console.log("Gráfico temperatura atualizado com", historicoData.length, "dias");
+}
+
+function atualizarVelocimetro(climaData) {
+  if (!ventoGauge) {
+    console.error("Velocímetro não inicializado");
+    return;
+  }
+  
+  if (climaData && climaData.vel_vento !== null && climaData.vel_vento !== undefined) {
+    const velocidade = parseFloat(climaData.vel_vento) || 0;
+    console.log(`Atualizando velocímetro para: ${velocidade} km/h`);
+    ventoGauge.refresh(velocidade);
+  } else {
+    console.log("Sem dados de velocidade do vento para atualizar velocímetro");
+    ventoGauge.refresh(0);
+  }
+}
+
+function limparDados() {
+  console.log("Limpando dados...");
+  // Limpar todos os valores quando não há dados
+  const elementos = [
+    'temp_ar_valor', 'umid_ar_valor', 'vel_vento_valor',
+    'pluviosidade_valor', 'fotoperiodo_valor', 'clima_valor',
+    'umidadeSoloValor', 'phSoloValor', 'maxTempValue', 'minTempValue'
+  ];
+  
+  elementos.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '--';
+  });
+  
+  // Limpar gráficos
+  if (pizzaChart) {
+    pizzaChart.data.datasets[0].data = [25, 25, 25, 25];
+    pizzaChart.update();
+  }
+  
+  if (temperatureChart) {
+    temperatureChart.data.datasets[0].data = [0, 0, 0, 0, 0, 0, 0];
+    temperatureChart.data.datasets[1].data = [0, 0, 0, 0, 0, 0, 0];
+    temperatureChart.update();
+  }
+  
+  if (ventoGauge) {
+    ventoGauge.refresh(0);
+  }
+}
+
+// --- INICIALIZAÇÃO DE GRÁFICOS ---
+
+function inicializarGraficos() {
+  console.log("Inicializando gráficos...");
+  
+  // 1. Velocímetro (JustGage)
   if (typeof Raphael !== "undefined" && typeof JustGage !== "undefined") {
-    let vento = new JustGage({
+    console.log("Inicializando velocímetro...");
+    ventoGauge = new JustGage({
       id: "velocimetro",
-      value: 12,
+      value: 0,
       min: 0,
       max: 60,
-      title: "Km/h",
-      label: "Velocidade",
+      title: "km/h",
+      label: "Velocidade do Vento",
       gaugeWidthScale: 0.6,
       levelColors: ["#00ff00", "#ffcc00", "#ff0000"],
       counter: true,
       customSectors: [
-        {
-          color: "#00ff00",
-          lo: 0,
-          hi: 20,
-        },
-        {
-          color: "#ffcc00",
-          lo: 20,
-          hi: 40,
-        },
-        {
-          color: "#ff0000",
-          lo: 40,
-          hi: 60,
-        },
+        { color: "#00ff00", lo: 0, hi: 20 },
+        { color: "#ffcc00", lo: 20, hi: 40 },
+        { color: "#ff0000", lo: 40, hi: 60 }
       ],
     });
-
-    // --- Simulação de Atualização de Sensores ---
-    setInterval(() => {
-      // Atualiza velocímetro
-      if (vento) {
-        const novaVelocidade = Math.floor(Math.random() * 61);
-        vento.refresh(novaVelocidade);
-      }
-
-      // Atualizar valores de texto dos sensores
-      const umidadeSoloEl = document.getElementById("umidadeSoloValor");
-      const phSoloEl = document.getElementById("phSoloValor");
-      const umidadeArEl = document.getElementById("umidadeArValor");
-
-      if (umidadeSoloEl) {
-        umidadeSoloEl.textContent = (Math.random() * 30 + 60).toFixed(0) + "%";
-      }
-      if (phSoloEl) {
-        phSoloEl.textContent = (Math.random() * 1.5 + 5.5).toFixed(1);
-      }
-      if (umidadeArEl) {
-        umidadeArEl.textContent = (Math.random() * 30 + 60).toFixed(0) + "%";
-      }
-    }, 3000); // Atualiza a cada 3 segundos
+    console.log("Velocímetro inicializado");
   } else {
     console.error("Raphael ou JustGage não carregado.");
   }
 
-  // --- 2. Script do Gráfico de Pizza (Chart.js) INTEGRADO AO BD ---
+  // 2. Gráfico de Pizza (Nutrientes)
   const ctxPizza = document.getElementById("graficoPizza");
-
   if (ctxPizza) {
-    // Função assíncrona para buscar dados e renderizar o gráfico
-    const carregarGraficoPizza = async () => {
-      let valoresNutrientes = [0, 0, 0, 0]; // Padrão: N, P, K, Outros
-
-      try {
-        const response = await fetch("/api/sensor/ultimo");
-        const json = await response.json();
-
-        if (json.status === "success" && json.data) {
-          const { nitrogenio, fosforo, potassio } = json.data;
-          
-          // Converte para número (caso venha como string do banco)
-          const n = parseFloat(nitrogenio);
-          const p = parseFloat(fosforo);
-          const k = parseFloat(potassio);
-
-          // Cálculo simples para "Outros" (assumindo base 100% ou apenas preenchimento)
-          // Se a soma for maior que 100, definimos Outros como 0 para não quebrar o gráfico
-          const soma = n + p + k;
-          const outros = soma < 100 ? 100 - soma : 0;
-
-          valoresNutrientes = [n, p, k, outros];
-        } else {
-          console.warn("Dados do sensor não encontrados ou vazios via API.");
-          // Usa valores de fallback se não tiver dados no banco
-          valoresNutrientes = [25, 25, 25, 25]; 
-        }
-
-      } catch (error) {
-        console.error("Erro ao carregar dados do gráfico pizza:", error);
-        valoresNutrientes = [25, 25, 25, 25]; // Fallback em caso de erro
-      }
-
-      // Configuração do Gráfico
-      const dados = {
+    console.log("Inicializando gráfico pizza...");
+    pizzaChart = new Chart(ctxPizza.getContext("2d"), {
+      type: "doughnut",
+      data: {
         labels: ["Nitrogênio", "Fósforo", "Potássio", "Outros"],
-        datasets: [
-          {
-            label: "Distribuição (%)",
-            data: valoresNutrientes, // Usa os dados vindos do banco
-            backgroundColor: [
-              "#1b5e20", // Nitrogênio
-              "#2e7d32", // Fósforo
-              "#43a047", // Potássio
-              "#81c784", // Outros
-            ],
-            borderColor: "#ffffff",
-            borderWidth: 3,
-            hoverOffset: 15,
-          },
-        ],
-      };
-
-      const configPizza = {
-        type: "doughnut",
-        data: dados,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: "60%",
-          plugins: {
-            legend: {
-              display: false,
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  let label = context.label || "";
-                  let value = context.raw || 0;
-                  return `${label}: ${value}%`;
-                },
-              },
-            },
-          },
-        },
-      };
-
-      new Chart(ctxPizza.getContext("2d"), configPizza);
-    };
-
-    // Chama a função para iniciar o gráfico
-    carregarGraficoPizza();
-    
+        datasets: [{
+          label: "Distribuição (%)",
+          data: [25, 25, 25, 25], // Valores iniciais
+          backgroundColor: ["#1b5e20", "#2e7d32", "#43a047", "#81c784"],
+          borderColor: "#ffffff",
+          borderWidth: 3,
+          hoverOffset: 15,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "60%",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.label}: ${context.raw}%`;
+              }
+            }
+          }
+        }
+      }
+    });
+    console.log("Gráfico pizza inicializado");
   } else {
     console.error("Elemento canvas 'graficoPizza' não encontrado.");
   }
 
-  // --- 3. Script do Gráfico de Temperatura (Chart.js) ---
+  // 3. Gráfico de Temperatura
   const ctxTemp = document.getElementById("temperatureChart");
   if (ctxTemp) {
-    const daysOfWeek = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-    const maxTemperatures = [28, 30, 32, 29, 31, 33, 30];
-    const minTemperatures = [18, 19, 20, 17, 19, 21, 20];
-
-    const temperatureChart = new Chart(ctxTemp.getContext("2d"), {
+    console.log("Inicializando gráfico temperatura...");
+    temperatureChart = new Chart(ctxTemp.getContext("2d"), {
       type: "bar",
       data: {
-        labels: daysOfWeek,
+        labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
         datasets: [
           {
             label: "Máxima",
-            data: maxTemperatures,
+            data: [0, 0, 0, 0, 0, 0, 0],
             backgroundColor: "rgba(255, 107, 107, 0.8)",
             borderColor: "#ff6b6b",
             borderWidth: 1,
@@ -244,13 +470,13 @@ document.addEventListener("DOMContentLoaded", function () {
           },
           {
             label: "Mínima",
-            data: minTemperatures,
+            data: [0, 0, 0, 0, 0, 0, 0],
             backgroundColor: "rgba(77, 171, 247, 0.8)",
             borderColor: "#4dabf7",
             borderWidth: 1,
             borderRadius: 3,
-          },
-        ],
+          }
+        ]
       },
       options: {
         responsive: true,
@@ -264,101 +490,115 @@ document.addEventListener("DOMContentLoaded", function () {
               usePointStyle: true,
               pointStyle: "circle",
               boxWidth: 6,
-            },
+            }
           },
           tooltip: {
             backgroundColor: "rgba(0, 0, 0, 0.7)",
             padding: 8,
             displayColors: false,
             callbacks: {
-              label: function (context) {
+              label: function(context) {
                 return `${context.dataset.label}: ${context.parsed.y}°C`;
-              },
-            },
-          },
+              }
+            }
+          }
         },
         scales: {
           y: {
             beginAtZero: false,
-            min: 15,
-            max: 35,
+            min: 0,
+            max: 40,
             grid: { color: "rgba(0, 0, 0, 0.05)", drawBorder: false },
             ticks: {
               callback: (value) => value + "°C",
               font: { size: 10 },
               stepSize: 5,
               padding: 5,
-            },
+            }
           },
           x: {
             grid: { display: false },
-            ticks: { font: { size: 11 }, padding: 5 },
-          },
+            ticks: { font: { size: 11 }, padding: 5 }
+          }
         },
-        interaction: { mode: "index", intersect: false },
-      },
+        interaction: { mode: "index", intersect: false }
+      }
     });
-
-    // Atualizar os valores de texto max/min
-    const maxTempEl = document.getElementById("maxTempValue");
-    const minTempEl = document.getElementById("minTempValue");
-
-    if (maxTempEl) {
-      maxTempEl.textContent = Math.max(...maxTemperatures) + "°C";
-    }
-    if (minTempEl) {
-      minTempEl.textContent = Math.min(...minTemperatures) + "°C";
-    }
+    console.log("Gráfico temperatura inicializado");
   } else {
     console.error("Elemento canvas 'temperatureChart' não encontrado.");
   }
+}
 
-  // --- 4. Event Listeners para Botões Flutuantes ---
+// --- CONFIGURAÇÃO DE EVENTOS ---
 
+function configurarEventos() {
+  console.log("Configurando eventos...");
+  
+  // Evento do seletor de lavouras
+  const seletor = document.getElementById('seletorLavouras');
+  if (seletor) {
+    seletor.addEventListener('change', async (e) => {
+      console.log(`Lavoura selecionada: ${e.target.value}`);
+      await carregarDadosLavoura(e.target.value);
+    });
+    console.log("Evento do seletor configurado");
+  } else {
+    console.error("Seletor de lavouras não encontrado para configurar evento");
+  }
+  
+  // Eventos dos botões flutuantes
   const btnConcluir = document.getElementById("btnConcluirLavoura");
   const btnExcluir = document.getElementById("btnExcluirLavoura");
-
+  
   if (btnConcluir) {
     btnConcluir.addEventListener("click", () => {
-      if (
-        confirm(
-          'Deseja realmente marcar esta lavoura como "concluída"? Esta ação não pode ser desfeita.'
-        )
-      ) {
+      if (confirm('Deseja marcar esta lavoura como "concluída"? Esta ação não pode ser desfeita.')) {
         alert("Lavoura concluída com sucesso!");
-        // TODO: Futuramente, fazer fetch() para /lavoura/concluir/:id
-        // e redirecionar para a lista de lavouras.
-        // window.location.href = 'CadastroLavoura.html';
+        // TODO: Implementar API para concluir lavoura
       }
     });
   }
-
+  
   if (btnExcluir) {
     btnExcluir.addEventListener("click", () => {
-      // O nome da lavoura não está disponível, então usamos uma msg genérica
-      if (
-        confirm(
-          "Tem certeza que deseja EXCLUIR esta lavoura? Todos os dados (sensores, histórico) serão perdidos."
-        )
-      ) {
-        alert("Lavoura excluída com sucesso!");
-        // TODO: Futuramente, fazer fetch() para /lavoura/excluir/:id
-        // e redirecionar para a lista de lavouras.
-        // window.location.href = 'CadastroLavoura.html';
+      const seletor = document.getElementById('seletorLavouras');
+      const lavouraId = seletor ? seletor.value : null;
+      
+      if (lavouraId && confirm("Tem certeza que deseja EXCLUIR esta lavoura? Todos os dados serão perdidos.")) {
+        excluirLavoura(lavouraId);
+      } else if (!lavouraId) {
+        alert("Selecione uma lavoura primeiro!");
       }
     });
   }
-});
+  
+  console.log("Eventos configurados");
+}
 
-// Em seu Lavouras.js, adicione:
-document.addEventListener('DOMContentLoaded', function() {
-  // Dados de exemplo para a API
-  document.getElementById('temp-atual').textContent = '24°C';
-  document.getElementById('clima-atual').textContent = 'Ensolarado';
-  document.getElementById('mm-chuva').textContent = '0 mm';
-  document.getElementById('prob-chuva').textContent = '10%';
-});
+// --- FUNÇÃO AUXILIAR PARA EXCLUIR LAVOURA ---
 
-// Verifique se os elementos existem
-console.log('Probabilidade elemento:', document.getElementById('prob-chuva'));
-console.log('Altura container:', document.querySelector('.api-dados-container').offsetHeight);
+async function excluirLavoura(idLavoura) {
+  try {
+    const response = await fetch(`/api/lavouras/${idLavoura}`, {
+      method: "DELETE",
+      credentials: "same-origin"
+    });
+    
+    const data = await response.json();
+    
+    if (data.status === "success") {
+      alert(data.message);
+      // Recarregar a lista de lavouras
+      await carregarLavourasNoSeletor();
+    } else {
+      alert("Erro ao excluir lavoura: " + data.message);
+    }
+  } catch (error) {
+    console.error("Erro ao excluir lavoura:", error);
+    alert("Erro ao excluir lavoura.");
+  }
+}
+
+// --- DEBUG: Verificar console para problemas ---
+console.log("Lavouras.js carregado com sucesso!");

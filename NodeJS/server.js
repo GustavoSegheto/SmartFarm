@@ -1,5 +1,6 @@
 // NodeJS/server.js
 "use strict";
+
 //criação de branch
 const express = require("express");
 const path = require("path");
@@ -43,7 +44,6 @@ function ensureAuthenticated(req, res, next) {
   if (req.session && req.session.user) return next();
   return res.redirect("/");
 }
-
 
 // Página de Lavouras (protegida)
 app.get("/lavouras", ensureAuthenticated, (req, res) => {
@@ -133,7 +133,6 @@ app.post("/login", async (req, res) => {
 // ====================================================================
 // ROTA DE LOGOUT
 // ====================================================================
-
 app.post("/logout", (req, res) => {
   req.session.destroy(() => {
     // limpa cookie da sessão (nome padrão do cookie de sessão do express-session)
@@ -189,12 +188,12 @@ app.post("/cadastro", async (req, res) => {
 });
 
 // Página de listagem de usuários
-app.get("/usuarios", (req, res) => {
+app.get("/usuarios", ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "usuarios.html"));
 });
 
 // API para retornar os usuários em JSON
-app.get("/api/usuarios", async (req, res) => {
+app.get("/api/usuarios", ensureAuthenticated, async (req, res) => {
   try {
     const sql =
       "SELECT ID_usuario, nome, email, telefone FROM usuario ORDER BY nome";
@@ -213,188 +212,9 @@ app.get("/api/usuarios", async (req, res) => {
   }
 });
 
-// Tela de Lavouras – PROTEGIDA
-app.get("/lavouras", ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "Lavouras.html"));
-});
-
-// Tela de Usuários – PROTEGIDA
-app.get("/usuarios", ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "usuarios.html"));
-});
-
 // Bloqueio de acesso direto ao arquivo HTML
 app.get("/Lavouras.html", (req, res) => {
   return res.redirect("/lavouras");
-});
-
-/* ============================================================
- * APIS DE SESSÃO / AUTENTICAÇÃO
- * ============================================================ */
-
-// Verificar sessão (usado em Lavouras.js)
-app.get("/api/sessao", (req, res) => {
-  if (req.session && req.session.user) {
-    return res.json({
-      authenticated: true,
-      user: req.session.user,
-    });
-  }
-  return res.status(401).json({ authenticated: false });
-});
-
-// Login
-app.post("/login", async (req, res) => {
-  console.log("=== POST /login ===");
-  console.log("Body recebido:", req.body);
-
-  const { email, senha } = req.body;
-
-  if (!email || !senha) {
-    return res.status(400).json({
-      status: "error",
-      message: "E-mail e senha são obrigatórios.",
-    });
-  }
-
-  try {
-    const sql =
-      "SELECT ID_usuario, nome, email, senha FROM usuario WHERE email = ? LIMIT 1";
-
-    const rows = await runQuery(sql, [email]);
-
-    if (!rows || rows.length === 0) {
-      return res.status(401).json({
-        status: "error",
-        message: "E-mail ou senha inválidos.",
-      });
-    }
-
-    const usuario = rows[0];
-
-    const senhaConfere = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaConfere) {
-      return res.status(401).json({
-        status: "error",
-        message: "E-mail ou senha inválidos.",
-      });
-    }
-
-    // Login OK → grava usuário na sessão
-    req.session.user = {
-      id: usuario.ID_usuario,
-      nome: usuario.nome,
-      email: usuario.email,
-    };
-
-    console.log("[/login] Login OK para ID_usuario =", usuario.ID_usuario);
-
-    return res.status(200).json({
-      status: "success",
-      message: "Login realizado com sucesso!",
-      redirect: "/lavouras",
-    });
-  } catch (error) {
-    console.error("[/login] ERRO:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro ao realizar login.",
-    });
-  }
-});
-
-// Logout (usado pelo popup da Lavouras)
-app.post("/logout", (req, res) => {
-  console.log("[POST /logout] session.user antes =", req.session?.user || null);
-
-  if (!req.session) {
-    return res.json({
-      status: "success",
-      message: "Já estava deslogado.",
-    });
-  }
-
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("[/logout] ERRO ao destruir sessão:", err);
-      return res.status(500).json({
-        status: "error",
-        message: "Erro ao fazer logout.",
-      });
-    }
-
-    res.clearCookie("connect.sid");
-    return res.json({
-      status: "success",
-      message: "Logout realizado com sucesso.",
-    });
-  });
-});
-
-/* ============================================================
- * APIS DE USUÁRIOS
- * ============================================================ */
-
-// Cadastro de usuário
-app.post("/cadastro", async (req, res) => {
-  console.log("=== POST /cadastro ===");
-  console.log("Body recebido:", req.body);
-
-  const { nome, email, telefone, senha } = req.body;
-
-  if (!nome || !email || !senha) {
-    return res.status(400).json({
-      status: "error",
-      message: "Nome, e-mail e senha são obrigatórios.",
-    });
-  }
-
-  try {
-    const saltRounds = 10;
-    const senhaHash = await bcrypt.hash(senha, saltRounds);
-
-    const sql =
-      "INSERT INTO usuario (nome, email, senha, telefone) VALUES (?, ?, ?, ?)";
-    const params = [nome, email, senhaHash, telefone || null];
-
-    const result = await runQuery(sql, params);
-
-    console.log(
-      `[/cadastro] Usuário cadastrado com sucesso! ID: ${result.insertId || "?"}`
-    );
-
-    return res.status(201).json({
-      status: "success",
-      message: "Usuário cadastrado com sucesso!",
-    });
-  } catch (error) {
-    console.error("[/cadastro] ERRO:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro ao registrar usuário.",
-    });
-  }
-});
-
-// Listar usuários (para usuarios.html) – protegido
-app.get("/api/usuarios", ensureAuthenticated, async (req, res) => {
-  try {
-    const sql =
-      "SELECT ID_usuario, nome, email, telefone FROM usuario ORDER BY nome";
-
-    const rows = await runQuery(sql);
-
-    return res.json({
-      status: "success",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("[/api/usuarios] ERRO:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro ao listar usuários.",
-    });
-  }
 });
 
 // ====================================================================
@@ -431,6 +251,212 @@ app.get("/api/sensor/ultimo", ensureAuthenticated, async (req, res) => {
       status: "error",
       message: "Erro ao buscar dados do sensor.",
     });
+  }
+});
+
+// ====================================================================
+// NOVAS ROTAS PARA O SELETOR DE LAVOURAS (ADICIONADAS AQUI)
+// ====================================================================
+
+// ROTA PARA BUSCAR LAVOURAS DO USUÁRIO (para o seletor) - VERIFIQUE ESTA ROTA
+app.get("/api/lavouras/lista", ensureAuthenticated, async (req, res) => {
+  try {
+    const idUsuario = req.session.user.id;
+    
+    console.log(`Buscando lavouras para usuário ID: ${idUsuario}`);
+    
+    const sql = `
+      SELECT 
+        ID_lavoura,
+        nome_lavoura AS nome,
+        latitude,
+        longitude
+      FROM lavoura 
+      WHERE ID_usuario = ?
+      ORDER BY nome_lavoura
+    `;
+    
+    const [rows] = await db.query(sql, [idUsuario]);
+    
+    console.log(`Encontradas ${rows.length} lavouras para o usuário`);
+    
+    return res.json({
+      status: "success",
+      data: rows,
+    });
+    
+  } catch (error) {
+    console.error("[GET /api/lavouras/lista] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar lavouras.",
+    });
+  }
+});
+
+// ROTA PARA DADOS COMPLETOS DE UMA LAVOURA (gráficos + clima) - VERSÃO FINAL CORRIGIDA
+app.get("/api/lavouras/:id/dados-completos", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+    
+    // Verifica se a lavoura pertence ao usuário
+    const checkSql = "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+    
+    if (checkRows.length === 0) {
+      return res.status(403).json({ 
+        status: "error", 
+        message: "Permissão negada ou lavoura não encontrada." 
+      });
+    }
+    
+    // 1. Busca dados do clima (última leitura)
+    const climaSql = `
+      SELECT 
+        temp_ar, 
+        umid_ar, 
+        vel_vento, 
+        pluviosidade, 
+        fotoperiodo,
+        clima,
+        DATE_FORMAT(data_leitura, '%d/%m/%Y %H:%i') as data_formatada
+      FROM info_ambiente 
+      WHERE ID_lavoura = ? 
+      ORDER BY data_leitura DESC 
+      LIMIT 1
+    `;
+    
+    const [climaRows] = await db.query(climaSql, [id]);
+    const climaData = climaRows.length > 0 ? climaRows[0] : null;
+    
+    // 2. Busca dados do sensor (última leitura) - COM NOMES CORRETOS DAS COLUNAS
+    // Primeiro, verifica se há sensor associado à lavoura
+    const sensorLavouraSql = `
+      SELECT l.ID_sensor, s.apelido 
+      FROM lavoura l
+      LEFT JOIN sensor s ON l.ID_sensor = s.ID_sensor
+      WHERE l.ID_lavoura = ?
+    `;
+    
+    const [sensorLavouraRows] = await db.query(sensorLavouraSql, [id]);
+    let sensorData = null;
+    
+    if (sensorLavouraRows.length > 0 && sensorLavouraRows[0].ID_sensor) {
+      // Se a lavoura tem sensor associado, busca os dados
+      const sensorSql = `
+        SELECT 
+          nitrogenio,
+          fosforo,
+          potassio,
+          umid_solo,
+          ph_solo,
+          temp_solo,
+          DATE_FORMAT(leitura_sensor, '%d/%m/%Y %H:%i') as data_leitura_sensor
+        FROM info_sensor 
+        WHERE ID_sensor = ?
+        ORDER BY leitura_sensor DESC 
+        LIMIT 1
+      `;
+      
+      const [sensorRows] = await db.query(sensorSql, [sensorLavouraRows[0].ID_sensor]);
+      
+      if (sensorRows.length > 0) {
+        sensorData = {
+          ID_sensor: sensorLavouraRows[0].ID_sensor,
+          apelido: sensorLavouraRows[0].apelido,
+          nitrogenio: sensorRows[0].nitrogenio,
+          fosforo: sensorRows[0].fosforo,
+          potassio: sensorRows[0].potassio,
+          umidade_solo: sensorRows[0].umid_solo,  // Mapeando umid_solo -> umidade_solo
+          ph_solo: sensorRows[0].ph_solo,
+          temperatura_solo: sensorRows[0].temp_solo,  // Mapeando temp_solo -> temperatura_solo
+          data_leitura_sensor: sensorRows[0].data_leitura_sensor
+        };
+      }
+    }
+    
+    // 3. Busca histórico de temperaturas para gráfico (últimos 7 dias)
+    const historicoTempSql = `
+      SELECT 
+        DATE(data_leitura) as data,
+        AVG(temp_ar) as temp_media,
+        MAX(temp_ar) as temp_max,
+        MIN(temp_ar) as temp_min
+      FROM info_ambiente 
+      WHERE ID_lavoura = ? 
+        AND data_leitura >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+      GROUP BY DATE(data_leitura)
+      ORDER BY data DESC
+      LIMIT 7
+    `;
+    
+    const [historicoRows] = await db.query(historicoTempSql, [id]);
+    
+    return res.json({
+      status: "success",
+      data: {
+        clima: climaData,
+        sensor: sensorData,
+        historicoTemperatura: historicoRows.reverse(), // Inverter para ordem cronológica
+        lavouraId: id
+      }
+    });
+    
+  } catch (error) {
+    console.error("[GET /api/lavouras/:id/dados-completos] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar dados da lavoura.",
+    });
+  }
+});
+
+// Rota para buscar o clima atual da lavoura (Tabela info_ambiente)
+app.get("/api/lavouras/:id/clima", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+
+    // Verifica se a lavoura pertence ao usuário
+    const checkSql = "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+    
+    if (checkRows.length === 0) {
+      return res.status(403).json({ 
+        status: "error", 
+        message: "Permissão negada." 
+      });
+    }
+
+    const sql = `
+      SELECT 
+        temp_ar, 
+        umid_ar, 
+        pluviosidade, 
+        vel_vento, 
+        clima, 
+        data_leitura
+      FROM info_ambiente 
+      WHERE ID_lavoura = ? 
+      ORDER BY data_leitura DESC 
+      LIMIT 1
+    `;
+
+    const [rows] = await db.query(sql, [id]);
+
+    if (!rows || rows.length === 0) {
+      return res.json({ status: "empty", message: "Sem dados climáticos para esta lavoura." });
+    }
+
+    return res.json({
+      status: "success",
+      data: rows[0],
+    });
+
+  } catch (error) {
+    console.error("Erro ao buscar clima:", error);
+    return res.status(500).json({ status: "error", message: "Erro no servidor." });
   }
 });
 
@@ -647,48 +673,6 @@ app.put("/api/sensores/:id", ensureAuthenticated, async (req, res) => {
   } catch (error) {
     console.error("Erro ao editar sensor:", error);
     return res.status(500).json({ status: "error", message: "Erro ao atualizar sensor." });
-  }
-});
-
-/* ============================================================
- * AJUSTE NA ROTA DE CRIAR LAVOURA
- * ============================================================ */
-app.post("/api/lavouras", ensureAuthenticated, async (req, res) => {
-  try {
-    // Agora recebemos 'idSensor' vindo diretamente do <select>
-    const { nomeLavoura, dataPlantio, cultura, latitude, longitude, idSensor } = req.body;
-    const idUsuario = req.session.user.id;
-
-    if (!cultura || !dataPlantio) {
-      return res.status(400).json({ status: "error", message: "Campos obrigatórios faltando." });
-    }
-
-    const sql = `
-      INSERT INTO lavoura 
-      (ID_usuario, ID_sensor, nome_lavoura, tipo_cultura, data_inicio_plantio, latitude, longitude) 
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    
-    // Se idSensor for string vazia ou "0", gravamos NULL
-    const sensorParaGravar = (idSensor && idSensor !== "0") ? idSensor : null;
-
-    const values = [
-      idUsuario,
-      sensorParaGravar,
-      nomeLavoura || "Minha Lavoura",
-      cultura,
-      dataPlantio,
-      latitude || null,
-      longitude || null
-    ];
-
-    const [result] = await db.query(sql, values);
-
-    return res.status(201).json({ status: "success", message: "Lavoura criada!", id: result.insertId });
-
-  } catch (error) {
-    console.error("Erro ao criar lavoura:", error);
-    return res.status(500).json({ status: "error", message: "Erro ao salvar lavoura." });
   }
 });
 
