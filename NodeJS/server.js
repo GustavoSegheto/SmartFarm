@@ -677,6 +677,326 @@ app.put("/api/sensores/:id", ensureAuthenticated, async (req, res) => {
 });
 
 /* ============================================================
+ * ROTAS PARA HISTÓRICO DE LAVOURAS
+ * ============================================================ */
+
+// 1. Buscar todas as lavouras do usuário (ativas e históricas)
+app.get("/api/historico/lavouras", ensureAuthenticated, async (req, res) => {
+  try {
+    const idUsuario = req.session.user.id;
+    
+    const sql = `
+      SELECT 
+        ID_lavoura,
+        nome_lavoura AS nome,
+        tipo_cultura AS cultura,
+        DATE_FORMAT(data_inicio_plantio, '%d/%m/%Y') AS data_inicio,
+        DATE_FORMAT(data_fim, '%d/%m/%Y') AS data_fim,
+        status,
+        CASE 
+          WHEN status = 'concluída' THEN 'Concluída'
+          WHEN status = 'cancelada' THEN 'Cancelada'
+          ELSE 'Em Andamento'
+        END AS status_display
+      FROM lavoura 
+      WHERE ID_usuario = ?
+      ORDER BY 
+        CASE status 
+          WHEN 'ativa' THEN 1
+          WHEN 'concluída' THEN 2
+          WHEN 'cancelada' THEN 3
+          ELSE 4
+        END,
+        data_inicio_plantio DESC
+    `;
+    
+    const [rows] = await db.query(sql, [idUsuario]);
+    
+    return res.json({
+      status: "success",
+      data: rows,
+    });
+    
+  } catch (error) {
+    console.error("[GET /api/historico/lavouras] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar histórico de lavouras.",
+    });
+  }
+});
+
+// 2. Buscar dados históricos COMPLETOS de uma lavoura específica
+app.get("/api/historico/lavouras/:id/detalhes", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+    
+    // Verifica se a lavoura pertence ao usuário
+    const checkSql = "SELECT ID_lavoura, nome_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+    
+    if (checkRows.length === 0) {
+      return res.status(403).json({ 
+        status: "error", 
+        message: "Permissão negada ou lavoura não encontrada." 
+      });
+    }
+    
+    const lavouraNome = checkRows[0].nome_lavoura;
+    
+    // 1. Buscar dados do clima (todas as leituras)
+    const climaSql = `
+      SELECT 
+        temp_ar, 
+        umid_ar, 
+        vel_vento, 
+        pluviosidade, 
+        fotoperiodo,
+        clima,
+        DATE_FORMAT(data_leitura, '%d/%m/%Y %H:%i') as data_leitura
+      FROM info_ambiente 
+      WHERE ID_lavoura = ?
+      ORDER BY data_leitura DESC
+      LIMIT 100  -- Limitar a 100 registros para não sobrecarregar
+    `;
+    
+    const [climaRows] = await db.query(climaSql, [id]);
+    
+    // 2. Buscar dados do sensor (se houver sensor associado)
+    let sensorRows = [];
+    
+    const sensorLavouraSql = `
+      SELECT l.ID_sensor
+      FROM lavoura l
+      WHERE l.ID_lavoura = ?
+    `;
+    
+    const [sensorLavouraResult] = await db.query(sensorLavouraSql, [id]);
+    
+    if (sensorLavouraResult.length > 0 && sensorLavouraResult[0].ID_sensor) {
+      const sensorSql = `
+        SELECT 
+          nitrogenio,
+          fosforo,
+          potassio,
+          umid_solo,
+          ph_solo,
+          temp_solo,
+          DATE_FORMAT(leitura_sensor, '%d/%m/%Y %H:%i') as data_leitura
+        FROM info_sensor 
+        WHERE ID_sensor = ?
+        ORDER BY leitura_sensor DESC
+        LIMIT 100
+      `;
+      
+      [sensorRows] = await db.query(sensorSql, [sensorLavouraResult[0].ID_sensor]);
+    }
+    
+    // 3. Combinar dados para tabela unificada
+    const dadosCombinados = [];
+    
+    // Adicionar dados de clima
+    climaRows.forEach(clima => {
+      dadosCombinados.push({
+        tipo: 'clima',
+        data_leitura: clima.data_leitura,
+        umidade_solo: null,
+        umidade_ar: clima.umid_ar,
+        velocidade_vento: clima.vel_vento,
+        ph_solo: null,
+        clima: clima.clima,
+        temperatura: clima.temp_ar,
+        nitrogenio: null,
+        fosforo: null,
+        potassio: null,
+        temp_solo: null
+      });
+    });
+    
+    // Adicionar dados do sensor
+    sensorRows.forEach(sensor => {
+      dadosCombinados.push({
+        tipo: 'sensor',
+        data_leitura: sensor.data_leitura,
+        umidade_solo: sensor.umid_solo,
+        umidade_ar: null,
+        velocidade_vento: null,
+        ph_solo: sensor.ph_solo,
+        clima: null,
+        temperatura: null,
+        nitrogenio: sensor.nitrogenio,
+        fosforo: sensor.fosforo,
+        potassio: sensor.potassio,
+        temp_solo: sensor.temp_solo
+      });
+    });
+    
+    // Ordenar por data (mais recente primeiro)
+    dadosCombinados.sort((a, b) => {
+      return new Date(b.data_leitura.split('/').reverse().join('-')) - 
+             new Date(a.data_leitura.split('/').reverse().join('-'));
+    });
+    
+    return res.json({
+      status: "success",
+      data: {
+        lavoura: {
+          id: id,
+          nome: lavouraNome,
+          dados_combinados: dadosCombinados,
+          total_registros: dadosCombinados.length,
+          registros_clima: climaRows.length,
+          registros_sensor: sensorRows.length
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error("[GET /api/historico/lavouras/:id/detalhes] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar detalhes históricos.",
+    });
+  }
+});
+
+// 3. Marcar lavoura como concluída
+app.put("/api/lavouras/:id/concluir", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+
+    // Verifica se a lavoura pertence ao usuário
+    const checkSql = "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+
+    if (checkRows.length === 0) {
+      return res.status(403).json({ status: "error", message: "Permissão negada." });
+    }
+
+    const updateSql = `
+      UPDATE lavoura 
+      SET 
+        status = 'concluída',
+        data_fim = CURDATE()
+      WHERE ID_lavoura = ?
+    `;
+
+    await db.query(updateSql, [id]);
+
+    return res.json({
+      status: "success",
+      message: "Lavoura marcada como concluída com sucesso!",
+    });
+
+  } catch (error) {
+    console.error("[PUT /api/lavouras/:id/concluir] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao concluir lavoura.",
+    });
+  }
+});
+
+// 4. Filtrar lavouras por período
+app.get("/api/historico/lavouras/filtrar", ensureAuthenticated, async (req, res) => {
+  try {
+    const idUsuario = req.session.user.id;
+    const { data_inicio, data_fim, status, nome } = req.query;
+    
+    let sql = `
+      SELECT 
+        ID_lavoura,
+        nome_lavoura AS nome,
+        tipo_cultura AS cultura,
+        DATE_FORMAT(data_inicio_plantio, '%d/%m/%Y') AS data_inicio,
+        DATE_FORMAT(data_fim, '%d/%m/%Y') AS data_fim,
+        status,
+        CASE 
+          WHEN status = 'concluída' THEN 'Concluída'
+          WHEN status = 'cancelada' THEN 'Cancelada'
+          ELSE 'Em Andamento'
+        END AS status_display
+      FROM lavoura 
+      WHERE ID_usuario = ?
+    `;
+    
+    const params = [idUsuario];
+    
+    // Aplicar filtros dinamicamente
+    if (data_inicio) {
+      sql += " AND data_inicio_plantio >= ?";
+      params.push(data_inicio);
+    }
+    
+    if (data_fim) {
+      sql += " AND (data_fim <= ? OR data_fim IS NULL)";
+      params.push(data_fim);
+    }
+    
+    if (status && status !== 'todos') {
+      sql += " AND status = ?";
+      params.push(status);
+    }
+    
+    if (nome) {
+      sql += " AND nome_lavoura LIKE ?";
+      params.push(`%${nome}%`);
+    }
+    
+    sql += " ORDER BY data_inicio_plantio DESC";
+    
+    const [rows] = await db.query(sql, params);
+    
+    return res.json({
+      status: "success",
+      data: rows,
+    });
+    
+  } catch (error) {
+    console.error("[GET /api/historico/lavouras/filtrar] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao filtrar lavouras.",
+    });
+  }
+});
+
+// 5. Buscar estatísticas do histórico
+app.get("/api/historico/estatisticas", ensureAuthenticated, async (req, res) => {
+  try {
+    const idUsuario = req.session.user.id;
+    
+    const sql = `
+      SELECT 
+        COUNT(*) as total_lavouras,
+        SUM(CASE WHEN status = 'ativa' THEN 1 ELSE 0 END) as lavouras_ativas,
+        SUM(CASE WHEN status = 'concluída' THEN 1 ELSE 0 END) as lavouras_concluidas,
+        SUM(CASE WHEN status = 'cancelada' THEN 1 ELSE 0 END) as lavouras_canceladas,
+        MIN(data_inicio_plantio) as primeira_lavoura,
+        MAX(COALESCE(data_fim, data_inicio_plantio)) as ultima_atividade
+      FROM lavoura 
+      WHERE ID_usuario = ?
+    `;
+    
+    const [rows] = await db.query(sql, [idUsuario]);
+    
+    return res.json({
+      status: "success",
+      data: rows[0] || {},
+    });
+    
+  } catch (error) {
+    console.error("[GET /api/historico/estatisticas] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar estatísticas.",
+    });
+  }
+});
+
+/* ============================================================
  * 404 GENÉRICO
  * ============================================================ */
 
