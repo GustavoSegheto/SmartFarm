@@ -687,7 +687,7 @@ app.delete("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
 // NO SERVER.JS, adicione estas rotas após as rotas CRUD de lavouras:
 
 // ====================================================================
-// ROTAS PARA CONCLUSÃO E "EXCLUSÃO" DE LAVOURAS
+// ROTAS PARA CONCLUSÃO, OCULTAÇÃO E RESTAURAÇÃO DE LAVOURAS
 // ====================================================================
 
 // Concluir lavoura
@@ -768,6 +768,54 @@ app.put("/api/lavouras/:id/ocultar", ensureAuthenticated, async (req, res) => {
     return res.status(500).json({
       status: "error",
       message: "Erro ao ocultar lavoura.",
+    });
+  }
+});
+
+// RESTAURAR lavoura ocultada (marcar como ativa novamente)
+app.put("/api/lavouras/:id/restaurar", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+
+    // Verifica se a lavoura pertence ao usuário
+    const checkSql = "SELECT ID_lavoura, status FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+
+    if (checkRows.length === 0) {
+      return res.status(403).json({ status: "error", message: "Permissão negada." });
+    }
+
+    const lavoura = checkRows[0];
+    
+    if (lavoura.status !== 'oculta') {
+      return res.status(400).json({ 
+        status: "error", 
+        message: "Esta lavoura não está oculta." 
+      });
+    }
+
+    // Restaura para status 'ativa'
+    const updateSql = `
+      UPDATE lavoura 
+      SET 
+        status = 'ativa',
+        data_fim = NULL
+      WHERE ID_lavoura = ?
+    `;
+
+    await db.query(updateSql, [id]);
+
+    return res.json({
+      status: "success",
+      message: "Lavoura restaurada com sucesso!",
+    });
+
+  } catch (error) {
+    console.error("[PUT /api/lavouras/:id/restaurar] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao restaurar lavoura.",
     });
   }
 });
