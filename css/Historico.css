@@ -383,7 +383,7 @@ section.table-section {
   box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);
 }
 
-.status-cancelada {
+.status-oculta {
   background: linear-gradient(135deg, #f44336, #b71c1c);
   color: white;
   box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);

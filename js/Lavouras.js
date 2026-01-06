@@ -5,6 +5,7 @@
 let ventoGauge = null;
 let pizzaChart = null;
 let temperatureChart = null;
+let lavouraAtualId = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   // 1. Verificar autenticação
@@ -85,7 +86,7 @@ async function carregarLavourasNoSeletor() {
     seletor.innerHTML = '<option value="">Carregando lavouras...</option>';
     
     // ATENÇÃO: Verifique se esta rota existe no server.js
-    const response = await fetch("/api/lavouras/lista", {
+    const response = await fetch("/api/lavouras", {
       credentials: "same-origin"
     });
     
@@ -104,28 +105,178 @@ async function carregarLavourasNoSeletor() {
         const option = document.createElement("option");
         option.value = lavoura.ID_lavoura;
         option.textContent = lavoura.nome || `Lavoura ${lavoura.ID_lavoura}`;
+        option.dataset.status = lavoura.status || 'ativa';
         seletor.appendChild(option);
       });
+
+      // Mostrar conteúdo da dashboard
+      mostrarDashboard();
       
       // Selecionar a primeira lavoura automaticamente
       if (seletor.options.length > 1) {
         seletor.selectedIndex = 1;
+        lavouraAtualId = seletor.value;
         await carregarDadosLavoura(seletor.value);
+
+        // Verificar status da lavoura e ajustar botões
+        const status = seletor.options[seletor.selectedIndex].dataset.status;
+        ajustarBotoesPorStatus(status);
       }
     } else {
       console.warn("Nenhuma lavoura encontrada ou dados vazios");
       seletor.innerHTML = '<option value="">Nenhuma lavoura encontrada</option>';
+      mostrarMensagemSemLavouras();
     }
   } catch (error) {
     console.error("Erro ao carregar lavouras:", error);
-    seletor.innerHTML = '<option value="">Erro ao carregar. Clique para recarregar</option>';
-    
-    // Adiciona evento para recarregar ao clicar
-    seletor.onclick = async () => {
-      await carregarLavourasNoSeletor();
-    };
+    seletor.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
   }
-}
+
+  function mostrarMensagemSemLavouras() {
+    // Esconder TODO o conteúdo da dashboard
+    const dashboardContent = document.querySelector('main.content .container-fluid');
+    const botoesContainer = document.querySelector('.botoes-container');
+    
+    if (dashboardContent) dashboardContent.style.display = 'none';
+    if (botoesContainer) botoesContainer.style.display = 'none';
+    
+    // Criar mensagem central
+    const mainContent = document.querySelector('main.content');
+    if (mainContent) {
+      // Limpar conteúdo existente
+      mainContent.innerHTML = '';
+      
+      const mensagemDiv = document.createElement('div');
+      mensagemDiv.className = 'mensagem-central';
+      mensagemDiv.innerHTML = `
+        <div class="mensagem-sem-lavouras">
+          <i class="fas fa-seedling icone-grande"></i>
+          <h2>Nenhuma lavoura cadastrada</h2>
+          <p class="subtitulo">
+            Você ainda não possui lavouras cadastradas em sua conta.
+          </p>
+          <p class="instrucao">
+            Para começar a monitorar suas plantações, crie sua primeira lavoura.
+          </p>
+          <div class="botoes-acao">
+            <a href="CadastroLavoura.html" class="btn-nova-lavoura">
+              <i class="fas fa-plus"></i> Criar Nova Lavoura
+            </a>
+            <button onclick="location.reload()" class="btn-atualizar">
+              <i class="fas fa-sync-alt"></i> Atualizar Página
+            </button>
+          </div>
+          <p class="dica">
+            <i class="fas fa-lightbulb"></i>
+            Dica: Vá em <strong>Nova Lavoura</strong> no menu lateral para adicionar sua primeira lavoura.
+          </p>
+        </div>
+      `;
+      
+      mainContent.appendChild(mensagemDiv);
+    }
+  }
+
+  function mostrarDashboard() {
+    // Mostrar TODO o conteúdo da dashboard
+    const dashboardContent = document.querySelector('main.content .container-fluid');
+    const botoesContainer = document.querySelector('.botoes-container');
+    
+    if (dashboardContent) dashboardContent.style.display = 'block';
+    if (botoesContainer) botoesContainer.style.display = 'flex';
+    
+    // Remover mensagem central se existir
+    const mensagemCentral = document.querySelector('.mensagem-central');
+    if (mensagemCentral) {
+      mensagemCentral.remove();
+    }
+  }
+
+  function ajustarBotoesPorStatus(status) {
+    const btnConcluir = document.getElementById("btnConcluirLavoura");
+    const btnExcluir = document.getElementById("btnExcluirLavoura");
+    
+    if (!btnConcluir || !btnExcluir) return;
+    
+    // Resetar botões
+    btnConcluir.disabled = false;
+    btnExcluir.disabled = false;
+    btnConcluir.innerHTML = '<i class="fas fa-check"></i> Concluir Lavoura';
+    btnExcluir.innerHTML = '<i class="fas fa-trash-alt"></i> Excluir Lavoura';
+    
+    if (status === 'concluída') {
+      btnConcluir.disabled = true;
+      btnConcluir.innerHTML = '<i class="fas fa-check-circle"></i> Lavoura Concluída';
+      btnConcluir.style.opacity = '0.7';
+      btnConcluir.style.cursor = 'not-allowed';
+    } else {
+      btnConcluir.style.opacity = '1';
+      btnConcluir.style.cursor = 'pointer';
+    }
+    
+    if (status === 'oculta') {
+      btnExcluir.innerHTML = '<i class="fas fa-eye-slash"></i> Lavoura Ocultada';
+      btnExcluir.disabled = true;
+      btnExcluir.style.opacity = '0.7';
+      btnExcluir.style.cursor = 'not-allowed';
+    } else {
+      btnExcluir.style.opacity = '1';
+      btnExcluir.style.cursor = 'pointer';
+    }
+  }
+
+  async function carregarDadosLavoura(idLavoura) {
+    if (!idLavoura) {
+      limparDados();
+      return;
+    }
+    
+    lavouraAtualId = idLavoura;
+    
+    try {
+      const response = await fetch(`/api/lavouras/${idLavoura}/dados-completos`, {
+        credentials: "same-origin"
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erro ao buscar dados");
+      }
+      
+      const data = await response.json();
+      
+      if (data.status === "success") {
+        atualizarDadosClima(data.data.clima);
+        atualizarDadosSensores(data.data.sensor);
+        atualizarGraficoPizza(data.data.sensor);
+        atualizarGraficoTemperatura(data.data.historicoTemperatura);
+        atualizarVelocimetro(data.data.clima);
+        
+        // Esconder mensagem de sem lavouras se existir
+        esconderMensagemSemLavouras();
+      } else {
+        limparDados();
+      }
+    } catch (error) {
+      console.error("Erro ao carregar dados da lavoura:", error);
+      limparDados();
+    }
+  }
+
+  function esconderMensagemSemLavouras() {
+    const graficosContainer = document.querySelector('.row.h-50.mb-4');
+    const sensoresContainer = document.querySelector('.row.h-50');
+    const botoesContainer = document.querySelector('.botoes-container');
+    
+    if (graficosContainer) graficosContainer.style.display = 'flex';
+    if (sensoresContainer) sensoresContainer.style.display = 'flex';
+    if (botoesContainer) botoesContainer.style.display = 'flex';
+    
+    const mensagem = document.querySelector('.mensagem-sem-lavouras');
+    if (mensagem) {
+      mensagem.remove();
+    }
+  }
 
 async function carregarDadosLavoura(idLavoura) {
   if (!idLavoura) {
@@ -530,6 +681,103 @@ function inicializarGraficos() {
   }
 }
 
+// --- FUNÇÕES DOS BOTÕES ---
+
+async function concluirLavoura() {
+  if (!lavouraAtualId) {
+    alert("Selecione uma lavoura primeiro!");
+    return;
+  }
+  
+  const seletor = document.getElementById('seletorLavouras');
+  const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
+  
+  if (!confirm(`Deseja realmente marcar a lavoura "${lavouraNome}" como concluída?`)) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/api/lavouras/${lavouraAtualId}/concluir`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin"
+    });
+    
+    const data = await response.json();
+    
+    if (data.status === "success") {
+      alert(data.message);
+      
+      // Atualizar status no seletor
+      const option = seletor.options[seletor.selectedIndex];
+      option.dataset.status = 'concluída';
+      
+      // Ajustar botões
+      ajustarBotoesPorStatus('concluída');
+      
+      // Recarregar dados
+      await carregarDadosLavoura(lavouraAtualId);
+      
+    } else {
+      alert("Erro: " + data.message);
+    }
+  } catch (error) {
+    console.error("Erro ao concluir lavoura:", error);
+    alert("Erro ao concluir lavoura.");
+  }
+}
+
+async function ocultarLavoura() {
+  if (!lavouraAtualId) {
+    alert("Selecione uma lavoura primeiro!");
+    return;
+  }
+  
+  const seletor = document.getElementById('seletorLavouras');
+  const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
+  
+  if (!confirm(`Tem certeza que deseja remover a lavoura "${lavouraNome}" da sua visão?\n\nOs dados serão mantidos no sistema, mas não aparecerão mais nas suas listas.`)) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/api/lavouras/${lavouraAtualId}/ocultar`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin"
+    });
+    
+    const data = await response.json();
+    
+    if (data.status === "success") {
+      alert(data.message);
+      
+      // Remover do seletor
+      seletor.remove(seletor.selectedIndex);
+      
+      // Selecionar próxima lavoura ou limpar
+      if (seletor.options.length > 1) {
+        seletor.selectedIndex = 1;
+        lavouraAtualId = seletor.value;
+        await carregarDadosLavoura(lavouraAtualId);
+        
+        const status = seletor.options[seletor.selectedIndex].dataset.status;
+        ajustarBotoesPorStatus(status);
+      } else {
+        lavouraAtualId = null;
+        limparDados();
+        mostrarMensagemSemLavouras();
+      }
+      
+    } else {
+      alert("Erro: " + data.message);
+    }
+  } catch (error) {
+    console.error("Erro ao ocultar lavoura:", error);
+    alert("Erro ao ocultar lavoura.");
+  }
+}
+
 // --- CONFIGURAÇÃO DE EVENTOS ---
 
 function configurarEventos() {
@@ -540,11 +788,16 @@ function configurarEventos() {
   if (seletor) {
     seletor.addEventListener('change', async (e) => {
       console.log(`Lavoura selecionada: ${e.target.value}`);
-      await carregarDadosLavoura(e.target.value);
+      lavouraAtualId = e.target.value;
+      
+      if (lavouraAtualId) {
+        const status = e.target.options[e.target.selectedIndex].dataset.status;
+        ajustarBotoesPorStatus(status);
+        await carregarDadosLavoura(lavouraAtualId);
+      } else {
+        limparDados();
+      }
     });
-    console.log("Evento do seletor configurado");
-  } else {
-    console.error("Seletor de lavouras não encontrado para configurar evento");
   }
   
   // Eventos dos botões flutuantes
@@ -552,29 +805,107 @@ function configurarEventos() {
   const btnExcluir = document.getElementById("btnExcluirLavoura");
   
   if (btnConcluir) {
-    btnConcluir.addEventListener("click", () => {
-      if (confirm('Deseja marcar esta lavoura como "concluída"? Esta ação não pode ser desfeita.')) {
-        alert("Lavoura concluída com sucesso!");
-        // TODO: Implementar API para concluir lavoura
+    btnConcluir.addEventListener("click", async () => {
+      if (!lavouraAtualId) {
+        alert("Selecione uma lavoura primeiro!");
+        return;
+      }
+      
+      const seletor = document.getElementById('seletorLavouras');
+      const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
+      
+      if (!confirm(`Deseja realmente marcar a lavoura "${lavouraNome}" como concluída?`)) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/lavouras/${lavouraAtualId}/concluir`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin"
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === "success") {
+          alert(data.message);
+          
+          // Atualizar status no seletor
+          const option = seletor.options[seletor.selectedIndex];
+          option.dataset.status = 'concluída';
+          
+          // Ajustar botões
+          ajustarBotoesPorStatus('concluída');
+          
+          // Recarregar dados
+          await carregarDadosLavoura(lavouraAtualId);
+          
+        } else {
+          alert("Erro: " + data.message);
+        }
+      } catch (error) {
+        console.error("Erro ao concluir lavoura:", error);
+        alert("Erro ao concluir lavoura.");
       }
     });
   }
   
   if (btnExcluir) {
-    btnExcluir.addEventListener("click", () => {
-      const seletor = document.getElementById('seletorLavouras');
-      const lavouraId = seletor ? seletor.value : null;
-      
-      if (lavouraId && confirm("Tem certeza que deseja EXCLUIR esta lavoura? Todos os dados serão perdidos.")) {
-        excluirLavoura(lavouraId);
-      } else if (!lavouraId) {
+    btnExcluir.addEventListener("click", async () => {
+      if (!lavouraAtualId) {
         alert("Selecione uma lavoura primeiro!");
+        return;
+      }
+      
+      const seletor = document.getElementById('seletorLavouras');
+      const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
+      
+      if (!confirm(`Tem certeza que deseja remover a lavoura "${lavouraNome}" da sua visão?\n\nOs dados serão mantidos no sistema, mas não aparecerão mais nas suas listas.`)) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/lavouras/${lavouraAtualId}/ocultar`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin"
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === "success") {
+          alert(data.message);
+          
+          // Remover do seletor
+          seletor.remove(seletor.selectedIndex);
+          
+          // Selecionar próxima lavoura ou mostrar mensagem
+          if (seletor.options.length > 1) {
+            seletor.selectedIndex = 1;
+            lavouraAtualId = seletor.value;
+            await carregarDadosLavoura(lavouraAtualId);
+            
+            const status = seletor.options[seletor.selectedIndex].dataset.status;
+            ajustarBotoesPorStatus(status);
+          } else {
+            lavouraAtualId = null;
+            limparDados();
+            mostrarMensagemSemLavouras();
+          }
+          
+        } else {
+          alert("Erro: " + data.message);
+        }
+      } catch (error) {
+        console.error("Erro ao ocultar lavoura:", error);
+        alert("Erro ao ocultar lavoura.");
       }
     });
   }
   
   console.log("Eventos configurados");
 }
+
 
 // --- FUNÇÃO AUXILIAR PARA EXCLUIR LAVOURA ---
 

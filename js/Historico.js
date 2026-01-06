@@ -74,9 +74,9 @@ async function carregarLavouras(filtros = {}) {
             statusIcon = '<i class="fas fa-check-circle"></i> ';
             statusClass = 'status-concluida';
             break;
-          case 'cancelada':
+          case 'oculta':
             statusIcon = '<i class="fas fa-times-circle"></i> ';
-            statusClass = 'status-cancelada';
+            statusClass = 'status-oculta';
             break;
           default:
             statusIcon = '<i class="fas fa-question-circle"></i> ';
@@ -144,7 +144,7 @@ function configurarFiltros() {
       <option value="todos">Todos os Status</option>
       <option value="ativa">Ativas</option>
       <option value="concluída">Concluídas</option>
-      <option value="cancelada">Canceladas</option>
+      <option value="oculta">Ocultas</option>
     </select>
   `;
   
@@ -212,7 +212,7 @@ async function carregarEstatisticas() {
               <strong>${stats.lavouras_ativas || 0}</strong> ativas | 
               <i class="fas fa-check-circle"></i> 
               <strong>${stats.lavouras_concluidas || 0}</strong> concluídas
-              ${stats.lavouras_canceladas ? `| <i class="fas fa-times-circle"></i> <strong>${stats.lavouras_canceladas}</strong> canceladas` : ''}
+              ${stats.lavouras_ocultas ? `| <i class="fas fa-times-circle"></i> <strong>${stats.lavouras_ocultas}</strong> ocultas` : ''}
             </span>
           `;
         }

@@ -1,3 +1,68 @@
+/* Adicione no início do Menulateral.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Nexa", sans-serif;
+}
+
+@font-face {
+  font-family: "Nexa";
+  src: url(../assets/Nexa\ Light.otf);
+  font-weight: 300;
+  font-style: normal;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(120deg, #e7ebe7de 0%, #09e6145d 100%);
+}
+
+/* Certifique-se de que o conteúdo principal esteja protegido */
+main.content {
+  position: fixed;
+  top: 70px;
+  left: 70px;
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+  color: #2e7d32;
+}
+
+.SmartLogoPrincipal {
+  max-width: 300px;
+  margin-bottom: 30px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+main.content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #2e7d32;
+}
+
+main.content p {
+  font-size: 1.1rem;
+  color: #666;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
 /* --- Resets Globais e Fontes --- */
 * {
   margin: 0;

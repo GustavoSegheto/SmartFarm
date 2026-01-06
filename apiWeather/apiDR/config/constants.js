@@ -10,7 +10,7 @@ module.exports = {
         port: process.env.DB_PORT || 3306,
         database: process.env.DB_NAME || 'farm_db',  // SEU banco
         username: process.env.DB_USER || 'root',
-        password: process.env.DB_PASS || 'bd_SmartFarm',
+        password: process.env.DB_PASS || 'root',
         logging: process.env.DB_LOGGING === 'true'
     }
 };

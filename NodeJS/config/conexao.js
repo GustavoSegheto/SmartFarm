@@ -6,7 +6,7 @@ const mysql = require("mysql2/promise");
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",        // ajuste se necessário
-  password: "bd_SmartFarm",    // ajuste se necessário
+  password: "root",    // ajuste se necessário
   database: "farm_db",
   port: 3306,
   waitForConnections: true,
