@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: "Nexa";
-  src: url(assets/Nexa\ Light.otf);
+  src: url("../assets/Nexa Light.otf");
   font-weight: 300;
   font-style: normal;
 }

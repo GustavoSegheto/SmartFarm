@@ -9,7 +9,7 @@
 @font-face {
   font-family: "Nexa";
   /* CAMINHO CORRIGIDO: Aponta para a pasta assets/ */
-  src: url(../assets/Nexa\ Light.otf);
+  src: url("../assets/Nexa Light.otf");
   font-weight: 300;
   font-style: normal;
 }
@@ -415,4 +415,74 @@ section.card {
 }
 .tabela-wrapper::-webkit-scrollbar-thumb:hover {
   background: #2e7d32;
+}
+
+/* Adicione estas regras ao final do avisos.css */
+
+/* Tooltip para avisos */
+[title] {
+  position: relative;
+  cursor: help;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  max-width: 300px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Animações para novos avisos */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+}
+
+.aviso-novo {
+  animation: pulse 2s infinite;
+}
+
+/* Indicador de contagem de avisos */
+.contador-avisos {
+  display: inline-block;
+  background: #f44336;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Responsividade para a tabela */
+@media (max-width: 768px) {
+  .avisos-tabela {
+    font-size: 12px;
+  }
+  
+  .avisos-tabela th,
+  .avisos-tabela td {
+    padding: 8px 6px;
+  }
+  
+  .lavoura-nome {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

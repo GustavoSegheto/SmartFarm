@@ -528,13 +528,11 @@ app.post("/api/lavouras", ensureAuthenticated, async (req, res) => {
 
     const [result] = await db.query(sql, values);
 
-    return res
-      .status(201)
-      .json({
-        status: "success",
-        message: "Lavoura criada!",
-        id: result.insertId,
-      });
+    return res.status(201).json({
+      status: "success",
+      message: "Lavoura criada!",
+      id: result.insertId,
+    });
   } catch (error) {
     console.error("Erro ao criar lavoura:", error);
     return res
@@ -577,7 +575,6 @@ app.get("/api/lavouras", ensureAuthenticated, async (req, res) => {
       status: "success",
       data: rows,
     });
-
   } catch (error) {
     console.error("[GET /api/lavouras] ERRO:", error);
     return res.status(500).json({
@@ -602,12 +599,10 @@ app.put("/api/lavouras/:id", ensureAuthenticated, async (req, res) => {
     const [checkRows] = await db.query(checkSql, [id, idUsuario]);
 
     if (checkRows.length === 0) {
-      return res
-        .status(403)
-        .json({
-          status: "error",
-          message: "Permissão negada ou lavoura não encontrada.",
-        });
+      return res.status(403).json({
+        status: "error",
+        message: "Permissão negada ou lavoura não encontrada.",
+      });
     }
 
     // 2. Lógica para tratar o sensor:
@@ -773,30 +768,36 @@ app.put("/api/lavouras/:id/ocultar", ensureAuthenticated, async (req, res) => {
 });
 
 // RESTAURAR lavoura ocultada (marcar como ativa novamente)
-app.put("/api/lavouras/:id/restaurar", ensureAuthenticated, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const idUsuario = req.session.user.id;
+app.put(
+  "/api/lavouras/:id/restaurar",
+  ensureAuthenticated,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const idUsuario = req.session.user.id;
 
-    // Verifica se a lavoura pertence ao usuário
-    const checkSql = "SELECT ID_lavoura, status FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
-    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+      // Verifica se a lavoura pertence ao usuário
+      const checkSql =
+        "SELECT ID_lavoura, status FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+      const [checkRows] = await db.query(checkSql, [id, idUsuario]);
 
-    if (checkRows.length === 0) {
-      return res.status(403).json({ status: "error", message: "Permissão negada." });
-    }
+      if (checkRows.length === 0) {
+        return res
+          .status(403)
+          .json({ status: "error", message: "Permissão negada." });
+      }
 
-    const lavoura = checkRows[0];
-    
-    if (lavoura.status !== 'oculta') {
-      return res.status(400).json({ 
-        status: "error", 
-        message: "Esta lavoura não está oculta." 
-      });
-    }
+      const lavoura = checkRows[0];
 
-    // Restaura para status 'ativa'
-    const updateSql = `
+      if (lavoura.status !== "oculta") {
+        return res.status(400).json({
+          status: "error",
+          message: "Esta lavoura não está oculta.",
+        });
+      }
+
+      // Restaura para status 'ativa'
+      const updateSql = `
       UPDATE lavoura 
       SET 
         status = 'ativa',
@@ -804,21 +805,21 @@ app.put("/api/lavouras/:id/restaurar", ensureAuthenticated, async (req, res) => 
       WHERE ID_lavoura = ?
     `;
 
-    await db.query(updateSql, [id]);
+      await db.query(updateSql, [id]);
 
-    return res.json({
-      status: "success",
-      message: "Lavoura restaurada com sucesso!",
-    });
-
-  } catch (error) {
-    console.error("[PUT /api/lavouras/:id/restaurar] ERRO:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Erro ao restaurar lavoura.",
-    });
+      return res.json({
+        status: "success",
+        message: "Lavoura restaurada com sucesso!",
+      });
+    } catch (error) {
+      console.error("[PUT /api/lavouras/:id/restaurar] ERRO:", error);
+      return res.status(500).json({
+        status: "error",
+        message: "Erro ao restaurar lavoura.",
+      });
+    }
   }
-});
+);
 
 /* ============================================================
  * ROTAS DE SENSORES (NOVA LÓGICA)
@@ -860,12 +861,10 @@ app.put("/api/sensores/:id", ensureAuthenticated, async (req, res) => {
     const [result] = await db.query(sql, [apelido, id, idUsuario]);
 
     if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({
-          status: "error",
-          message: "Sensor não encontrado ou não pertence a você.",
-        });
+      return res.status(404).json({
+        status: "error",
+        message: "Sensor não encontrado ou não pertence a você.",
+      });
     }
 
     return res.json({
@@ -1210,6 +1209,456 @@ app.get(
       return res.status(500).json({
         status: "error",
         message: "Erro ao buscar estatísticas.",
+      });
+    }
+  }
+);
+
+/* ============================================================
+ * ROTAS PARA AVISOS INTELIGENTES
+ * ============================================================ */
+
+// 1. Buscar todos os avisos do usuário (para a página de Avisos)
+app.get("/api/avisos", ensureAuthenticated, async (req, res) => {
+  try {
+    const idUsuario = req.session.user.id;
+
+    // Buscar todas as lavouras ativas do usuário
+    const lavourasSql = `
+      SELECT 
+        l.ID_lavoura,
+        l.nome_lavoura,
+        l.tipo_cultura,
+        tc.nome as nome_cultura,
+        tc.temp_min,
+        tc.temp_max,
+        tc.umid_ar_min,
+        tc.umid_ar_max,
+        tc.umid_solo_min,
+        tc.umid_solo_max,
+        tc.ph_min,
+        tc.ph_max
+      FROM lavoura l
+      LEFT JOIN tipo_cultura tc ON l.tipo_cultura = tc.nome
+      WHERE l.ID_usuario = ? 
+        AND l.status = 'ativa'
+      ORDER BY l.nome_lavoura
+    `;
+
+    const [lavouras] = await db.query(lavourasSql, [idUsuario]);
+
+    if (lavouras.length === 0) {
+      return res.json({
+        status: "success",
+        data: [],
+        message: "Nenhuma lavoura ativa encontrada.",
+      });
+    }
+
+    // Para cada lavoura, verificar condições e gerar avisos
+    const todosAvisos = [];
+
+    for (const lavoura of lavouras) {
+      const avisosLavoura = await gerarAvisosParaLavoura(lavoura);
+      todosAvisos.push(...avisosLavoura);
+    }
+
+    // Ordenar avisos por severidade (vermelho > amarelo > verde) e data
+    todosAvisos.sort((a, b) => {
+      const severidade = { vermelho: 3, amarelo: 2, verde: 1 };
+      if (severidade[b.nivel] !== severidade[a.nivel]) {
+        return severidade[b.nivel] - severidade[a.nivel];
+      }
+      return new Date(b.data_hora) - new Date(a.data_hora);
+    });
+
+    return res.json({
+      status: "success",
+      data: todosAvisos,
+      total: todosAvisos.length,
+    });
+  } catch (error) {
+    console.error("[GET /api/avisos] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar avisos.",
+    });
+  }
+});
+
+// 2. Buscar avisos específicos de uma lavoura (para a página Lavouras)
+app.get("/api/lavouras/:id/avisos", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idUsuario = req.session.user.id;
+
+    // Verificar permissão
+    const checkSql =
+      "SELECT ID_lavoura FROM lavoura WHERE ID_lavoura = ? AND ID_usuario = ?";
+    const [checkRows] = await db.query(checkSql, [id, idUsuario]);
+
+    if (checkRows.length === 0) {
+      return res.status(403).json({
+        status: "error",
+        message: "Permissão negada.",
+      });
+    }
+
+    // Buscar dados da lavoura
+    const lavouraSql = `
+      SELECT 
+        l.ID_lavoura,
+        l.nome_lavoura,
+        l.tipo_cultura,
+        tc.nome as nome_cultura,
+        tc.temp_min,
+        tc.temp_max,
+        tc.umid_ar_min,
+        tc.umid_ar_max,
+        tc.umid_solo_min,
+        tc.umid_solo_max,
+        tc.ph_min,
+        tc.ph_max
+      FROM lavoura l
+      LEFT JOIN tipo_cultura tc ON l.tipo_cultura = tc.nome
+      WHERE l.ID_lavoura = ?
+    `;
+
+    const [lavouraRows] = await db.query(lavouraSql, [id]);
+
+    if (lavouraRows.length === 0) {
+      return res.json({
+        status: "success",
+        data: [],
+        message: "Lavoura não encontrada.",
+      });
+    }
+
+    const lavoura = lavouraRows[0];
+    const avisos = await gerarAvisosParaLavoura(lavoura);
+
+    return res.json({
+      status: "success",
+      data: avisos,
+      lavoura_nome: lavoura.nome_lavoura,
+    });
+  } catch (error) {
+    console.error("[GET /api/lavouras/:id/avisos] ERRO:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Erro ao buscar avisos da lavoura.",
+    });
+  }
+});
+
+// 3. Função auxiliar para gerar avisos para uma lavoura
+async function gerarAvisosParaLavoura(lavoura) {
+  const avisos = [];
+  const agora = new Date();
+
+  // 1. Buscar dados mais recentes do clima e sensor
+  const [dadosClima] = await db.query(
+    `
+    SELECT 
+      temp_ar,
+      umid_ar,
+      vel_vento,
+      pluviosidade,
+      fotoperiodo,
+      clima,
+      data_leitura
+    FROM info_ambiente 
+    WHERE ID_lavoura = ?
+    ORDER BY data_leitura DESC 
+    LIMIT 1
+  `,
+    [lavoura.ID_lavoura]
+  );
+
+  const [dadosSensor] = await db.query(
+    `
+    SELECT 
+      nitrogenio,
+      fosforo,
+      potassio,
+      umid_solo,
+      ph_solo,
+      temp_solo,
+      leitura_sensor
+    FROM info_sensor 
+    WHERE ID_sensor IN (
+      SELECT ID_sensor FROM lavoura WHERE ID_lavoura = ?
+    )
+    ORDER BY leitura_sensor DESC 
+    LIMIT 1
+  `,
+    [lavoura.ID_lavoura]
+  );
+
+  const clima = dadosClima[0] || null;
+  const sensor = dadosSensor[0] || null;
+
+  // Se não houver dados recentes (< 24 horas), criar aviso
+  const ultimaLeitura = clima
+    ? new Date(clima.data_leitura)
+    : sensor
+    ? new Date(sensor.leitura_sensor)
+    : null;
+
+  if (!ultimaLeitura || agora - ultimaLeitura > 24 * 60 * 60 * 1000) {
+    avisos.push({
+      lavoura_id: lavoura.ID_lavoura,
+      lavoura_nome: lavoura.nome_lavoura,
+      tipo: "sem_dados",
+      mensagem: "Sem dados de monitoramento nas últimas 24 horas",
+      nivel: "amarelo",
+      data_hora: agora.toISOString(),
+      parametro: "atualização",
+      valor_atual: null,
+      valor_ideal: "dados recentes",
+    });
+  }
+
+  // 2. Verificar condições climáticas se houver dados
+  if (clima) {
+    // Temperatura do ar
+    if (lavoura.temp_min && lavoura.temp_max) {
+      if (clima.temp_ar < lavoura.temp_min) {
+        const diferenca = lavoura.temp_min - clima.temp_ar;
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "temperatura_baixa",
+          mensagem: `Temperatura muito baixa para ${
+            lavoura.nome_cultura || lavoura.tipo_cultura
+          }`,
+          nivel: diferenca > 5 ? "vermelho" : "amarelo",
+          data_hora: clima.data_leitura,
+          parametro: "temperatura",
+          valor_atual: `${clima.temp_ar}°C`,
+          valor_ideal: `${lavoura.temp_min}°C - ${lavoura.temp_max}°C`,
+        });
+      } else if (clima.temp_ar > lavoura.temp_max) {
+        const diferenca = clima.temp_ar - lavoura.temp_max;
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "temperatura_alta",
+          mensagem: `Temperatura muito alta para ${
+            lavoura.nome_cultura || lavoura.tipo_cultura
+          }`,
+          nivel: diferenca > 5 ? "vermelho" : "amarelo",
+          data_hora: clima.data_leitura,
+          parametro: "temperatura",
+          valor_atual: `${clima.temp_ar}°C`,
+          valor_ideal: `${lavoura.temp_min}°C - ${lavoura.temp_max}°C`,
+        });
+      }
+    }
+
+    // Umidade do ar
+    if (lavoura.umid_ar_min && lavoura.umid_ar_max) {
+      if (clima.umid_ar < lavoura.umid_ar_min) {
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "umidade_ar_baixa",
+          mensagem: "Umidade do ar muito baixa",
+          nivel: "amarelo",
+          data_hora: clima.data_leitura,
+          parametro: "umidade_ar",
+          valor_atual: `${clima.umid_ar}%`,
+          valor_ideal: `${lavoura.umid_ar_min}% - ${lavoura.umid_ar_max}%`,
+        });
+      } else if (clima.umid_ar > lavoura.umid_ar_max) {
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "umidade_ar_alta",
+          mensagem: "Umidade do ar muito alta - risco de fungos",
+          nivel: "vermelho",
+          data_hora: clima.data_leitura,
+          parametro: "umidade_ar",
+          valor_atual: `${clima.umid_ar}%`,
+          valor_ideal: `${lavoura.umid_ar_min}% - ${lavoura.umid_ar_max}%`,
+        });
+      }
+    }
+
+    // Vento forte
+    if (clima.vel_vento > 30) {
+      avisos.push({
+        lavoura_id: lavoura.ID_lavoura,
+        lavoura_nome: lavoura.nome_lavoura,
+        tipo: "vento_forte",
+        mensagem: "Vento forte - risco de danos físicos",
+        nivel: "vermelho",
+        data_hora: clima.data_leitura,
+        parametro: "vento",
+        valor_atual: `${clima.vel_vento} km/h`,
+        valor_ideal: "< 30 km/h",
+      });
+    }
+
+    // Chuva excessiva
+    if (clima.pluviosidade > 50) {
+      avisos.push({
+        lavoura_id: lavoura.ID_lavoura,
+        lavoura_nome: lavoura.nome_lavoura,
+        tipo: "chuva_excessiva",
+        mensagem: "Chuva excessiva - risco de encharcamento",
+        nivel: "vermelho",
+        data_hora: clima.data_leitura,
+        parametro: "pluviosidade",
+        valor_atual: `${clima.pluviosidade} mm`,
+        valor_ideal: "< 50 mm",
+      });
+    }
+  }
+
+  // 3. Verificar condições do solo se houver sensor
+  if (sensor) {
+    // Umidade do solo
+    if (lavoura.umid_solo_min && lavoura.umid_solo_max) {
+      if (sensor.umid_solo < lavoura.umid_solo_min) {
+        const diferenca = lavoura.umid_solo_min - sensor.umid_solo;
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "umidade_solo_baixa",
+          mensagem:
+            diferenca > 20 ? "Solo muito seco" : "Solo precisando de irrigação",
+          nivel: diferenca > 20 ? "vermelho" : "amarelo",
+          data_hora: sensor.leitura_sensor,
+          parametro: "umidade_solo",
+          valor_atual: `${sensor.umid_solo}%`,
+          valor_ideal: `${lavoura.umid_solo_min}% - ${lavoura.umid_solo_max}%`,
+        });
+      } else if (sensor.umid_solo > lavoura.umid_solo_max) {
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "umidade_solo_alta",
+          mensagem: "Solo muito úmido - risco de apodrecimento",
+          nivel: "vermelho",
+          data_hora: sensor.leitura_sensor,
+          parametro: "umidade_solo",
+          valor_atual: `${sensor.umid_solo}%`,
+          valor_ideal: `${lavoura.umid_solo_min}% - ${lavoura.umid_solo_max}%`,
+        });
+      }
+    }
+
+    // pH do solo
+    if (lavoura.ph_min && lavoura.ph_max) {
+      if (sensor.ph_solo < lavoura.ph_min) {
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "ph_baixo",
+          mensagem: "pH do solo muito baixo (ácido)",
+          nivel: "vermelho",
+          data_hora: sensor.leitura_sensor,
+          parametro: "ph_solo",
+          valor_atual: sensor.ph_solo,
+          valor_ideal: `${lavoura.ph_min} - ${lavoura.ph_max}`,
+        });
+      } else if (sensor.ph_solo > lavoura.ph_max) {
+        avisos.push({
+          lavoura_id: lavoura.ID_lavoura,
+          lavoura_nome: lavoura.nome_lavoura,
+          tipo: "ph_alto",
+          mensagem: "pH do solo muito alto (alcalino)",
+          nivel: "vermelho",
+          data_hora: sensor.leitura_sensor,
+          parametro: "ph_solo",
+          valor_atual: sensor.ph_solo,
+          valor_ideal: `${lavoura.ph_min} - ${lavoura.ph_max}`,
+        });
+      }
+    }
+
+    // Nutrientes (N, P, K)
+    if (sensor.nitrogenio && sensor.nitrogenio < 30) {
+      avisos.push({
+        lavoura_id: lavoura.ID_lavoura,
+        lavoura_nome: lavoura.nome_lavoura,
+        tipo: "deficiencia_nitrogenio",
+        mensagem: "Deficiência de nitrogênio",
+        nivel: "amarelo",
+        data_hora: sensor.leitura_sensor,
+        parametro: "nitrogenio",
+        valor_atual: `${sensor.nitrogenio}%`,
+        valor_ideal: "> 30%",
+      });
+    }
+
+    if (sensor.fosforo && sensor.fosforo < 20) {
+      avisos.push({
+        lavoura_id: lavoura.ID_lavoura,
+        lavoura_nome: lavoura.nome_lavoura,
+        tipo: "deficiencia_fosforo",
+        mensagem: "Deficiência de fósforo",
+        nivel: "amarelo",
+        data_hora: sensor.leitura_sensor,
+        parametro: "fosforo",
+        valor_atual: `${sensor.fosforo}%`,
+        valor_ideal: "> 20%",
+      });
+    }
+
+    if (sensor.potassio && sensor.potassio < 25) {
+      avisos.push({
+        lavoura_id: lavoura.ID_lavoura,
+        lavoura_nome: lavoura.nome_lavoura,
+        tipo: "deficiencia_potassio",
+        mensagem: "Deficiência de potássio",
+        nivel: "amarelo",
+        data_hora: sensor.leitura_sensor,
+        parametro: "potassio",
+        valor_atual: `${sensor.potassio}%`,
+        valor_ideal: "> 25%",
+      });
+    }
+  }
+
+  // 4. Se não houver avisos críticos, criar aviso de "tudo normal"
+  if (avisos.length === 0 && (clima || sensor)) {
+    avisos.push({
+      lavoura_id: lavoura.ID_lavoura,
+      lavoura_nome: lavoura.nome_lavoura,
+      tipo: "normal",
+      mensagem: "Todas as condições estão dentro do ideal",
+      nivel: "verde",
+      data_hora:
+        clima?.data_leitura || sensor?.leitura_sensor || agora.toISOString(),
+      parametro: "geral",
+      valor_atual: "OK",
+      valor_ideal: "dentro dos parâmetros",
+    });
+  }
+
+  return avisos;
+}
+
+// 4. Marcar aviso como lido/resolvido
+app.post(
+  "/api/avisos/:id/marcar-lido",
+  ensureAuthenticated,
+  async (req, res) => {
+    try {
+      // Esta função pode ser expandida para salvar no banco
+      // Por enquanto, apenas retorna sucesso
+
+      return res.json({
+        status: "success",
+        message: "Aviso marcado como lido.",
+      });
+    } catch (error) {
+      console.error("[POST /api/avisos/:id/marcar-lido] ERRO:", error);
+      return res.status(500).json({
+        status: "error",
+        message: "Erro ao marcar aviso como lido.",
       });
     }
   }

@@ -10,7 +10,7 @@
 @font-face {
   font-family: "Nexa";
   /* CAMINHO CORRIGIDO: Aponta para a pasta assets/ */
-  src: url(../assets/Nexa\ Light.otf);
+  src: url("../assets/Nexa Light.otf");
   font-weight: 300;
   font-style: normal;
 }

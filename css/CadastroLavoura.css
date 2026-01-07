@@ -9,7 +9,7 @@
 @font-face {
   font-family: "Nexa";
   /* CORRIGIDO: Caminho correto para a fonte */
-  src: url("../../assets/Nexa Light.otf");
+  src: url("../assets/Nexa Light.otf");
   font-weight: 300;
   font-style: normal;
 }

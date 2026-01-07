@@ -1,4 +1,4 @@
-// js/Lavouras.js
+// js/Lavouras.js - VERSÃO CORRIGIDA
 "use strict";
 
 // Variáveis globais para os gráficos
@@ -85,7 +85,6 @@ async function carregarLavourasNoSeletor() {
   try {
     seletor.innerHTML = '<option value="">Carregando lavouras...</option>';
     
-    // ATENÇÃO: Verifique se esta rota existe no server.js
     const response = await fetch("/api/lavouras", {
       credentials: "same-origin"
     });
@@ -130,159 +129,100 @@ async function carregarLavourasNoSeletor() {
   } catch (error) {
     console.error("Erro ao carregar lavouras:", error);
     seletor.innerHTML = '<option value="">Erro ao carregar</option>';
-    }
   }
+}
 
-  function mostrarMensagemSemLavouras() {
-    // Esconder TODO o conteúdo da dashboard
-    const dashboardContent = document.querySelector('main.content .container-fluid');
-    const botoesContainer = document.querySelector('.botoes-container');
+function mostrarMensagemSemLavouras() {
+  // Esconder TODO o conteúdo da dashboard
+  const dashboardContent = document.querySelector('main.content .container-fluid');
+  const botoesContainer = document.querySelector('.botoes-container');
+  
+  if (dashboardContent) dashboardContent.style.display = 'none';
+  if (botoesContainer) botoesContainer.style.display = 'none';
+  
+  // Criar mensagem central
+  const mainContent = document.querySelector('main.content');
+  if (mainContent) {
+    // Limpar conteúdo existente
+    mainContent.innerHTML = '';
     
-    if (dashboardContent) dashboardContent.style.display = 'none';
-    if (botoesContainer) botoesContainer.style.display = 'none';
-    
-    // Criar mensagem central
-    const mainContent = document.querySelector('main.content');
-    if (mainContent) {
-      // Limpar conteúdo existente
-      mainContent.innerHTML = '';
-      
-      const mensagemDiv = document.createElement('div');
-      mensagemDiv.className = 'mensagem-central';
-      mensagemDiv.innerHTML = `
-        <div class="mensagem-sem-lavouras">
-          <i class="fas fa-seedling icone-grande"></i>
-          <h2>Nenhuma lavoura cadastrada</h2>
-          <p class="subtitulo">
-            Você ainda não possui lavouras cadastradas em sua conta.
-          </p>
-          <p class="instrucao">
-            Para começar a monitorar suas plantações, crie sua primeira lavoura.
-          </p>
-          <div class="botoes-acao">
-            <a href="CadastroLavoura.html" class="btn-nova-lavoura">
-              <i class="fas fa-plus"></i> Criar Nova Lavoura
-            </a>
-            <button onclick="location.reload()" class="btn-atualizar">
-              <i class="fas fa-sync-alt"></i> Atualizar Página
-            </button>
-          </div>
-          <p class="dica">
-            <i class="fas fa-lightbulb"></i>
-            Dica: Vá em <strong>Nova Lavoura</strong> no menu lateral para adicionar sua primeira lavoura.
-          </p>
+    const mensagemDiv = document.createElement('div');
+    mensagemDiv.className = 'mensagem-central';
+    mensagemDiv.innerHTML = `
+      <div class="mensagem-sem-lavouras">
+        <i class="fas fa-seedling icone-grande"></i>
+        <h2>Nenhuma lavoura cadastrada</h2>
+        <p class="subtitulo">
+          Você ainda não possui lavouras cadastradas em sua conta.
+        </p>
+        <p class="instrucao">
+          Para começar a monitorar suas plantações, crie sua primeira lavoura.
+        </p>
+        <div class="botoes-acao">
+          <a href="CadastroLavoura.html" class="btn-nova-lavoura">
+            <i class="fas fa-plus"></i> Criar Nova Lavoura
+          </a>
+          <button onclick="location.reload()" class="btn-atualizar">
+            <i class="fas fa-sync-alt"></i> Atualizar Página
+          </button>
         </div>
-      `;
-      
-      mainContent.appendChild(mensagemDiv);
-    }
+        <p class="dica">
+          <i class="fas fa-lightbulb"></i>
+          Dica: Vá em <strong>Nova Lavoura</strong> no menu lateral para adicionar sua primeira lavoura.
+        </p>
+      </div>
+    `;
+    
+    mainContent.appendChild(mensagemDiv);
   }
+}
 
-  function mostrarDashboard() {
-    // Mostrar TODO o conteúdo da dashboard
-    const dashboardContent = document.querySelector('main.content .container-fluid');
-    const botoesContainer = document.querySelector('.botoes-container');
-    
-    if (dashboardContent) dashboardContent.style.display = 'block';
-    if (botoesContainer) botoesContainer.style.display = 'flex';
-    
-    // Remover mensagem central se existir
-    const mensagemCentral = document.querySelector('.mensagem-central');
-    if (mensagemCentral) {
-      mensagemCentral.remove();
-    }
+function mostrarDashboard() {
+  // Mostrar TODO o conteúdo da dashboard
+  const dashboardContent = document.querySelector('main.content .container-fluid');
+  const botoesContainer = document.querySelector('.botoes-container');
+  
+  if (dashboardContent) dashboardContent.style.display = 'block';
+  if (botoesContainer) botoesContainer.style.display = 'flex';
+  
+  // Remover mensagem central se existir
+  const mensagemCentral = document.querySelector('.mensagem-central');
+  if (mensagemCentral) {
+    mensagemCentral.remove();
   }
+}
 
-  function ajustarBotoesPorStatus(status) {
-    const btnConcluir = document.getElementById("btnConcluirLavoura");
-    const btnExcluir = document.getElementById("btnExcluirLavoura");
-    
-    if (!btnConcluir || !btnExcluir) return;
-    
-    // Resetar botões
-    btnConcluir.disabled = false;
-    btnExcluir.disabled = false;
-    btnConcluir.innerHTML = '<i class="fas fa-check"></i> Concluir Lavoura';
-    btnExcluir.innerHTML = '<i class="fas fa-trash-alt"></i> Excluir Lavoura';
-    
-    if (status === 'concluída') {
-      btnConcluir.disabled = true;
-      btnConcluir.innerHTML = '<i class="fas fa-check-circle"></i> Lavoura Concluída';
-      btnConcluir.style.opacity = '0.7';
-      btnConcluir.style.cursor = 'not-allowed';
-    } else {
-      btnConcluir.style.opacity = '1';
-      btnConcluir.style.cursor = 'pointer';
-    }
-    
-    if (status === 'oculta') {
-      btnExcluir.innerHTML = '<i class="fas fa-eye-slash"></i> Lavoura Ocultada';
-      btnExcluir.disabled = true;
-      btnExcluir.style.opacity = '0.7';
-      btnExcluir.style.cursor = 'not-allowed';
-    } else {
-      btnExcluir.style.opacity = '1';
-      btnExcluir.style.cursor = 'pointer';
-    }
+function ajustarBotoesPorStatus(status) {
+  const btnConcluir = document.getElementById("btnConcluirLavoura");
+  const btnExcluir = document.getElementById("btnExcluirLavoura");
+  
+  if (!btnConcluir || !btnExcluir) return;
+  
+  // Resetar botões
+  btnConcluir.disabled = false;
+  btnExcluir.disabled = false;
+  btnConcluir.innerHTML = '<i class="fas fa-check"></i> Concluir Lavoura';
+  btnExcluir.innerHTML = '<i class="fas fa-trash-alt"></i> Excluir Lavoura';
+  
+  if (status === 'concluída') {
+    btnConcluir.disabled = true;
+    btnConcluir.innerHTML = '<i class="fas fa-check-circle"></i> Lavoura Concluída';
+    btnConcluir.style.opacity = '0.7';
+    btnConcluir.style.cursor = 'not-allowed';
+  } else {
+    btnConcluir.style.opacity = '1';
+    btnConcluir.style.cursor = 'pointer';
   }
-
-  async function carregarDadosLavoura(idLavoura) {
-    if (!idLavoura) {
-      limparDados();
-      return;
-    }
-    
-    lavouraAtualId = idLavoura;
-    
-    try {
-      const response = await fetch(`/api/lavouras/${idLavoura}/dados-completos`, {
-        credentials: "same-origin"
-      });
-      
-      if (!response.ok) {
-        throw new Error("Erro ao buscar dados");
-      }
-      
-      const data = await response.json();
-      
-      if (data.status === "success") {
-        atualizarDadosClima(data.data.clima);
-        atualizarDadosSensores(data.data.sensor);
-        atualizarGraficoPizza(data.data.sensor);
-        atualizarGraficoTemperatura(data.data.historicoTemperatura);
-        atualizarVelocimetro(data.data.clima);
-        
-        // Esconder mensagem de sem lavouras se existir
-        esconderMensagemSemLavouras();
-      } else {
-        limparDados();
-      }
-    } catch (error) {
-      console.error("Erro ao carregar dados da lavoura:", error);
-      limparDados();
-    }
-  }
-
-  function esconderMensagemSemLavouras() {
-    const graficosContainer = document.querySelector('.row.h-50.mb-4');
-    const sensoresContainer = document.querySelector('.row.h-50');
-    const botoesContainer = document.querySelector('.botoes-container');
-    
-    if (graficosContainer) graficosContainer.style.display = 'flex';
-    if (sensoresContainer) sensoresContainer.style.display = 'flex';
-    if (botoesContainer) botoesContainer.style.display = 'flex';
-    
-    const mensagem = document.querySelector('.mensagem-sem-lavouras');
-    if (mensagem) {
-      mensagem.remove();
-    }
-  }
+}
 
 async function carregarDadosLavoura(idLavoura) {
   if (!idLavoura) {
     console.log("Nenhuma lavoura selecionada");
+    limparDados();
     return;
   }
+  
+  lavouraAtualId = idLavoura;
   
   try {
     console.log(`Carregando dados da lavoura ID: ${idLavoura}`);
@@ -304,6 +244,9 @@ async function carregarDadosLavoura(idLavoura) {
       atualizarGraficoPizza(data.data.sensor);
       atualizarGraficoTemperatura(data.data.historicoTemperatura);
       atualizarVelocimetro(data.data.clima);
+      
+      // Carregar avisos específicos da lavoura
+      await atualizarAvisosLavoura(idLavoura);
     } else {
       console.warn("Status não é success:", data);
       limparDados();
@@ -681,103 +624,6 @@ function inicializarGraficos() {
   }
 }
 
-// --- FUNÇÕES DOS BOTÕES ---
-
-async function concluirLavoura() {
-  if (!lavouraAtualId) {
-    alert("Selecione uma lavoura primeiro!");
-    return;
-  }
-  
-  const seletor = document.getElementById('seletorLavouras');
-  const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
-  
-  if (!confirm(`Deseja realmente marcar a lavoura "${lavouraNome}" como concluída?`)) {
-    return;
-  }
-  
-  try {
-    const response = await fetch(`/api/lavouras/${lavouraAtualId}/concluir`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin"
-    });
-    
-    const data = await response.json();
-    
-    if (data.status === "success") {
-      alert(data.message);
-      
-      // Atualizar status no seletor
-      const option = seletor.options[seletor.selectedIndex];
-      option.dataset.status = 'concluída';
-      
-      // Ajustar botões
-      ajustarBotoesPorStatus('concluída');
-      
-      // Recarregar dados
-      await carregarDadosLavoura(lavouraAtualId);
-      
-    } else {
-      alert("Erro: " + data.message);
-    }
-  } catch (error) {
-    console.error("Erro ao concluir lavoura:", error);
-    alert("Erro ao concluir lavoura.");
-  }
-}
-
-async function ocultarLavoura() {
-  if (!lavouraAtualId) {
-    alert("Selecione uma lavoura primeiro!");
-    return;
-  }
-  
-  const seletor = document.getElementById('seletorLavouras');
-  const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
-  
-  if (!confirm(`Tem certeza que deseja remover a lavoura "${lavouraNome}" da sua visão?\n\nOs dados serão mantidos no sistema, mas não aparecerão mais nas suas listas.`)) {
-    return;
-  }
-  
-  try {
-    const response = await fetch(`/api/lavouras/${lavouraAtualId}/ocultar`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin"
-    });
-    
-    const data = await response.json();
-    
-    if (data.status === "success") {
-      alert(data.message);
-      
-      // Remover do seletor
-      seletor.remove(seletor.selectedIndex);
-      
-      // Selecionar próxima lavoura ou limpar
-      if (seletor.options.length > 1) {
-        seletor.selectedIndex = 1;
-        lavouraAtualId = seletor.value;
-        await carregarDadosLavoura(lavouraAtualId);
-        
-        const status = seletor.options[seletor.selectedIndex].dataset.status;
-        ajustarBotoesPorStatus(status);
-      } else {
-        lavouraAtualId = null;
-        limparDados();
-        mostrarMensagemSemLavouras();
-      }
-      
-    } else {
-      alert("Erro: " + data.message);
-    }
-  } catch (error) {
-    console.error("Erro ao ocultar lavoura:", error);
-    alert("Erro ao ocultar lavoura.");
-  }
-}
-
 // --- CONFIGURAÇÃO DE EVENTOS ---
 
 function configurarEventos() {
@@ -860,14 +706,13 @@ function configurarEventos() {
       const seletor = document.getElementById('seletorLavouras');
       const lavouraNome = seletor.options[seletor.selectedIndex].textContent;
       
-      if (!confirm(`Tem certeza que deseja remover a lavoura "${lavouraNome}" da sua visão?\n\nOs dados serão mantidos no sistema, mas não aparecerão mais nas suas listas.`)) {
+      if (!confirm(`Tem certeza que deseja EXCLUIR permanentemente a lavoura "${lavouraNome}"?\n\nTodos os dados relacionados serão perdidos.`)) {
         return;
       }
       
       try {
-        const response = await fetch(`/api/lavouras/${lavouraAtualId}/ocultar`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch(`/api/lavouras/${lavouraAtualId}`, {
+          method: "DELETE",
           credentials: "same-origin"
         });
         
@@ -876,29 +721,15 @@ function configurarEventos() {
         if (data.status === "success") {
           alert(data.message);
           
-          // Remover do seletor
-          seletor.remove(seletor.selectedIndex);
-          
-          // Selecionar próxima lavoura ou mostrar mensagem
-          if (seletor.options.length > 1) {
-            seletor.selectedIndex = 1;
-            lavouraAtualId = seletor.value;
-            await carregarDadosLavoura(lavouraAtualId);
-            
-            const status = seletor.options[seletor.selectedIndex].dataset.status;
-            ajustarBotoesPorStatus(status);
-          } else {
-            lavouraAtualId = null;
-            limparDados();
-            mostrarMensagemSemLavouras();
-          }
+          // Recarregar a lista de lavouras
+          await carregarLavourasNoSeletor();
           
         } else {
           alert("Erro: " + data.message);
         }
       } catch (error) {
-        console.error("Erro ao ocultar lavoura:", error);
-        alert("Erro ao ocultar lavoura.");
+        console.error("Erro ao excluir lavoura:", error);
+        alert("Erro ao excluir lavoura.");
       }
     });
   }
@@ -906,29 +737,75 @@ function configurarEventos() {
   console.log("Eventos configurados");
 }
 
+// --- FUNÇÕES PARA AVISOS ---
 
-// --- FUNÇÃO AUXILIAR PARA EXCLUIR LAVOURA ---
-
-async function excluirLavoura(idLavoura) {
+async function carregarAvisosLavoura(idLavoura) {
   try {
-    const response = await fetch(`/api/lavouras/${idLavoura}`, {
-      method: "DELETE",
+    const response = await fetch(`/api/lavouras/${idLavoura}/avisos`, {
       credentials: "same-origin"
     });
     
+    if (!response.ok) return [];
+    
     const data = await response.json();
     
-    if (data.status === "success") {
-      alert(data.message);
-      // Recarregar a lista de lavouras
-      await carregarLavourasNoSeletor();
-    } else {
-      alert("Erro ao excluir lavoura: " + data.message);
+    if (data.status === "success" && data.data) {
+      return data.data;
     }
+    
+    return [];
   } catch (error) {
-    console.error("Erro ao excluir lavoura:", error);
-    alert("Erro ao excluir lavoura.");
+    console.error("Erro ao carregar avisos da lavoura:", error);
+    return [];
   }
+}
+
+async function atualizarAvisosLavoura(idLavoura) {
+  const containerAvisos = document.querySelector('.subcardAvisos');
+  if (!containerAvisos) return;
+  
+  // Mostrar carregamento
+  containerAvisos.innerHTML = `
+    <h2><i class="fas fa-bell"></i> Avisos</h2>
+    <div class="text-center">Carregando avisos...</div>
+  `;
+  
+  const avisos = await carregarAvisosLavoura(idLavoura);
+  
+  // Limitar a 5 avisos mais críticos
+  const avisosExibir = avisos
+    .sort((a, b) => {
+      const severidade = { 'vermelho': 3, 'amarelo': 2, 'verde': 1 };
+      return severidade[b.nivel] - severidade[a.nivel];
+    })
+    .slice(0, 5);
+  
+  if (avisosExibir.length === 0) {
+    containerAvisos.innerHTML = `
+      <h2><i class="fas fa-bell"></i> Avisos</h2>
+      <div class="aviso verde">
+        <span>Todas as condições estão normais</span>
+        <span class="status verde"></span>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `<h2><i class="fas fa-bell"></i> Avisos</h2>`;
+  
+  avisosExibir.forEach(aviso => {
+    const nivelClass = aviso.nivel === 'vermelho' ? 'vermelho' : 
+                      aviso.nivel === 'amarelo' ? 'amarelo' : '';
+    
+    html += `
+      <div class="aviso ${nivelClass}" title="${aviso.mensagem} - Ideal: ${aviso.valor_ideal}">
+        <span>${aviso.mensagem.substring(0, 40)}${aviso.mensagem.length > 40 ? '...' : ''}</span>
+        <span class="status ${aviso.nivel}"></span>
+      </div>
+    `;
+  });
+  
+  containerAvisos.innerHTML = html;
 }
 
 // --- DEBUG: Verificar console para problemas ---
